@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Dynamic Render Planets into 12 Chart Boxes
+    // Dynamic Render Planets into 12 Chart Boxes Cleanly
     function renderPlanetsToGrid(containerId, planetMap) {
         for (let i = 1; i <= 12; i++) {
             const box = document.querySelector(`#${containerId} .h${i}`);
@@ -31,10 +31,42 @@ document.addEventListener('DOMContentLoaded', () => {
         if (planetMap) {
             Object.keys(planetMap).forEach(houseNum => {
                 const box = document.querySelector(`#${containerId} .h${houseNum}`);
-                if (box && Array.isArray(planetMap[houseNum])) {
-                    box.innerHTML = planetMap[houseNum].join(' ');
+                if (box && Array.isArray(planetMap[houseNum]) && planetMap[houseNum].length > 0) {
+                    box.innerHTML = planetMap[houseNum]
+                        .map(p => `<span class="p-symbol">${p}</span>`)
+                        .join('');
                 }
             });
+        }
+    }
+
+    // Dynamic Render V12 Detailed Report Below Charts
+    function renderV12ReportData(report) {
+        if (!report) return;
+
+        if (document.getElementById('rpt-nakshatra')) {
+            document.getElementById('rpt-nakshatra').innerText = `${report.nakshatra} (Lord: ${report.nakshatra_lord})`;
+        }
+        if (document.getElementById('rpt-tithi')) {
+            document.getElementById('rpt-tithi').innerText = report.tithi;
+        }
+        if (document.getElementById('rpt-yoni-gana')) {
+            document.getElementById('rpt-yoni-gana').innerText = `${report.yoni} / ${report.gana} / ${report.nadi}`;
+        }
+        if (document.getElementById('rpt-maha-dasha')) {
+            document.getElementById('rpt-maha-dasha').innerText = report.current_dasha.maha_dasha;
+        }
+        if (document.getElementById('rpt-antar-dasha')) {
+            document.getElementById('rpt-antar-dasha').innerText = report.current_dasha.antar_dasha;
+        }
+        if (document.getElementById('rpt-indu-lagna')) {
+            document.getElementById('rpt-indu-lagna').innerText = report.special_lagnas.indu_lagna;
+        }
+        if (document.getElementById('rpt-arudha-lagna')) {
+            document.getElementById('rpt-arudha-lagna').innerText = report.special_lagnas.arudha_lagna;
+        }
+        if (document.getElementById('rpt-yogas')) {
+            document.getElementById('rpt-yogas').innerText = report.yogas.join(', ');
         }
     }
 
@@ -86,6 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     if (result.navamsha_planets) {
                         renderPlanetsToGrid('navamsha-houses', result.navamsha_planets);
+                    }
+
+                    // Render V12 Report Details
+                    if (result.v12_report) {
+                        renderV12ReportData(result.v12_report);
                     }
                 } else {
                     alert("කේන්දර ගණනය කිරීමේදී දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.");
