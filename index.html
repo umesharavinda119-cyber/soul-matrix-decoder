@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RADIANCE OF NUMBERS | Ultimate Real Universe</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;800&family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;600;700&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/horoscope.css">
+    
+    <!-- THREE.JS, GLTFLOADER & DRACO DECODER -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+</head>
+<body>
+
+    <audio id="bg-audio" loop preload="auto">
+        <source src="assets/Tone.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="real-bg" id="universe-bg"></div>
+    <div class="ambient-overlay"></div>
+    <canvas id="webgl-canvas"></canvas>
+    <canvas id="meteor-canvas"></canvas>
+
+    <header>
+        <div class="logo">
+            <div style="width:10px; height:10px; background:var(--accent-gold); border-radius:50%; box-shadow:0 0 15px var(--accent-gold);"></div>
+            RADIANCE OF NUMBERS
+        </div>
+        <div class="header-controls">
+            <button id="lang-toggle-btn" class="lang-btn">SI | EN</button>
+
+            <div class="celestial-badge">
+                <i class="fa-solid fa-moon"></i> FULL MOON: <span id="celestial-timer">00d 00h 00m</span>
+            </div>
+
+            <div class="daily-badge" id="daily-cosmic-badge">
+                <i class="fa-solid fa-atom"></i> TODAY MATRIX: <strong>CALCULATING...</strong>
+            </div>
+
+            <div class="theme-picker">
+                <span class="theme-dot gold" data-theme="gold" title="Solar Gold"></span>
+                <span class="theme-dot cyan" data-theme="cyan" title="Quantum Cyan"></span>
+                <span class="theme-dot violet" data-theme="violet" title="Mystic Violet"></span>
+            </div>
+
+            <div class="audio-vis-container">
+                <span class="audio-vis-bar"></span>
+                <span class="audio-vis-bar"></span>
+                <span class="audio-vis-bar"></span>
+                <span class="audio-vis-bar"></span>
+                <span class="audio-vis-bar"></span>
+            </div>
+
+            <select id="audio-freq-select" class="freq-select">
+                <option value="default">Original Track</option>
+                <option value="432">432Hz Cosmic</option>
+                <option value="528">528Hz Healing</option>
+            </select>
+
+            <div class="live-clock" id="clock-display">00:00:00 AM</div>
+            <div class="audio-toggle" id="audio-toggle-btn" title="Toggle Cosmic Track" tabindex="0">
+                <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
+            </div>
+            <div class="social-links">
+                <a href="https://wa.me/94700000000" target="_blank" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="badge">ULTIMATE REALITY MATRIX</div>
+        <h1>DECODE YOUR SOUL MATRIX</h1>
+        <p data-si="ආත්මයේ සංඛ්‍යා න්‍යාසය සහ ජ්‍යොතිෂමය කර්මජ දත්ත එකම තාක්ෂණික පද්ධතියකින් නිවැරදිවම විශ්ලේෂණය කරගන්න." data-en="Precisely analyze your soul's numerical matrix and karmic data through a unified cosmic engine.">ආත්මයේ සංඛ්‍යා න්‍යාසය සහ ජ්‍යොතිෂමය කර්මජ දත්ත එකම තාක්ෂණික පද්ධතියකින් නිවැරදිවම විශ්ලේෂණය කරගන්න.</p>
+
+        <div class="wheel-wrapper" id="wheel-card">
+            
+            <div class="scroll-wrapper" id="master-scroll" style="display: none;">
+                <div class="scroll-clipper">
+                    <div class="scroll-bg">
+                        <ul class="pkg-features scroll-content-list" id="scroll-content-list"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calc-card">
+                <div class="hud-corner hud-tl"></div>
+                <div class="hud-corner hud-tr"></div>
+                <div class="hud-corner hud-bl"></div>
+                <div class="hud-corner hud-br"></div>
+
+                <div class="tab-menu" id="main-tabs" style="display: none;">
+                    <button class="tab-btn" onclick="goHome()" tabindex="0" title="Back to Home"><i class="fa-solid fa-house"></i></button>
+                    <button class="tab-btn active" onclick="openTab('pkg-1', this)" tabindex="0">MINI</button>
+                    <button class="tab-btn" onclick="openTab('pkg-2', this)" tabindex="0">MICRO</button>
+                    <button class="tab-btn blueprint-btn" onclick="openTab('pkg-3', this)" tabindex="0">BLUEPRINT</button>
+                    <button class="tab-btn vvip-btn" onclick="openTab('pkg-4', this)" tabindex="0">VVIP</button>
+                    <button class="tab-btn portal-btn" onclick="openTab('portal', this)" tabindex="0"><i class="fa-solid fa-lock"></i></button>
+                </div>
+
+                <div id="initial-decoder" class="tab-content active">
+                    <h3>FREE SOUL MATRIX DECODER</h3>
+                    <p style="font-size: 0.88rem; color: var(--text-sub);" data-si="ඔබගේ උපන් දිනය ලබා දී නොමිලේ මූලික ආත්මීය කම්පනය පරීක්ෂා කරන්න." data-en="Enter your birthdate to decode your primary soul vibration for free.">ඔබගේ උපන් දිනය ලබා දී නොමිලේ මූලික ආත්මීය කම්පනය පරීක්ෂා කරන්න.</p>
+                    <div class="input-group" id="input-group">
+                        <input type="date" id="birthdate" class="date-input" required tabindex="0">
+                        <button class="decode-btn" id="decode-btn" tabindex="0">DECODE</button>
+                    </div>
+                    
+                    <!-- SOUL COMPATIBILITY QUICK MATCHER -->
+                    <div class="compat-box">
+                        <div class="compat-title"><i class="fa-solid fa-heart-pulse"></i> SOUL COMPATIBILITY MATCHER</div>
+                        <div class="compat-inputs">
+                            <input type="text" id="compat-name1" placeholder="ඔබගේ නම">
+                            <input type="text" id="compat-name2" placeholder="සහකරුගේ නම">
+                        </div>
+                        <button class="submit-btn-3d" id="calc-compat-btn" style="padding: 0.6rem; font-size: 0.8rem;">CHECK COMPATIBILITY</button>
+                        <div id="compat-result" class="compat-res"></div>
+                    </div>
+
+                    <div class="result-box" id="result-box">
+                        <div class="number-circle" id="res-number">0</div>
+                        <div id="res-hook" style="color: #e5e7eb; font-size: 0.95rem; line-height: 1.5; text-align: center; margin-bottom: 15px;"></div>
+                        <button class="upgrade-btn-3d" id="view-packages-btn" tabindex="0">
+                            <i class="fa-solid fa-gem"></i> VIEW UPGRADE PACKAGES
+                        </button>
+                    </div>
+                </div>
+
+                <div id="pkg-1" class="tab-content" style="display: none;">
+                    <h3>MINI CHECK <span>(කෙටි පරීක්ෂාව)</span></h3>
+                    <div class="price-tag">රු. 1260/-</div>
+                    <a href="https://wa.me/94700000000?text=I%20need%20the%20MINI%20CHECK%20package" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
+                </div>
+
+                <div id="pkg-2" class="tab-content" style="display: none;">
+                    <h3>MICRO PACKAGE <span>(මූලික පලාපල)</span></h3>
+                    <div class="price-tag">රු. 2,700/-</div>
+                    <a href="https://wa.me/94700000000?text=I%20need%20the%20MICRO%20PACKAGE" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
+                </div>
+
+                <div id="pkg-3" class="tab-content" style="display: none;">
+                    <h3 class="highlight-title">THE SOUL BLUEPRINT 🚀 <span>[Best Seller]</span></h3>
+                    <div class="price-tag highlight">රු. 7,200/-</div>
+                    <a href="https://wa.me/94700000000?text=I%20need%20THE%20SOUL%20BLUEPRINT" target="_blank" class="order-btn blueprint" tabindex="0">ORDER VIA WHATSAPP</a>
+                </div>
+
+                <div id="pkg-4" class="tab-content" style="display: none;">
+                    <h3 class="vip-title">VVIP PACKAGE 👑 <span>(Royal Family Service)</span></h3>
+                    <div class="price-tag vip">රු. 9,900/-</div>
+                    <a href="https://wa.me/94700000000?text=I%20need%20the%20VVIP%20PACKAGE" target="_blank" class="order-btn vvip" tabindex="0">ORDER VIA WHATSAPP</a>
+                </div>
+
+                <div id="portal" class="tab-content" style="display: none; text-align: center;">
+                    <i class="fa-solid fa-book-journal-whills portal-icon"></i>
+                    <h3 style="color: var(--accent-gold); margin-top: 15px;">ACCESS YOUR GRIMOIRE</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 20px;">ඔබට ලැබුණු රහස්‍ය කේතය (Security Code) මෙහි ඇතුළත් කරන්න.</p>
+                    <div class="input-group" style="justify-content: center;">
+                        <input type="text" id="security-code" class="date-input" placeholder="e.g. URM-2026-A8B" style="text-align: center; letter-spacing: 2px; text-transform: uppercase;" tabindex="0">
+                        <button class="decode-btn full-width" id="unlock-book-btn" tabindex="0" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; margin-top: 10px; width: 100%;">UNLOCK BLUEPRINT</button>
+                    </div>
+                </div>
+
+                <div class="scanner-overlay" id="scanner">
+                    <div class="laser-line"></div>
+                    <div class="scan-status">SCANNING SOUL MATRIX...</div>
+                    <div class="scan-progress" id="scan-prog">0%</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- RIGHT SIDE PANEL -->
+    <div id="horoscope-app-wrapper">
+        <canvas id="zodiac-3d-canvas"></canvas>
+        <button id="open-horoscope-btn" class="glow-btn" tabindex="0" data-si='<i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම' data-en='<i class="fa-solid fa-compass"></i> GENERATE HOROSCOPE'>
+            <i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම
+        </button>
+
+        <div id="horoscope-panel" class="glass-panel">
+            <div class="panel-header">
+                <h3>SOUL MATRIX DECODER</h3>
+                <button id="close-panel-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="panel-body">
+                <p class="panel-desc">නිවැරදි ජ්‍යොතිෂමය දත්ත සඳහා ඔබගේ උපන් තොරතුරු ලබා දෙන්න.</p>
+                <form id="horoscope-form">
+                    <div class="input-grp">
+                        <label><i class="fa-solid fa-user"></i> සම්පූර්ණ නම</label>
+                        <input type="text" id="h-name" placeholder="Ex: Umesh (Mars/No.9)" required>
+                    </div>
+                    <div class="input-grp">
+                        <label><i class="fa-solid fa-calendar-days"></i> උපන් දිනය</label>
+                        <input type="date" id="h-date" required>
+                    </div>
+                    <div class="input-grp">
+                        <label><i class="fa-solid fa-clock"></i> උපන් වෙලාව</label>
+                        <input type="time" id="h-time" required>
+                    </div>
+                    <div class="input-grp">
+                        <label><i class="fa-solid fa-hospital"></i> උපන් ස්ථානය / නගරය</label>
+                        <input type="text" id="h-place" placeholder="Ex: Colombo / General Hospital" required>
+                    </div>
+                    <button type="submit" class="submit-btn-3d" id="generate-matrix-btn">
+                        <i class="fa-solid fa-atom"></i> GENERATE MATRIX
+                    </button>
+                </form>
+                <div id="loading-matrix" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>කේන්දර සටහන ගණනය කරමින් පවතී...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE 3D PLANETARY POSITIONS WIDGET -->
+    <div class="planetary-widget-right">
+        <div class="planet-row">
+            <div class="planet-sphere sun">☉</div>
+            <div class="planet-info">
+                <span class="planet-title">රවි (SUN)</span>
+                <strong id="pos-sun">ගණනය වෙමින්...</strong>
+            </div>
+        </div>
+        <div class="planet-row">
+            <div class="planet-sphere moon">☽</div>
+            <div class="planet-info">
+                <span class="planet-title">සඳු (MOON)</span>
+                <strong id="pos-moon">ගණනය වෙමින්...</strong>
+            </div>
+        </div>
+        <div class="planet-row">
+            <div class="planet-sphere jupiter">♃</div>
+            <div class="planet-info">
+                <span class="planet-title">ගුරු (JUPITER)</span>
+                <strong id="pos-jup">ගණනය වෙමින්...</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- MATRIX ORACLE CHAT WIDGET -->
+    <button id="oracle-toggle-btn" class="oracle-btn" title="Ask Matrix Oracle">
+        <i class="fa-solid fa-headset"></i>
+    </button>
+
+    <div id="oracle-modal" class="oracle-modal">
+        <div class="oracle-header">
+            <span><i class="fa-solid fa-atom"></i> MATRIX ORACLE</span>
+            <button id="close-oracle-btn">&times;</button>
+        </div>
+        <div class="oracle-body" id="oracle-chat-body">
+            <div class="oracle-msg ai">ආයුබෝවන්! මම Soul Matrix විශ්වීය උපදේශක. ඔබගේ පැනය යොමු කරන්න.</div>
+        </div>
+        <div class="oracle-footer">
+            <input type="text" id="oracle-input" placeholder="ප්‍රශ්නය ඇතුළත් කරන්න...">
+            <button id="send-oracle-btn"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- BOTTOM RUNNING QUOTE BANNER -->
+    <div class="bottom-quote-ticker">
+        <div class="ticker-track">
+            <span>”අනාගතය යනු අහඹුවක් නොව, පරම නිහඬතාවය තුළ ඔබ විසින්ම ලියනු ලබන ක්වන්ටම් කේතයකි.”</span>
+            <span>”අනාගතය යනු අහඹුවක් නොව, පරම නිහඬතාවය තුළ ඔබ විසින්ම ලියනු ලබන ක්වන්ටම් කේතයකි.”</span>
+        </div>
+    </div>
+
+    <script src="js/three-universe.js" defer></script>
+    <script src="js/core-logic.js" defer></script>
+    <script src="js/horoscope-3d.js" defer></script>
+    <script src="js/horoscope-ui.js" defer></script>
+    <script src="js/cosmic-enhancements.js" defer></script>
+</body>
+</html>
