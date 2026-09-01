@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Window Object එකට සම්බන්ධ කිරීම (HTML එකේ Onclick වලින් කතා කරන්න පුළුවන් වෙන්න)
+    // Window Object එකට සම්බන්ධ කිරීම
     window.openTab = function(tabId, btnElement) {
         const contents = document.querySelectorAll('.tab-content');
         contents.forEach(content => { if(content.id !== 'initial-decoder') content.style.display = 'none'; });
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(initDecoder) initDecoder.style.display = 'block';
     };
 
-    // --- 6. 3D HOVER EFFECT (Only on Card, Not Scroll) ---
+    // --- 6. 3D HOVER EFFECT ---
     let mouseX = 0, mouseY = 0;
     const uniBg = document.getElementById('universe-bg');
     const calcCard = document.querySelector('.calc-card');
@@ -250,19 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (calcCard) calcCard.style.transform = `perspective(1000px) rotateY(${mouseX * 0.8}deg) rotateX(${-mouseY * 0.8}deg)`;
     });
 
-   // --- 3D HOROSCOPE RINGS ENGINE ---
-function open3DHoroscopeRings() {
-    const modal = document.getElementById('horoscope-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        initSingleRing('lagna-3d-canvas');
-        initSingleRing('navamsha-3d-canvas');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-   document.addEventListener('DOMContentLoaded', () => {
-    // 1. "ජන්ම පත්‍ර සැකසීම" Button එක Click කළ විට Modal එක Open වීම
+    // --- 7. HOROSCOPE MODAL EVENT LISTENERS ---
     const janmaPathraBtn = document.getElementById('open-horoscope-btn') || document.querySelector('.janma-pathra-btn');
     if (janmaPathraBtn) {
         janmaPathraBtn.addEventListener('click', (e) => {
@@ -271,7 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Close Button Click Event
     const closeBtn = document.getElementById('close-modal-btn');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
@@ -279,15 +266,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (modal) modal.style.display = 'none';
         });
     }
-}); 
-    const closeBtn = document.getElementById('close-modal-btn');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-            const modal = document.getElementById('horoscope-modal');
-            if (modal) modal.style.display = 'none';
-        });
+
+}); // end DOMContentLoaded
+
+// --- 8. 3D HOROSCOPE RINGS ENGINE ---
+function open3DHoroscopeRings() {
+    const modal = document.getElementById('horoscope-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        initSingleRing('lagna-3d-canvas');
+        initSingleRing('navamsha-3d-canvas');
     }
-});
+}
 
 function initSingleRing(canvasId) {
     const canvas = document.getElementById(canvasId);
@@ -323,4 +313,4 @@ function initSingleRing(canvasId) {
         renderer.render(scene, camera);
     }
     animate();
-} 
+}
