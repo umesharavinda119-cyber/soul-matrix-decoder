@@ -5,6 +5,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('horoscope-form');
     const loadingDiv = document.getElementById('loading-matrix');
 
+    // -------------------------------------------------------------------------
+    // 1. 4-DAY ROLLING COSMIC TIMER LOGIC
+    // -------------------------------------------------------------------------
+    function start4DayTimer() {
+        let endTime = localStorage.getItem('matrix_timer_end');
+        if (!endTime || new Date().getTime() > parseInt(endTime)) {
+            endTime = new Date().getTime() + (4 * 24 * 60 * 60 * 1000);
+            localStorage.setItem('matrix_timer_end', endTime);
+        }
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = parseInt(endTime) - now;
+            
+            if (distance < 0) {
+                localStorage.removeItem('matrix_timer_end');
+                start4DayTimer();
+                return;
+            }
+
+            const days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+            const hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+            const minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            const seconds = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+
+            const timerEl = document.getElementById('celestial-timer');
+            if (timerEl) {
+                timerEl.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+        }
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    }
+    start4DayTimer();
+
+    // -------------------------------------------------------------------------
+    // 2. UI PANEL TOGGLE
+    // -------------------------------------------------------------------------
     if (openBtn && panel) {
         openBtn.addEventListener('click', () => {
             panel.classList.add('active');
@@ -175,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -------------------------------------------------------------------------
-    // DYNAMIC QUANTUM PARTICLE BACKGROUND FOR MODAL
+    // 3. DYNAMIC QUANTUM PARTICLE BACKGROUND FOR MODAL
     // -------------------------------------------------------------------------
     function initModalParticleBg() {
         const canvas = document.getElementById('modal-bg-canvas');
@@ -243,13 +281,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -------------------------------------------------------------------------
-    // INTERACTIVE 3D PARALLAX MOUSE TILT FOR MODAL CARD
+    // 4. INTERACTIVE 3D PARALLAX MOUSE & GYRO TILT FOR MODAL CARD
     // -------------------------------------------------------------------------
     function initModal3DTilt() {
         const overlay = document.getElementById('horoscope-modal');
         const card = document.getElementById('horoscope-3d-card');
         if (!overlay || !card) return;
 
+        // Desktop Mouse Motion
         overlay.addEventListener('mousemove', (e) => {
             const { clientX, clientY } = e;
             const { innerWidth, innerHeight } = window;
@@ -263,6 +302,17 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.addEventListener('mouseleave', () => {
             card.style.transform = `rotateX(0deg) rotateY(0deg) translateZ(0px)`;
         });
+
+        // Mobile Gyroscope Motion
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (e) => {
+                if (overlay.style.display === 'flex') {
+                    const tiltX = e.beta ? Math.min(Math.max(e.beta - 45, -15), 15) : 0;
+                    const tiltY = e.gamma ? Math.min(Math.max(e.gamma, -15), 15) : 0;
+                    card.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(10px)`;
+                }
+            });
+        }
     }
 
     initModalParticleBg();
