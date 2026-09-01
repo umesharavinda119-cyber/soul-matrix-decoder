@@ -30,15 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
     modelGroup.rotation.set(0, 0, 0); 
     scene.add(modelGroup);
 
-    // DRACO DECODER SETUP
+    // DRACO DECODER SETUP (Compress කරපු ෆයිල් එක Load කරන්න මෙය අනිවාර්යයි)
     const dracoLoader = new THREE.DRACOLoader();
     dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/gltf/');
 
     const gltfLoader = new THREE.GLTFLoader();
     gltfLoader.setDRACOLoader(dracoLoader);
 
+    // LOCAL ASSETS ෆෝල්ඩරයෙන් 3D Model එක ලබාගැනීම (CORS Error එක මින් වැළකේ)
     gltfLoader.load(
-        'https://github.com/umesharavinda119-cyber/soul-matrix-decoder/releases/download/v1.0.0/zodiac-statue.glb',
+        './assets/zodiac-statue.glb',
         (gltf) => {
             const loadedModel = gltf.scene;
 
