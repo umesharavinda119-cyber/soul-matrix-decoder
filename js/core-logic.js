@@ -130,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     renderTeaserResult(dateVal);
 
-                    // Decode වූ පසු ජන්ම පත්‍ර සැකසීම Icon/Button එක Display කිරීම
                     const horoscopeAppWrapper = document.getElementById('horoscope-app-wrapper');
                     if (horoscopeAppWrapper) {
                         horoscopeAppWrapper.style.display = 'block';
@@ -187,7 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Window Object එකට සම්බන්ධ කිරීම
     window.openTab = function(tabId, btnElement) {
         const contents = document.querySelectorAll('.tab-content');
         contents.forEach(content => { if(content.id !== 'initial-decoder') content.style.display = 'none'; });
@@ -256,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (calcCard) calcCard.style.transform = `perspective(1000px) rotateY(${mouseX * 0.8}deg) rotateX(${-mouseY * 0.8}deg)`;
     });
 
-    // Close Horoscope Modal Event
     const closeBtn = document.getElementById('close-modal-btn');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
@@ -267,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 }); // End DOMContentLoaded
 
-// --- 7. 3D HOROSCOPE RINGS ENGINE ---
+// --- 7. 3D HOROSCOPE RINGS ENGINE (420px RESOLUTION) ---
 function open3DHoroscopeRings() {
     const modal = document.getElementById('horoscope-modal');
     if (modal) {
@@ -276,7 +273,7 @@ function open3DHoroscopeRings() {
         initSingleRing('navamsha-3d-canvas');
     }
 }
-window.open3DHoroscopeRings = open3DHoroscopeRings; // Export to Global Window
+window.open3DHoroscopeRings = open3DHoroscopeRings;
 
 function initSingleRing(canvasId) {
     const canvas = document.getElementById(canvasId);
@@ -287,17 +284,17 @@ function initSingleRing(canvasId) {
     camera.position.z = 5;
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-    renderer.setSize(280, 280);
+    renderer.setSize(420, 420);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     const ambLight = new THREE.AmbientLight(0xffffff, 1.5);
     scene.add(ambLight);
 
-    const goldLight = new THREE.PointLight(0xffd700, 3, 20);
+    const goldLight = new THREE.PointLight(0xffd700, 3.2, 20);
     goldLight.position.set(2, 2, 4);
     scene.add(goldLight);
 
-    const geometry = new THREE.TorusGeometry(1.8, 0.12, 16, 100);
+    const geometry = new THREE.TorusGeometry(1.82, 0.11, 16, 100);
     const material = new THREE.MeshStandardMaterial({
         color: 0xd4af37,
         metalness: 0.9,
