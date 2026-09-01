@@ -40,34 +40,48 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Dynamic Render V12 Detailed Report Below Charts
+    // Map Calculated V12 Numeric & Metric Values Directly to UI
     function renderV12ReportData(report) {
         if (!report) return;
 
-        if (document.getElementById('rpt-nakshatra')) {
-            document.getElementById('rpt-nakshatra').innerText = `${report.nakshatra} (Lord: ${report.nakshatra_lord})`;
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = val !== undefined && val !== null ? val : '-';
+        };
+
+        setVal('m-ayanamsha', report.ayanamsha);
+        setVal('m-nakshatra', report.nakshatra);
+        setVal('m-nak-lord', report.nakshatra_lord);
+        setVal('m-tithi', report.tithi);
+        setVal('m-yoni-gana-nadi', `${report.yoni} / ${report.gana} / ${report.nadi}`);
+
+        if (report.current_dasha) {
+            setVal('m-maha-dasha', report.current_dasha.maha_dasha);
+            setVal('m-antar-dasha', report.current_dasha.antar_dasha);
+            setVal('m-pratyantar-dasha', report.current_dasha.pratyantar_dasha);
         }
-        if (document.getElementById('rpt-tithi')) {
-            document.getElementById('rpt-tithi').innerText = report.tithi;
+
+        if (report.special_lagnas) {
+            setVal('m-indu-lagna', report.special_lagnas.indu_lagna);
+            setVal('m-arudha-lagna', report.special_lagnas.arudha_lagna);
+            setVal('m-upapada-lagna', report.special_lagnas.upapada_lagna);
         }
-        if (document.getElementById('rpt-yoni-gana')) {
-            document.getElementById('rpt-yoni-gana').innerText = `${report.yoni} / ${report.gana} / ${report.nadi}`;
+
+        setVal('m-yogas', Array.isArray(report.yogas) ? report.yogas.join(', ') : report.yogas);
+
+        if (report.spouse_info) {
+            setVal('m-7th-lord', report.spouse_info.seventh_lord);
+            setVal('m-spouse-dir', report.spouse_info.direction);
+            setVal('m-spouse-letter', `'${report.spouse_info.first_letter}'`);
         }
-        if (document.getElementById('rpt-maha-dasha')) {
-            document.getElementById('rpt-maha-dasha').innerText = report.current_dasha.maha_dasha;
+
+        if (report.doshas) {
+            setVal('m-kuja-dosha', report.doshas.kuja_dosha);
+            setVal('m-sade-sati', report.doshas.sade_sati);
+            setVal('m-tara-bala', report.doshas.tara_bala);
         }
-        if (document.getElementById('rpt-antar-dasha')) {
-            document.getElementById('rpt-antar-dasha').innerText = report.current_dasha.antar_dasha;
-        }
-        if (document.getElementById('rpt-indu-lagna')) {
-            document.getElementById('rpt-indu-lagna').innerText = report.special_lagnas.indu_lagna;
-        }
-        if (document.getElementById('rpt-arudha-lagna')) {
-            document.getElementById('rpt-arudha-lagna').innerText = report.special_lagnas.arudha_lagna;
-        }
-        if (document.getElementById('rpt-yogas')) {
-            document.getElementById('rpt-yogas').innerText = report.yogas.join(', ');
-        }
+
+        setVal('m-sav-total', `${report.sav_total} / 337`);
     }
 
     if (form) {
@@ -120,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderPlanetsToGrid('navamsha-houses', result.navamsha_planets);
                     }
 
-                    // Render V12 Report Details
+                    // Render V12 Metric Values
                     if (result.v12_report) {
                         renderV12ReportData(result.v12_report);
                     }
