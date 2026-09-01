@@ -173,4 +173,98 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 800);
         });
     }
+
+    // -------------------------------------------------------------------------
+    // DYNAMIC QUANTUM PARTICLE BACKGROUND FOR MODAL
+    // -------------------------------------------------------------------------
+    function initModalParticleBg() {
+        const canvas = document.getElementById('modal-bg-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 45;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 2 + 0.5;
+                this.color = Math.random() > 0.5 ? '#f59e0b' : '#38bdf8';
+                this.vx = (Math.random() - 0.5) * 0.6;
+                this.vy = (Math.random() - 0.5) * 0.6;
+                this.alpha = Math.random() * 0.7 + 0.2;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            const overlay = document.getElementById('horoscope-modal');
+            if (overlay && overlay.style.display === 'flex') {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    // -------------------------------------------------------------------------
+    // INTERACTIVE 3D PARALLAX MOUSE TILT FOR MODAL CARD
+    // -------------------------------------------------------------------------
+    function initModal3DTilt() {
+        const overlay = document.getElementById('horoscope-modal');
+        const card = document.getElementById('horoscope-3d-card');
+        if (!overlay || !card) return;
+
+        overlay.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const { innerWidth, innerHeight } = window;
+
+            const rotX = ((clientY / innerHeight) - 0.5) * -16;
+            const rotY = ((clientX / innerWidth) - 0.5) * 16;
+
+            card.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(10px)`;
+        });
+
+        overlay.addEventListener('mouseleave', () => {
+            card.style.transform = `rotateX(0deg) rotateY(0deg) translateZ(0px)`;
+        });
+    }
+
+    initModalParticleBg();
+    initModal3DTilt();
 });
