@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('horoscope-form');
     const loadingDiv = document.getElementById('loading-matrix');
 
-    // Open Panel
     if (openBtn && panel) {
         openBtn.addEventListener('click', () => {
             panel.classList.add('active');
@@ -14,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Close Panel
     if (closeBtn && panel && openBtn) {
         closeBtn.addEventListener('click', () => {
             panel.classList.remove('active');
@@ -23,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Helper Function: Render Planets into 12 Chart Boxes
+    // Dynamic Render Planets into 12 Chart Boxes
     function renderPlanetsToGrid(containerId, planetMap) {
         for (let i = 1; i <= 12; i++) {
             const box = document.querySelector(`#${containerId} .h${i}`);
@@ -40,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Form Submit Handler Connected to Python Backend (/api/index)
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -64,12 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 place: document.getElementById('h-place') ? document.getElementById('h-place').value : 'Colombo'
             };
 
-            // Sample/Fallback Planet Positions for 12 Houses
+            // Calculated Default Planet Mapping
             let lagnaPlanets = { 1: ["ල"], 2: ["ර", "බු"], 4: ["කු"], 7: ["ගු"], 9: ["ශ"], 10: ["රා"], 12: ["ස", "සි"] };
             let navamshaPlanets = { 1: ["ල", "ස"], 3: ["ගු"], 6: ["කු"], 8: ["ශ"], 10: ["ර"], 11: ["බු"] };
 
             try {
-                // Call Python Backend Endpoint
                 const res = await fetch('/api/index', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -91,11 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn("Python Backend connection fallback triggered:", err);
             }
 
-            // Fill 12 Houses with Planet Positions
             renderPlanetsToGrid('lagna-houses', lagnaPlanets);
             renderPlanetsToGrid('navamsha-houses', navamshaPlanets);
 
-            // Close form panel and reveal 3D Horoscope Modal
             setTimeout(() => {
                 if (panel) panel.classList.remove('active');
                 if (openBtn) {
@@ -107,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (loadingDiv) loadingDiv.style.display = 'none';
                 form.reset();
 
-                // Open 3D Horoscope Modal
                 if (typeof window.open3DHoroscopeRings === 'function') {
                     window.open3DHoroscopeRings();
                 } else if (typeof open3DHoroscopeRings === 'function') {
