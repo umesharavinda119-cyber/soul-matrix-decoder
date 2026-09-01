@@ -53,19 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const payload = {
                 name: document.getElementById('h-name') ? document.getElementById('h-name').value : '',
-                year: dateParts[0] || 1990,
-                month: dateParts[1] || 1,
-                day: dateParts[2] || 1,
-                hour: timeParts[0] || 12,
-                minute: timeParts[1] || 0,
-                place: document.getElementById('h-place') ? document.getElementById('h-place').value : 'Colombo'
+                year: parseInt(dateParts[0]) || 1990,
+                month: parseInt(dateParts[1]) || 1,
+                day: parseInt(dateParts[2]) || 1,
+                hour: parseInt(timeParts[0]) || 12,
+                minute: parseInt(timeParts[1]) || 0,
+                lat: 6.9271, // Colombo Latitude (Default)
+                lon: 79.8612  // Colombo Longitude (Default)
             };
 
-            // Calculated Default Planet Mapping
-            let lagnaPlanets = { 1: ["ල"], 2: ["ර", "බු"], 4: ["කු"], 7: ["ගු"], 9: ["ශ"], 10: ["රා"], 12: ["ස", "සි"] };
-            let navamshaPlanets = { 1: ["ල", "ස"], 3: ["ගු"], 6: ["කු"], 8: ["ශ"], 10: ["ර"], 11: ["බු"] };
-
             try {
+                // Call Real Python Swiss Ephemeris API
                 const res = await fetch('/api/index', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -74,21 +72,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (res.ok) {
                     const result = await res.json();
+                    
                     if (result.lagna && document.getElementById('lagna-name-display')) {
                         document.getElementById('lagna-name-display').innerHTML = result.lagna;
                     }
                     if (result.navamsha && document.getElementById('navamsha-name-display')) {
                         document.getElementById('navamsha-name-display').innerHTML = result.navamsha;
                     }
-                    if (result.lagna_planets) lagnaPlanets = result.lagna_planets;
-                    if (result.navamsha_planets) navamshaPlanets = result.navamsha_planets;
+
+                    // Render EXACT Live Python Calculations to 12 Houses
+                    if (result.lagna_planets) {
+                        renderPlanetsToGrid('lagna-houses', result.lagna_planets);
+                    }
+                    if (result.navamsha_planets) {
+                        renderPlanetsToGrid('navamsha-houses', result.navamsha_planets);
+                    }
+                } else {
+                    alert("කේන්දර ගණනය කිරීමේදී දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.");
                 }
             } catch (err) {
-                console.warn("Python Backend connection fallback triggered:", err);
+                console.error("Python Calculation Error:", err);
+                alert("Server එක සම්බන්ධ කර ගැනීමට නොහැකි විය. කරුණාකර Internet Connection පරීක්ෂා කරන්න.");
             }
-
-            renderPlanetsToGrid('lagna-houses', lagnaPlanets);
-            renderPlanetsToGrid('navamsha-houses', navamshaPlanets);
 
             setTimeout(() => {
                 if (panel) panel.classList.remove('active');
