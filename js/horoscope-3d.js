@@ -25,8 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
     modelGroup.rotation.set(0, 0, 0); 
     scene.add(modelGroup);
 
+    // GOOGLE STABLE DRACO DECODER CDN
     const dracoLoader = new THREE.DRACOLoader();
-    dracoLoader.setDecoderPath('[https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/gltf/](https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/gltf/)');
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
 
     const gltfLoader = new THREE.GLTFLoader();
     gltfLoader.setDRACOLoader(dracoLoader);
