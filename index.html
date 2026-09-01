@@ -272,16 +272,16 @@
         </div>
     </div>
 
-    <!-- DUAL 3D HOROSCOPE MODAL WITH V12 ASTROLOGY REPORT -->
+    <!-- DUAL 3D HOROSCOPE MODAL WITH TECHNICAL METRICS DASHBOARD -->
     <div id="horoscope-modal" class="horoscope-modal-overlay">
         <div class="horoscope-modal-card">
             <button class="close-modal-btn" id="close-modal-btn">&times;</button>
-            <h2 class="modal-title">ඔබගේ ජන්ම පත්‍ර විශ්ලේෂණය</h2>
+            <h2 class="modal-title">ජන්ම පත්‍ර ගණිතමය විශ්ලේෂණය (TECHNICAL METRICS)</h2>
             
             <div class="dual-wheels-wrapper">
                 <!-- 1. ලග්න චක්‍රය -->
                 <div class="wheel-box">
-                    <h3>ලග්න චක්‍රය</h3>
+                    <h3>ලග්න චක්‍රය (D1)</h3>
                     <div class="ring-container">
                         <canvas id="lagna-3d-canvas"></canvas>
                         <div class="zodiac-center-grid lagna-bg">
@@ -298,7 +298,7 @@
 
                 <!-- 2. නවාංශක චක්‍රය -->
                 <div class="wheel-box">
-                    <h3>නවාංශක චක්‍රය</h3>
+                    <h3>නවාංශක චක්‍රය (D9)</h3>
                     <div class="ring-container">
                         <canvas id="navamsha-3d-canvas"></canvas>
                         <div class="zodiac-center-grid navamsha-bg">
@@ -314,26 +314,45 @@
                 </div>
             </div>
 
-            <!-- V12 ASTROLOGY DETAILED REPORT DISPLAY -->
+            <!-- RAW CALCULATED ASTROLOGICAL VALUES GRID -->
             <div id="v12-report-container" class="v12-report-grid">
                 <div class="report-card">
-                    <h4><i class="fa-solid fa-star"></i> ජන්ම පංචාංගය</h4>
-                    <p><strong>නැකත:</strong> <span id="rpt-nakshatra">-</span></p>
-                    <p><strong>තිථිය:</strong> <span id="rpt-tithi">-</span></p>
-                    <p><strong>යෝනි/ගණ/නාඩි:</strong> <span id="rpt-yoni-gana">-</span></p>
+                    <h4><i class="fa-solid fa-calculator"></i> පංචාංග අගයන්</h4>
+                    <div class="metric-row"><span>ලහිරි අයනාංශය:</span> <strong id="m-ayanamsha">0.00°</strong></div>
+                    <div class="metric-row"><span>නැකත & පදය:</span> <strong id="m-nakshatra">-</strong></div>
+                    <div class="metric-row"><span>නැකත් අධිපති:</span> <strong id="m-nak-lord">-</strong></div>
+                    <div class="metric-row"><span>තිථිය & පක්ෂය:</span> <strong id="m-tithi">-</strong></div>
+                    <div class="metric-row"><span>යෝනි / ගණ / නාඩි:</span> <strong id="m-yoni-gana-nadi">-</strong></div>
                 </div>
 
                 <div class="report-card">
-                    <h4><i class="fa-solid fa-clock"></i> විම්ශෝත්තරී දශා තත්ත්වය</h4>
-                    <p><strong>වත්මන් මහ දශාව:</strong> <span id="rpt-maha-dasha" class="highlight-txt">-</span></p>
-                    <p><strong>අන්තර දශාව:</strong> <span id="rpt-antar-dasha" class="highlight-txt">-</span></p>
+                    <h4><i class="fa-solid fa-clock"></i> දශා කාල ගණනය</h4>
+                    <div class="metric-row"><span>මහ දශාව:</span> <strong id="m-maha-dasha" class="val-gold">-</strong></div>
+                    <div class="metric-row"><span>අන්තර දශාව:</span> <strong id="m-antar-dasha" class="val-cyan">-</strong></div>
+                    <div class="metric-row"><span>ප්‍රත්‍යන්තර දශාව:</span> <strong id="m-pratyantar-dasha">-</strong></div>
+                    <div class="metric-row"><span>අද දින තාරා බලය:</span> <strong id="m-tara-bala">-</strong></div>
                 </div>
 
                 <div class="report-card">
-                    <h4><i class="fa-solid fa-gem"></i> විශේෂ යෝග සහ ලග්න</h4>
-                    <p><strong>ඉන්දු ලග්නය (ධන):</strong> <span id="rpt-indu-lagna">-</span></p>
-                    <p><strong>අරුඪ ලග්නය:</strong> <span id="rpt-arudha-lagna">-</span></p>
-                    <p><strong>ප්‍රධාන යෝග:</strong> <span id="rpt-yogas">-</span></p>
+                    <h4><i class="fa-solid fa-compass"></i> විශේෂ ලග්න & අක්ෂ</h4>
+                    <div class="metric-row"><span>ඉන්දු ලග්නය:</span> <strong id="m-indu-lagna">-</strong></div>
+                    <div class="metric-row"><span>අරුඪ ලග්නය (AL):</span> <strong id="m-arudha-lagna">-</strong></div>
+                    <div class="metric-row"><span>උපපද ලග්නය (UL):</span> <strong id="m-upapada-lagna">-</strong></div>
+                    <div class="metric-row"><span>ප්‍රධාන යෝග:</span> <strong id="m-yogas" class="val-green">-</strong></div>
+                </div>
+
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-ring"></i> 7 වැන්න & සහකරු ගණනය</h4>
+                    <div class="metric-row"><span>7 අධිපති ග්‍රහයා:</span> <strong id="m-7th-lord">-</strong></div>
+                    <div class="metric-row"><span>සහකරුගේ දිශාව:</span> <strong id="m-spouse-dir">-</strong></div>
+                    <div class="metric-row"><span>නමේ මූලික ශබ්දය:</span> <strong id="m-spouse-letter" class="val-gold">-</strong></div>
+                </div>
+
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-shield-halved"></i> දෝෂ & කර්මජ අගයන්</h4>
+                    <div class="metric-row"><span>කුජ දෝෂය:</span> <strong id="m-kuja-dosha">-</strong></div>
+                    <div class="metric-row"><span>ඒරාෂ්ටක / ඡායා:</span> <strong id="m-sade-sati">-</strong></div>
+                    <div class="metric-row"><span>SAV මුළු බිංදු:</span> <strong id="m-sav-total" class="val-cyan">0 / 337</strong></div>
                 </div>
             </div>
 
