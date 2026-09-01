@@ -177,8 +177,8 @@
         </div>
     </section>
 
-    <!-- RIGHT SIDE PANEL -->
-    <div id="horoscope-app-wrapper">
+    <!-- RIGHT SIDE PANEL (Initially Hidden - Unhides after Decode) -->
+    <div id="horoscope-app-wrapper" style="display: none;">
         <canvas id="zodiac-3d-canvas"></canvas>
         <button id="open-horoscope-btn" class="glow-btn" tabindex="0" data-si='<i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම' data-en='<i class="fa-solid fa-compass"></i> GENERATE HOROSCOPE'>
             <i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම
@@ -201,12 +201,12 @@
                         <input type="date" id="h-date" required>
                     </div>
                     <div class="input-grp">
-                        <label><i class="fa-solid fa-clock"></i> උපන් වෙලාව</label>
-                        <input type="time" id="h-time" required>
+                        <label><i class="fa-solid fa-clock"></i> උපන් වෙලාව (පැය 24)</label>
+                        <input type="time" id="h-time" step="60" required>
                     </div>
                     <div class="input-grp">
                         <label><i class="fa-solid fa-hospital"></i> උපන් ස්ථානය / නගරය</label>
-                        <input type="text" id="h-place" placeholder="Ex: Colombo / General Hospital" required>
+                        <input type="text" id="h-place" placeholder="Ex: Castle Hospital, Colombo" required>
                     </div>
                     <button type="submit" class="submit-btn-3d" id="generate-matrix-btn">
                         <i class="fa-solid fa-atom"></i> GENERATE MATRIX
