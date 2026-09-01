@@ -1,5 +1,5 @@
 // =================================================================
-// ULTIMATE COSMIC ENGINE (PLANETARY WIDGET, SHOCKWAVE, COMPATIBILITY & ALL)
+// ULTIMATE COSMIC ENGINE (PLANETARY WIDGET, AUDIO, THEME & COMPATIBILITY)
 // =================================================================
 
 // 1. WEBAUDIO SCI-FI SOUND FX
@@ -59,20 +59,62 @@ function initPlanetaryWidget() {
         const moonIdx = (day + month) % 12;
         const jupiterIdx = (month + 2) % 12;
 
-        const sunEl = document.getElementById('planet-sun');
-        const moonEl = document.getElementById('planet-moon');
-        const jupiterEl = document.getElementById('planet-jupiter');
+        const sunEl = document.getElementById('pos-sun') || document.getElementById('planet-sun');
+        const moonEl = document.getElementById('pos-moon') || document.getElementById('planet-moon');
+        const jupiterEl = document.getElementById('pos-jup') || document.getElementById('planet-jupiter');
 
-        if (sunEl) sunEl.textContent = `සූර්ය: ${zodiacs[sunIdx]}`;
-        if (moonEl) moonEl.textContent = `චන්ද්‍ර: ${zodiacs[moonIdx]}`;
-        if (jupiterEl) jupiterEl.textContent = `ගුරු: ${zodiacs[jupiterIdx]}`;
+        if (sunEl) sunEl.textContent = zodiacs[sunIdx];
+        if (moonEl) moonEl.textContent = zodiacs[moonIdx];
+        if (jupiterEl) jupiterEl.textContent = zodiacs[jupiterIdx];
     }
 
     updatePlanets();
     setInterval(updatePlanets, 60000);
 }
 
-// 3. PYTHAGOREAN NUMEROLOGY MATCHING
+// 3. BACKGROUND MUSIC CONTROLLER & VISUALIZER
+function initAudioControls() {
+    const audio = document.getElementById('bg-audio');
+    const toggleBtn = document.getElementById('audio-toggle-btn');
+    const audioIcon = document.getElementById('audio-icon');
+    const visBars = document.querySelectorAll('.audio-vis-bar');
+
+    if (!audio || !toggleBtn) return;
+
+    toggleBtn.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play().then(() => {
+                if (audioIcon) {
+                    audioIcon.classList.remove('fa-volume-xmark');
+                    audioIcon.classList.add('fa-volume-high');
+                }
+                visBars.forEach(bar => bar.style.animationPlayState = 'running');
+            }).catch(err => console.log("Audio play blocked by browser:", err));
+        } else {
+            audio.pause();
+            if (audioIcon) {
+                audioIcon.classList.remove('fa-volume-high');
+                audioIcon.classList.add('fa-volume-xmark');
+            }
+            visBars.forEach(bar => bar.style.animationPlayState = 'paused');
+        }
+    });
+}
+
+// 4. COLOR THEME PICKER SWITCHER
+function initThemePicker() {
+    document.querySelectorAll('.theme-dot').forEach(dot => {
+        dot.addEventListener('click', (e) => {
+            const theme = e.target.getAttribute('data-theme');
+            if (theme) {
+                document.body.setAttribute('data-theme', theme);
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+        });
+    });
+}
+
+// 5. PYTHAGOREAN NUMEROLOGY MATCHING
 function getPythagoreanValue(name) {
     if (!name) return 0;
     const map = {
@@ -90,9 +132,32 @@ function getPythagoreanValue(name) {
     return sum;
 }
 
-// 4. ATTACH SOUNDS & EVENT LISTENERS
+function initCompatibilityMatcher() {
+    const btn = document.getElementById('calc-compat-btn');
+    const name1 = document.getElementById('compat-name1');
+    const name2 = document.getElementById('compat-name2');
+    const res = document.getElementById('compat-result');
+
+    if (!btn || !name1 || !name2 || !res) return;
+
+    btn.addEventListener('click', () => {
+        const v1 = getPythagoreanValue(name1.value);
+        const v2 = getPythagoreanValue(name2.value);
+        if (!v1 || !v2) {
+            res.innerHTML = "<span style='color:#ef4444;'>කරුණාකර නම් දෙකම ඇතුළත් කරන්න.</span>";
+            return;
+        }
+        const score = Math.min(100, Math.max(45, Math.abs(100 - (Math.abs(v1 - v2) * 8))));
+        res.innerHTML = `ආත්මීය ගැලපීම: <strong style="color:var(--accent-gold, #f59e0b);">${score}%</strong>`;
+    });
+}
+
+// 6. INITIALIZE ALL ON DOM LOAD
 document.addEventListener('DOMContentLoaded', () => {
     initPlanetaryWidget();
+    initAudioControls();
+    initThemePicker();
+    initCompatibilityMatcher();
 
     document.querySelectorAll('button, input, select').forEach(el => {
         el.addEventListener('click', () => CosmicAudio.playClick());
