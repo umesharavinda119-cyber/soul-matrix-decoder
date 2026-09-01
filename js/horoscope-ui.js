@@ -6,55 +6,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingDiv = document.getElementById('loading-matrix');
 
     // Open Panel
-    openBtn.addEventListener('click', () => {
-        panel.classList.add('active');
-        openBtn.style.opacity = '0'; // Hide button when panel is open
-        openBtn.style.pointerEvents = 'none';
-    });
+    if (openBtn && panel) {
+        openBtn.addEventListener('click', () => {
+            panel.classList.add('active');
+            openBtn.style.opacity = '0';
+            openBtn.style.pointerEvents = 'none';
+        });
+    }
 
     // Close Panel
-    closeBtn.addEventListener('click', () => {
-        panel.classList.remove('active');
-        openBtn.style.opacity = '1';
-        openBtn.style.pointerEvents = 'all';
-    });
+    if (closeBtn && panel && openBtn) {
+        closeBtn.addEventListener('click', () => {
+            panel.classList.remove('active');
+            openBtn.style.opacity = '1';
+            openBtn.style.pointerEvents = 'all';
+        });
+    }
 
-    // Form Submit (Future Python Backend Connection here)
-    form.addEventListener('submit', (e) => {
-        e.preventDefault(); // Prevent page reload
-        
-        // Form ටික hide කරලා Loading එක පෙන්නනවා
-        form.style.display = 'none';
-        loadingDiv.style.display = 'block';
-
-        // දත්ත ටික අරගන්න විදිහ (පස්සේ Python එකට යවන්න පුළුවන්)
-        const userData = {
-            name: document.getElementById('h-name').value,
-            date: document.getElementById('h-date').value,
-            time: document.getElementById('h-time').value,
-            place: document.getElementById('h-place').value
-        };
-        console.log("SENDING TO BACKEND:", userData);
-
-        // තත්පර 3කින් පස්සේ හරියට කේන්දරේ හැදුණා වගේ පෙන්නන්න Dummy Timer එකක්
-        setTimeout(() => {
-            loadingDiv.innerHTML = '<i class="fa-solid fa-check-circle" style="color: #22c55e; font-size: 3rem; margin-bottom:10px;"></i><p style="color: #22c55e;">MATRIX GENERATED SUCCESSFULLY!</p>';
+    // Form Submit (Triggers Processing & 3D Wheel Modal)
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
             
-            // මේක තමයි උඹට පස්සේ අර ලොකු කේන්දර සටහන් දෙක පෙන්නන්න Trigger කරන තැන.
-            // දැනට අපි Panel එක close කරමු.
-            setTimeout(() => {
-                panel.classList.remove('active');
-                openBtn.style.opacity = '1';
-                openBtn.style.pointerEvents = 'all';
-                // Reset form
-                setTimeout(() => {
-                    form.style.display = 'block';
-                    loadingDiv.style.display = 'none';
-                    loadingDiv.innerHTML = '<div class="spinner"></div><p>කේන්දර සටහන ගණනය කරමින් පවතී...</p>';
-                    form.reset();
-                }, 500);
-            }, 2000);
+            form.style.display = 'none';
+            if (loadingDiv) loadingDiv.style.display = 'block';
 
-        }, 3000);
-    });
+            const userData = {
+                name: document.getElementById('h-name') ? document.getElementById('h-name').value : '',
+                date: document.getElementById('h-date') ? document.getElementById('h-date').value : '',
+                time: document.getElementById('h-time') ? document.getElementById('h-time').value : '',
+                place: document.getElementById('h-place') ? document.getElementById('h-place').value : ''
+            };
+            console.log("SENDING TO PYTHON ENGINE:", userData);
+
+            setTimeout(() => {
+                if (loadingDiv) {
+                    loadingDiv.innerHTML = '<i class="fa-solid fa-check-circle" style="color: #22c55e; font-size: 3rem; margin-bottom:10px;"></i><p style="color: #22c55e;">MATRIX GENERATED SUCCESSFULLY!</p>';
+                }
+                
+                setTimeout(() => {
+                    if (panel) panel.classList.remove('active');
+                    if (openBtn) {
+                        openBtn.style.opacity = '1';
+                        openBtn.style.pointerEvents = 'all';
+                    }
+                    
+                    // Reset form and loading state
+                    form.style.display = 'block';
+                    if (loadingDiv) {
+                        loadingDiv.style.display = 'none';
+                        loadingDiv.innerHTML = '<div class="spinner"></div><p>කේන්දර සටහන ගණනය කරමින් පවතී...</p>';
+                    }
+                    form.reset();
+
+                    // Open 3D Horoscope Modal (Lagna & Navamsha Wheels)
+                    if (typeof window.open3DHoroscopeRings === 'function') {
+                        window.open3DHoroscopeRings();
+                    }
+                }, 1200);
+
+            }, 2500);
+        });
+    }
 });
