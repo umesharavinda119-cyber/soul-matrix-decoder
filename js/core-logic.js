@@ -267,42 +267,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 }); // End DOMContentLoaded
 
-// --- 7. 3D HOROSCOPE RINGS ENGINE (FORCED INLINE OVERLAY ENGINE) ---
+// --- 7. 3D HOROSCOPE RINGS ENGINE ---
 function open3DHoroscopeRings() {
     const modal = document.getElementById('horoscope-modal');
     if (modal) {
-        // Dynamic Force Display & High Z-Index Styling
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.width = '100vw';
-        modal.style.height = '100vh';
-        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
-        modal.style.backdropFilter = 'blur(10px)';
-        modal.style.zIndex = '999999';
         modal.style.display = 'flex';
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
-
-        const card = modal.querySelector('.horoscope-modal-card');
-        if (card) {
-            card.style.background = 'linear-gradient(135deg, #140f05, #05050c)';
-            card.style.border = '2px solid #d4af37';
-            card.style.borderRadius = '16px';
-            card.style.padding = '30px';
-            card.style.maxWidth = '850px';
-            card.style.width = '90%';
-            card.style.color = '#ffffff';
-            card.style.textAlign = 'center';
-            card.style.boxShadow = '0 0 50px rgba(245, 158, 11, 0.5)';
-            card.style.position = 'relative';
-        }
-
         initSingleRing('lagna-3d-canvas');
         initSingleRing('navamsha-3d-canvas');
     }
 }
-window.open3DHoroscopeRings = open3DHoroscopeRings; // Export to Global Window Scope
+window.open3DHoroscopeRings = open3DHoroscopeRings; // Export to Global Window
 
 function initSingleRing(canvasId) {
     const canvas = document.getElementById(canvasId);
