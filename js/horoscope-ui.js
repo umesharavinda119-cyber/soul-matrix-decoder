@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Form Submit (Triggers Processing & 3D Wheel Modal)
+    // Fast Form Submit Handler (1 Second Delay Only)
     if (form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -31,41 +31,25 @@ document.addEventListener('DOMContentLoaded', () => {
             form.style.display = 'none';
             if (loadingDiv) loadingDiv.style.display = 'block';
 
-            const userData = {
-                name: document.getElementById('h-name') ? document.getElementById('h-name').value : '',
-                date: document.getElementById('h-date') ? document.getElementById('h-date').value : '',
-                time: document.getElementById('h-time') ? document.getElementById('h-time').value : '',
-                place: document.getElementById('h-place') ? document.getElementById('h-place').value : ''
-            };
-            console.log("SENDING TO PYTHON ENGINE:", userData);
-
+            // තත්පර 1ක් ඇතුළත Form එක වැසී 3D Rings Modal එක පෙන්වීම
             setTimeout(() => {
-                if (loadingDiv) {
-                    loadingDiv.innerHTML = '<i class="fa-solid fa-check-circle" style="color: #22c55e; font-size: 3rem; margin-bottom:10px;"></i><p style="color: #22c55e;">MATRIX GENERATED SUCCESSFULLY!</p>';
+                if (panel) panel.classList.remove('active');
+                if (openBtn) {
+                    openBtn.style.opacity = '1';
+                    openBtn.style.pointerEvents = 'all';
                 }
                 
-                setTimeout(() => {
-                    if (panel) panel.classList.remove('active');
-                    if (openBtn) {
-                        openBtn.style.opacity = '1';
-                        openBtn.style.pointerEvents = 'all';
-                    }
-                    
-                    // Reset form and loading state
-                    form.style.display = 'block';
-                    if (loadingDiv) {
-                        loadingDiv.style.display = 'none';
-                        loadingDiv.innerHTML = '<div class="spinner"></div><p>කේන්දර සටහන ගණනය කරමින් පවතී...</p>';
-                    }
-                    form.reset();
+                form.style.display = 'block';
+                if (loadingDiv) loadingDiv.style.display = 'none';
+                form.reset();
 
-                    // Open 3D Horoscope Modal (Lagna & Navamsha Wheels)
-                    if (typeof window.open3DHoroscopeRings === 'function') {
-                        window.open3DHoroscopeRings();
-                    }
-                }, 1200);
-
-            }, 2500);
+                // Call 3D Rings Engine Directly
+                if (typeof window.open3DHoroscopeRings === 'function') {
+                    window.open3DHoroscopeRings();
+                } else if (typeof open3DHoroscopeRings === 'function') {
+                    open3DHoroscopeRings();
+                }
+            }, 1000);
         });
     }
 });
