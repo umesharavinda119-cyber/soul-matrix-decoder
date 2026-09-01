@@ -129,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         inputGroup.style.display = 'none'; 
                     }
                     renderTeaserResult(dateVal);
-                open3DHoroscopeRings();
                 }
             }, 50);
         });
@@ -262,6 +261,25 @@ function open3DHoroscopeRings() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+   document.addEventListener('DOMContentLoaded', () => {
+    // 1. "ජන්ම පත්‍ර සැකසීම" Button එක Click කළ විට Modal එක Open වීම
+    const janmaPathraBtn = document.getElementById('open-horoscope-btn') || document.querySelector('.janma-pathra-btn');
+    if (janmaPathraBtn) {
+        janmaPathraBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            open3DHoroscopeRings();
+        });
+    }
+
+    // 2. Close Button Click Event
+    const closeBtn = document.getElementById('close-modal-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            const modal = document.getElementById('horoscope-modal');
+            if (modal) modal.style.display = 'none';
+        });
+    }
+}); 
     const closeBtn = document.getElementById('close-modal-btn');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
