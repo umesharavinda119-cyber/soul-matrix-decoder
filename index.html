@@ -272,7 +272,7 @@
         </div>
     </div>
 
-    <!-- DUAL 3D HOROSCOPE MODAL WITH 12-HOUSE CHART OVERLAYS -->
+    <!-- DUAL 3D HOROSCOPE MODAL WITH V12 ASTROLOGY REPORT -->
     <div id="horoscope-modal" class="horoscope-modal-overlay">
         <div class="horoscope-modal-card">
             <button class="close-modal-btn" id="close-modal-btn">&times;</button>
@@ -287,18 +287,10 @@
                         <div class="zodiac-center-grid lagna-bg">
                             <div class="chart-center-title" id="lagna-name-display">මේෂ<br>ලග්නය</div>
                             <div class="house-grid" id="lagna-houses">
-                                <div class="h-box h1"></div>
-                                <div class="h-box h2"></div>
-                                <div class="h-box h3"></div>
-                                <div class="h-box h4"></div>
-                                <div class="h-box h5"></div>
-                                <div class="h-box h6"></div>
-                                <div class="h-box h7"></div>
-                                <div class="h-box h8"></div>
-                                <div class="h-box h9"></div>
-                                <div class="h-box h10"></div>
-                                <div class="h-box h11"></div>
-                                <div class="h-box h12"></div>
+                                <div class="h-box h1"></div><div class="h-box h2"></div><div class="h-box h3"></div>
+                                <div class="h-box h4"></div><div class="h-box h5"></div><div class="h-box h6"></div>
+                                <div class="h-box h7"></div><div class="h-box h8"></div><div class="h-box h9"></div>
+                                <div class="h-box h10"></div><div class="h-box h11"></div><div class="h-box h12"></div>
                             </div>
                         </div>
                     </div>
@@ -312,23 +304,39 @@
                         <div class="zodiac-center-grid navamsha-bg">
                             <div class="chart-center-title" id="navamsha-name-display">කන්‍යා<br>නවාංශකය</div>
                             <div class="house-grid" id="navamsha-houses">
-                                <div class="h-box h1"></div>
-                                <div class="h-box h2"></div>
-                                <div class="h-box h3"></div>
-                                <div class="h-box h4"></div>
-                                <div class="h-box h5"></div>
-                                <div class="h-box h6"></div>
-                                <div class="h-box h7"></div>
-                                <div class="h-box h8"></div>
-                                <div class="h-box h9"></div>
-                                <div class="h-box h10"></div>
-                                <div class="h-box h11"></div>
-                                <div class="h-box h12"></div>
+                                <div class="h-box h1"></div><div class="h-box h2"></div><div class="h-box h3"></div>
+                                <div class="h-box h4"></div><div class="h-box h5"></div><div class="h-box h6"></div>
+                                <div class="h-box h7"></div><div class="h-box h8"></div><div class="h-box h9"></div>
+                                <div class="h-box h10"></div><div class="h-box h11"></div><div class="h-box h12"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- V12 ASTROLOGY DETAILED REPORT DISPLAY -->
+            <div id="v12-report-container" class="v12-report-grid">
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-star"></i> ජන්ම පංචාංගය</h4>
+                    <p><strong>නැකත:</strong> <span id="rpt-nakshatra">-</span></p>
+                    <p><strong>තිථිය:</strong> <span id="rpt-tithi">-</span></p>
+                    <p><strong>යෝනි/ගණ/නාඩි:</strong> <span id="rpt-yoni-gana">-</span></p>
+                </div>
+
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-clock"></i> විම්ශෝත්තරී දශා තත්ත්වය</h4>
+                    <p><strong>වත්මන් මහ දශාව:</strong> <span id="rpt-maha-dasha" class="highlight-txt">-</span></p>
+                    <p><strong>අන්තර දශාව:</strong> <span id="rpt-antar-dasha" class="highlight-txt">-</span></p>
+                </div>
+
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-gem"></i> විශේෂ යෝග සහ ලග්න</h4>
+                    <p><strong>ඉන්දු ලග්නය (ධන):</strong> <span id="rpt-indu-lagna">-</span></p>
+                    <p><strong>අරුඪ ලග්නය:</strong> <span id="rpt-arudha-lagna">-</span></p>
+                    <p><strong>ප්‍රධාන යෝග:</strong> <span id="rpt-yogas">-</span></p>
+                </div>
+            </div>
+
         </div>
     </div>
 
