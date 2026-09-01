@@ -296,51 +296,60 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
 .h3  { top: 38%; left: 19%;   width: 14%; height: 14%; }
 .h2  { top: 23%; left: 20%;   width: 13%; height: 13%; }
 
-/* V12 ASTROLOGY REPORT GRID STYLING */
+/* HIGH-DENSITY METRICS GRID STYLING */
 .v12-report-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-top: 25px;
-    padding-top: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 15px;
     border-top: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .report-card {
-    background: rgba(12, 10, 25, 0.75);
-    border: 1px solid rgba(245, 158, 11, 0.3);
-    border-radius: 12px;
-    padding: 15px;
+    background: rgba(8, 8, 20, 0.85);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 10px;
+    padding: 12px 15px;
     text-align: left;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
 }
 
 .report-card h4 {
     color: var(--accent-gold, #ffd700);
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     margin-bottom: 10px;
-    font-family: 'Cinzel', serif;
+    font-family: 'Orbitron', sans-serif;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 5px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
-.report-card p {
-    color: #e2e8f0;
-    font-size: 0.82rem;
-    margin: 6px 0;
-    line-height: 1.4;
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    padding: 3px 0;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
 }
 
-.report-card strong {
+.metric-row span {
     color: #94a3b8;
+    font-family: 'Noto Sans Sinhala', sans-serif;
 }
 
-.highlight-txt {
-    color: #38bdf8 !important;
-    font-weight: bold;
+.metric-row strong {
+    color: #f8fafc;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
 }
+
+.val-gold { color: #f59e0b !important; }
+.val-cyan { color: #38bdf8 !important; }
+.val-green { color: #4ade80 !important; }
 
 /* RESPONSIVE DESIGN */
 @media (max-width: 950px) {
