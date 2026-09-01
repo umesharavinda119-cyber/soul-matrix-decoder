@@ -3,11 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!canvas) return;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, 460 / 400, 0.1, 1000);
+
+    // PERFECT 1:1 SQUARE ASPECT RATIO FIX
+    const size = Math.min(canvas.clientWidth || 400, 400);
+
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000); // 1:1 Aspect Ratio
     camera.position.set(0, 0, 10);
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-    renderer.setSize(460, 400);
+    renderer.setSize(size, size);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
@@ -22,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
     scene.add(fillLight);
 
     const modelGroup = new THREE.Group();
-    modelGroup.rotation.set(0, 0, 0); 
     scene.add(modelGroup);
 
     // GOOGLE STABLE DRACO DECODER CDN
@@ -47,9 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const box = new THREE.Box3().setFromObject(loadedModel);
             const center = box.getCenter(new THREE.Vector3());
-            const size = box.getSize(new THREE.Vector3());
+            const modelSize = box.getSize(new THREE.Vector3());
 
-            const maxDim = Math.max(size.x, size.y, size.z) || 1;
+            const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z) || 1;
             const scale = 7.5 / maxDim;
 
             loadedModel.scale.set(scale, scale, scale);
