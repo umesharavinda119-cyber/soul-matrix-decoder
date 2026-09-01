@@ -94,8 +94,6 @@ class handler(BaseHTTPRequestHandler):
             pada = int((moon_deg % nak_span) / (360 / 108)) + 1
             tithi_idx = int(((moon_deg - sun_deg) % 360) / 12) + 1
             tithi_paksha = "Shukla (Waxing)" if tithi_idx <= 15 else "Krishna (Waning)"
-            karana_idx = int(((moon_deg - sun_deg) % 360) / 6) + 1
-            yoga_idx = int(((moon_deg + sun_deg) % 360) / (360/27)) + 1
 
             nakshatra_table = [("Ashwini", "Horse", "Deva", "Adhi"), ("Bharani", "Elephant", "Manushya", "Madhya"), ("Krittika", "Goat", "Rakshasa", "Antya"), ("Rohini", "Serpent", "Manushya", "Antya"), ("Mrigashira", "Serpent", "Deva", "Madhya"), ("Ardra", "Dog", "Manushya", "Adhi"), ("Punarvasu", "Cat", "Deva", "Adhi"), ("Pushya", "Goat", "Deva", "Madhya"), ("Ashlesha", "Cat", "Rakshasa", "Antya"), ("Magha", "Rat", "Rakshasa", "Antya"), ("Purva Phalguni", "Rat", "Manushya", "Madhya"), ("Uttara Phalguni", "Cow", "Manushya", "Adhi"), ("Hasta", "Buffalo", "Deva", "Adhi"), ("Chitra", "Tiger", "Rakshasa", "Madhya"), ("Swati", "Buffalo", "Deva", "Antya"), ("Vishakha", "Tiger", "Rakshasa", "Antya"), ("Anuradha", "Deer", "Deva", "Madhya"), ("Jyeshta", "Deer", "Rakshasa", "Adhi"), ("Mula", "Dog", "Rakshasa", "Adhi"), ("Purva Ashadha", "Monkey", "Manushya", "Madhya"), ("Uttara Ashadha", "Mongoose", "Manushya", "Antya"), ("Shravana", "Monkey", "Deva", "Antya"), ("Dhanishta", "Lion", "Rakshasa", "Madhya"), ("Shatabhisha", "Horse", "Rakshasa", "Adhi"), ("Purva Bhadrapada", "Lion", "Manushya", "Adhi"), ("Uttara Bhadrapada", "Cow", "Manushya", "Madhya"), ("Revati", "Elephant", "Deva", "Antya")]
             nak_name, yoni, gana, nadi = nakshatra_table[moon_nak_idx]
@@ -120,7 +118,7 @@ class handler(BaseHTTPRequestHandler):
                     if p_id == 6: yogas_detected.append("Malavya Yoga")
                     if p_id == 7: yogas_detected.append("Shasha Yoga")
 
-            # --- 4. SPECIAL LAGNAS ---
+            # --- 4. SPECIAL LAGNAS (Indu, AL, UL) ---
             lord_map = {1:3, 2:6, 3:4, 4:2, 5:1, 6:4, 7:6, 8:3, 9:5, 10:7, 11:7, 12:5}
             kalas = {1:30, 2:16, 3:6, 4:8, 5:10, 6:12, 7:1}
             moon_s = get_d1(planets[2])
@@ -130,7 +128,12 @@ class handler(BaseHTTPRequestHandler):
             if al_sign == asc_s: al_sign = (al_sign + 9) % 12 or 12
             elif al_sign == ((asc_s + 6)%12 or 12): al_sign = (al_sign + 3) % 12 or 12
 
-            # --- 5. SAV 337 BINDUS ---
+            h12_s = (asc_s + 10) % 12 + 1
+            ul_sign = (get_d1(planets[lord_map[h12_s]]) + (get_d1(planets[lord_map[h12_s]]) - h12_s)%12) % 12 or 12
+            if ul_sign == h12_s: ul_sign = (ul_sign + 9) % 12 or 12
+            elif ul_sign == ((h12_s + 6)%12 or 12): ul_sign = (ul_sign + 3) % 12 or 12
+
+            # --- 5. SAV 337 BINDUS CALCULATIONS ---
             sav = [0] * 12
             bav_rules = {
                 1: {1: [1,2,4,7,8,9,10,11], 2: [3,6,10,11], 3: [1,2,4,7,8,9,10,11], 4: [3,5,6,9,10,11,12], 5: [5,6,9,11], 6: [6,7,12], 7: [1,2,4,7,8,9,10,11], 0: [3,4,6,10,11,12]},
@@ -147,8 +150,6 @@ class handler(BaseHTTPRequestHandler):
                     for pt in points:
                         sav[(ref_s + pt - 2) % 12] += 1
 
-            sav_house_map = {f"House_{h:02d}": sav[(asc_s + h - 2) % 12] for h in range(1, 13)}
-
             # --- 6. SPOUSE PREDICTION ---
             seventh_house_idx = (asc_s + 5) % 12 + 1
             seventh_lord_id = lord_map[seventh_house_idx]
@@ -160,9 +161,22 @@ class handler(BaseHTTPRequestHandler):
             nama_akshara = [["Chu","Che","Cho","La"], ["Li","Lu","Le","Lo"], ["A","I","U","E"], ["O","Va","Vi","Vu"], ["Ve","Vo","Ka","Ki"], ["Ku","Gha","Ng","Chha"], ["Ke","Ko","Ha","Hi"], ["Hu","He","Ho","Da"], ["Di","Du","De","Do"], ["Ma","Mi","Mu","Me"], ["Mo","Ta","Ti","Tu"], ["Te","To","Pa","Pi"], ["Pu","Sha","Na","Tha"], ["Pe","Po","Ra","Ri"], ["Ru","Re","Ro","Ta"], ["Ti","Tu","Te","To"], ["Na","Ni","Nu","Ne"], ["No","Ya","Yi","Yu"], ["Ye","Yo","Bha","Bhi"], ["Bhu","Dha","Bha","Dha"], ["Bhe","Bho","Ja","Ji"], ["Ju","Je","Jo","Gha"], ["Ga","Gi","Gu","Ge"], ["Go","Sa","Si","Su"], ["Se","So","Da","Di"], ["Du","Tha","Jha","Na"], ["De","Do","Cha","Chi"]]
             spouse_letter = nama_akshara[sl_nak_idx][sl_pada - 1]
 
-            # --- 7. VIMSHOTTARI DASHA TRACKER ---
-            bal_y = (1 - ((planets[2] % nak_span) / nak_span)) * dasha_years[moon_nak_idx % 9]
+            # --- 7. DOSHAS & TRANSITS ---
             now = datetime.now(timezone.utc)
+            t_jd = swe.julday(now.year, now.month, now.day, now.hour + now.minute/60.0)
+            t_moon = swe.calc_ut(t_jd, swe.MOON, swe.FLG_SIDEREAL)[0][0]
+            t_sat = get_d1(swe.calc_ut(t_jd, swe.SATURN, swe.FLG_SIDEREAL)[0][0])
+            s_from_m = (t_sat - get_d1(planets[2])) % 12 + 1
+            mars_h = (get_d1(planets[3]) - asc_s) % 12 + 1
+
+            kuja_dosha = "YES" if mars_h in [1, 2, 4, 7, 8, 12] else "NO"
+            sade_sati = "Sade Sati" if s_from_m in [12, 1, 2] else ("Ashtama Shani" if s_from_m == 8 else "NO")
+
+            tara_idx = (int(t_moon / nak_span) - moon_nak_idx) % 9
+            tara_names = ["Janma", "Sampat", "Vipat", "Kshema", "Pratyak", "Sadhaka", "Naidhana", "Mitra", "Parama Mitra"]
+
+            # --- 8. VIMSHOTTARI DASHAS (Maha, Antar, Pratyantar) ---
+            bal_y = (1 - ((planets[2] % nak_span) / nak_span)) * dasha_years[moon_nak_idx % 9]
             c_date, d_end = now.date(), date(year, month, day) + timedelta(days=bal_y*365.25)
             c_idx = moon_nak_idx % 9
             while c_date > d_end:
@@ -176,28 +190,41 @@ class handler(BaseHTTPRequestHandler):
                 if ad_strt <= c_date <= ad_end: break
                 ad_strt, ad_idx = ad_end, (ad_idx + 1) % 9
 
-            # PACK COMPLETE REPORT FOR DETAILED DISPLAY BELOW CHART
+            pd_strt, pd_idx = ad_strt, ad_idx
+            for _ in range(9):
+                pd_end = pd_strt + timedelta(days=(dasha_years[c_idx]*dasha_years[ad_idx]*dasha_years[pd_idx]/14400)*365.25)
+                if pd_strt <= c_date <= pd_end: break
+                pd_strt, pd_idx = pd_end, (pd_idx + 1) % 9
+
+            # COMPLETE REPORT OBJECT WITH ALL EXPECTED FRONTEND KEYS
             v12_report = {
                 "client": client_name,
-                "ayanamsha": round(ayanamsha, 4),
+                "ayanamsha": f"{ayanamsha:.3f}°",
                 "nakshatra": f"{nak_name} (Pada {pada})",
                 "nakshatra_lord": dasha_lords[moon_nak_idx % 9],
                 "yoni": yoni, "gana": gana, "nadi": nadi,
                 "tithi": f"{tithi_idx} ({tithi_paksha})",
-                "yogas": yogas_detected if yogas_detected else ["Standard Configuration"],
+                "yogas": yogas_detected if yogas_detected else "Standard Configuration",
                 "special_lagnas": {
                     "indu_lagna": signs_en[indu_lagna-1],
-                    "arudha_lagna": signs_en[al_sign-1]
+                    "arudha_lagna": signs_en[al_sign-1],
+                    "upapada_lagna": signs_en[ul_sign-1]
                 },
-                "sav_bindus": sav_house_map,
+                "sav_total": sum(sav),
                 "spouse_info": {
                     "seventh_lord": names[seventh_lord_id],
                     "direction": spouse_dir,
                     "first_letter": spouse_letter
                 },
+                "doshas": {
+                    "kuja_dosha": kuja_dosha,
+                    "sade_sati": sade_sati,
+                    "tara_bala": tara_names[tara_idx]
+                },
                 "current_dasha": {
                     "maha_dasha": dasha_lords[c_idx],
-                    "antar_dasha": dasha_lords[ad_idx]
+                    "antar_dasha": dasha_lords[ad_idx],
+                    "pratyantar_dasha": dasha_lords[pd_idx]
                 }
             }
 
