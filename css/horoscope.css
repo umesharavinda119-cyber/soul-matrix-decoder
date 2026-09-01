@@ -143,14 +143,14 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
 }
 .submit-btn-3d:active { transform: translateY(4px); box-shadow: 0 1px 0 #92400e; }
 
-/* HOROSCOPE DUAL WHEEL MODAL LAYOUT FIX */
+/* ENLARGED HOROSCOPE DUAL WHEEL MODAL */
 .horoscope-modal-overlay {
     display: none;
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.92);
-    backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.93);
+    backdrop-filter: blur(14px);
     z-index: 999999;
     justify-content: center;
     align-items: center;
@@ -159,20 +159,20 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
 .horoscope-modal-card {
     background: linear-gradient(135deg, rgba(20, 15, 5, 0.98), rgba(5, 5, 12, 0.98));
     border: 2px solid var(--accent-gold);
-    border-radius: 20px;
-    padding: 25px 30px;
-    max-width: 850px;
-    width: 90%;
-    box-shadow: 0 0 50px rgba(245, 158, 11, 0.4);
+    border-radius: 24px;
+    padding: 30px;
+    max-width: 1150px;
+    width: 95%;
+    box-shadow: 0 0 60px rgba(245, 158, 11, 0.5);
     position: relative;
     text-align: center;
 }
 
 .close-modal-btn {
     position: absolute;
-    top: 15px; right: 20px;
+    top: 20px; right: 25px;
     background: none; border: none;
-    color: var(--accent-gold); font-size: 2rem; cursor: pointer;
+    color: var(--accent-gold); font-size: 2.2rem; cursor: pointer;
 }
 
 .dual-wheels-wrapper {
@@ -180,7 +180,7 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
     flex-direction: row !important;
     justify-content: center !important;
     align-items: center !important;
-    gap: 40px !important;
+    gap: 50px !important;
     margin-top: 20px;
 }
 
@@ -192,15 +192,17 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
 
 .wheel-box h3 {
     color: #ffd700;
-    font-size: 1.1rem;
-    margin-bottom: 12px;
+    font-size: 1.35rem;
+    margin-bottom: 15px;
     font-family: 'Cinzel', serif;
+    letter-spacing: 1px;
 }
 
+/* ENLARGED RING & CHART CONTAINERS (420px) */
 .ring-container {
     position: relative;
-    width: 280px;
-    height: 280px;
+    width: 420px;
+    height: 420px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -213,25 +215,25 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
     height: 100% !important;
 }
 
-/* CUSTOM IMAGE BACKGROUND OVERLAYS FOR 3D RINGS */
+/* CHART IMAGE BACKGROUND OVERLAYS (330px) */
 .zodiac-center-grid.lagna-bg {
     background: url('../assets/lagna-chart.png') center/cover no-repeat !important;
-    width: 220px !important;
-    height: 220px !important;
+    width: 330px !important;
+    height: 330px !important;
     border-radius: 50%;
     position: absolute;
     z-index: 2;
-    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.9);
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.95);
 }
 
 .zodiac-center-grid.navamsha-bg {
     background: url('../assets/navamsha-chart.png') center/cover no-repeat !important;
-    width: 220px !important;
-    height: 220px !important;
+    width: 330px !important;
+    height: 330px !important;
     border-radius: 50%;
     position: absolute;
     z-index: 2;
-    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.9);
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.95);
 }
 
 .chart-center-title {
@@ -239,12 +241,12 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     font-weight: 900;
-    color: #3b1602;
-    font-size: 0.82rem;
+    color: #2e1002;
+    font-size: 1.1rem;
     text-align: center;
     z-index: 5;
     pointer-events: none;
-    line-height: 1.2;
+    line-height: 1.3;
 }
 
 /* 12 HOUSES ABSOLUTE OVERLAY GRID */
@@ -252,37 +254,36 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
     position: absolute;
     width: 100%;
     height: 100%;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
 }
 
 .h-box {
     position: absolute;
-    font-size: 0.62rem;
+    font-size: 0.95rem;
     font-weight: 900;
-    color: #1e1b4b;
+    color: #0f172a;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     line-height: 1.1;
     word-break: break-all;
-    padding: 1px;
+    padding: 2px;
 }
 
-/* EXACT 12-BOX COORDINATES FOR UPLOADED VEDIC CHART IMAGE */
-.h1  { top: 15%; left: 33%; width: 17%; height: 18%; }
-.h12 { top: 15%; left: 50%; width: 17%; height: 18%; }
-.h11 { top: 15%; left: 67%; width: 17%; height: 18%; }
-.h10 { top: 33%; left: 67%; width: 17%; height: 17%; }
-.h9  { top: 50%; left: 67%; width: 17%; height: 17%; }
-.h8  { top: 67%; left: 67%; width: 17%; height: 17%; }
-.h7  { top: 67%; left: 50%; width: 17%; height: 17%; }
-.h6  { top: 67%; left: 33%; width: 17%; height: 17%; }
-.h5  { top: 67%; left: 16%; width: 17%; height: 17%; }
-.h4  { top: 50%; left: 16%; width: 17%; height: 17%; }
-.h3  { top: 33%; left: 16%; width: 17%; height: 17%; }
-.h2  { top: 15%; left: 16%; width: 17%; height: 18%; }
+/* EXACT 12-BOX COORDINATES FOR PARCHMENT CHART IMAGE (330px BASE) */
+.h1  { top: 14%; left: 32%; width: 18%; height: 18%; }
+.h12 { top: 14%; left: 50%; width: 18%; height: 18%; }
+.h11 { top: 14%; left: 68%; width: 18%; height: 18%; }
+.h10 { top: 32%; left: 68%; width: 18%; height: 18%; }
+.h9  { top: 50%; left: 68%; width: 18%; height: 18%; }
+.h8  { top: 68%; left: 68%; width: 18%; height: 18%; }
+.h7  { top: 68%; left: 50%; width: 18%; height: 18%; }
+.h6  { top: 68%; left: 32%; width: 18%; height: 18%; }
+.h5  { top: 68%; left: 14%; width: 18%; height: 18%; }
+.h4  { top: 50%; left: 14%; width: 18%; height: 18%; }
+.h3  { top: 32%; left: 14%; width: 18%; height: 18%; }
+.h2  { top: 14%; left: 14%; width: 18%; height: 18%; }
 
 /* BOTTOM RUNNING QUOTE BANNER */
 .bottom-quote-ticker {
@@ -336,59 +337,10 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
 .planet-title { font-size: 0.65rem; color: var(--text-sub); font-family: 'Orbitron', sans-serif; }
 .planet-info strong { font-size: 0.82rem; color: #fff; font-family: 'Noto Sans Sinhala', sans-serif; }
 
-/* COMPATIBILITY MATCHER INPUTS */
-.compat-box {
-    margin-top: 15px; background: rgba(5, 5, 18, 0.85);
-    border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 12px;
-}
-.compat-title { font-size: 0.78rem; color: var(--accent-gold); font-family: 'Orbitron', sans-serif; margin-bottom: 8px; text-align: center; }
-.compat-inputs { display: flex; gap: 8px; margin-bottom: 8px; }
-
-.compat-inputs input {
-    width: 50%; padding: 0.65rem 0.8rem;
-    background: rgba(12, 12, 30, 0.95) !important;
-    border: 1.5px solid rgba(245, 158, 11, 0.5) !important;
-    border-radius: 8px; color: #ffffff !important;
-    font-size: 0.88rem !important; font-weight: 600; text-align: center; outline: none;
-}
-.compat-inputs input::placeholder { color: rgba(255, 255, 255, 0.6) !important; }
-
-/* MATRIX ORACLE CHAT WIDGET */
-.oracle-btn {
-    position: fixed; bottom: 60px; left: 20px; width: 50px; height: 50px;
-    border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706);
-    border: 2px solid #fff; color: #000; font-size: 1.3rem; cursor: pointer; z-index: 200;
-}
-
-.oracle-modal {
-    position: fixed; bottom: 120px; left: 20px; width: 310px; height: 380px;
-    background: rgba(8, 8, 20, 0.96); border: 1.5px solid var(--accent-gold);
-    border-radius: 14px; backdrop-filter: blur(15px); display: flex; flex-direction: column;
-    z-index: 200; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s ease;
-}
-.oracle-modal.active { opacity: 1; pointer-events: all; transform: translateY(0); }
-
-.oracle-header {
-    background: rgba(0,0,0,0.6); padding: 0.8rem 1rem; color: var(--accent-gold);
-    font-family: 'Orbitron', sans-serif; font-size: 0.85rem; display: flex;
-    justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(245, 158, 11, 0.3);
-}
-.oracle-header button { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
-
-.oracle-body { flex: 1; padding: 0.8rem; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-.oracle-msg { max-width: 85%; padding: 0.6rem 0.8rem; border-radius: 10px; font-size: 0.8rem; line-height: 1.4; }
-.oracle-msg.ai { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #fff; align-self: flex-start; }
-.oracle-msg.user { background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(6, 182, 212, 0.4); color: #fff; align-self: flex-end; }
-
-.oracle-footer { padding: 0.6rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 6px; }
-.oracle-footer input {
-    flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 6px; padding: 0.5rem; color: #fff !important; font-size: 0.8rem; outline: none;
-}
-.oracle-footer button { background: var(--accent-gold); border: none; padding: 0 0.8rem; border-radius: 6px; color: #000; cursor: pointer; }
-
 /* RESPONSIVE DESIGN */
-@media (max-width: 850px) {
-    .dual-wheels-wrapper { flex-direction: column !important; gap: 20px !important; }
+@media (max-width: 950px) {
+    .dual-wheels-wrapper { flex-direction: column !important; gap: 25px !important; }
+    .ring-container { width: 320px; height: 320px; }
+    .zodiac-center-grid.lagna-bg, .zodiac-center-grid.navamsha-bg { width: 250px !important; height: 250px !important; }
     #horoscope-app-wrapper { position: relative; right: auto; top: auto; transform: none; width: 90vw; margin: 30px auto; }
 }
