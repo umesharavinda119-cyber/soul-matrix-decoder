@@ -61,19 +61,25 @@ document.addEventListener('DOMContentLoaded', () => {
             setVal('m-pratyantar-dasha', report.current_dasha.pratyantar_dasha);
         }
 
+        setVal('m-golden-window', report.golden_window);
+        setVal('m-wealth-score', report.wealth_potential);
+
         if (report.special_lagnas) {
             setVal('m-indu-lagna', report.special_lagnas.indu_lagna);
             setVal('m-arudha-lagna', report.special_lagnas.arudha_lagna);
-            setVal('m-upapada-lagna', report.special_lagnas.upapada_lagna);
         }
 
         setVal('m-yogas', Array.isArray(report.yogas) ? report.yogas.join(', ') : report.yogas);
 
+        setVal('m-marriage-window', report.marriage_window);
+        setVal('m-soulmate-match', report.soulmate_match);
+
         if (report.spouse_info) {
-            setVal('m-7th-lord', report.spouse_info.seventh_lord);
-            setVal('m-spouse-dir', report.spouse_info.direction);
+            setVal('m-spouse-dir', `${report.spouse_info.seventh_lord} (${report.spouse_info.direction})`);
             setVal('m-spouse-letter', `'${report.spouse_info.first_letter}'`);
         }
+
+        setVal('m-karmic-level', report.karmic_level);
 
         if (report.doshas) {
             setVal('m-kuja-dosha', report.doshas.kuja_dosha);
@@ -82,6 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         setVal('m-sav-total', `${report.sav_total} / 337`);
+        setVal('m-lucky-freq', report.lucky_freq);
+        setVal('m-power-gem', report.power_gem);
     }
 
     if (form) {
