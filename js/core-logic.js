@@ -129,6 +129,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         inputGroup.style.display = 'none'; 
                     }
                     renderTeaserResult(dateVal);
+
+                    // Decode වූ පසු ජන්ම පත්‍ර සැකසීම Icon/Button එක Display කිරීම
+                    const horoscopeAppWrapper = document.getElementById('horoscope-app-wrapper');
+                    if (horoscopeAppWrapper) {
+                        horoscopeAppWrapper.style.display = 'block';
+                    }
                 }
             }, 50);
         });
@@ -164,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(resBox) resBox.style.display = 'block';
     }
 
-    // --- 5. TAB SWITCHING & PUSKOLA POTHA LOGIC ---
+    // --- 5. TAB SWITCHING LOGIC ---
     const packageDetails = {
         'pkg-1': `<li><i class="fa-solid fa-check"></i> එක් ප්‍රධාන ගැටලුවකට පමණක් අංක විද්‍යාත්මක පිළිතුරු.</li><li><i class="fa-solid fa-check"></i> ජන්ම පත්‍රයේ පවතින ප්‍රධානම ග්‍රහ දෝෂය හඳුනා ගැනීම.</li><li class="note">මෙහිදි කලයුතු වත්පිළිවෙත් විස්තරාත්මක ලබා දීමක් සිදු නොවේ.</li>`,
         'pkg-2': `<li><i class="fa-solid fa-check"></i> 2026 වසර සඳහා පූර්ණ පලාපල සහ පවතින බාධක.</li><li><i class="fa-solid fa-check"></i> ඔබේ ජන්ම අංකයට අදාළ වාසනාවන්ත වර්ණ, අංක සහ මූලික ශාන්තිකර්ම.</li>`,
@@ -250,15 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (calcCard) calcCard.style.transform = `perspective(1000px) rotateY(${mouseX * 0.8}deg) rotateX(${-mouseY * 0.8}deg)`;
     });
 
-    // --- 7. HOROSCOPE MODAL EVENT LISTENERS ---
-    const janmaPathraBtn = document.getElementById('open-horoscope-btn') || document.querySelector('.janma-pathra-btn');
-    if (janmaPathraBtn) {
-        janmaPathraBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            open3DHoroscopeRings();
-        });
-    }
-
+    // Close Horoscope Modal Event
     const closeBtn = document.getElementById('close-modal-btn');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
@@ -267,9 +265,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-}); // end DOMContentLoaded
+}); // End DOMContentLoaded
 
-// --- 8. 3D HOROSCOPE RINGS ENGINE ---
+// --- 7. 3D HOROSCOPE RINGS ENGINE ---
 function open3DHoroscopeRings() {
     const modal = document.getElementById('horoscope-modal');
     if (modal) {
@@ -278,6 +276,7 @@ function open3DHoroscopeRings() {
         initSingleRing('navamsha-3d-canvas');
     }
 }
+window.open3DHoroscopeRings = open3DHoroscopeRings; // Export to Global Window
 
 function initSingleRing(canvasId) {
     const canvas = document.getElementById(canvasId);
