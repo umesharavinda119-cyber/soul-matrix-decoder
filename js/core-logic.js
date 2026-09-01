@@ -129,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         inputGroup.style.display = 'none'; 
                     }
                     renderTeaserResult(dateVal);
+                open3DHoroscopeRings();
                 }
             }, 50);
         });
@@ -250,4 +251,58 @@ document.addEventListener('DOMContentLoaded', () => {
         if (calcCard) calcCard.style.transform = `perspective(1000px) rotateY(${mouseX * 0.8}deg) rotateX(${-mouseY * 0.8}deg)`;
     });
 
+   // --- 3D HOROSCOPE RINGS ENGINE ---
+function open3DHoroscopeRings() {
+    const modal = document.getElementById('horoscope-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        initSingleRing('lagna-3d-canvas');
+        initSingleRing('navamsha-3d-canvas');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById('close-modal-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            const modal = document.getElementById('horoscope-modal');
+            if (modal) modal.style.display = 'none';
+        });
+    }
 });
+
+function initSingleRing(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    camera.position.z = 5;
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(280, 280);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const ambLight = new THREE.AmbientLight(0xffffff, 1.5);
+    scene.add(ambLight);
+
+    const goldLight = new THREE.PointLight(0xffd700, 3, 20);
+    goldLight.position.set(2, 2, 4);
+    scene.add(goldLight);
+
+    const geometry = new THREE.TorusGeometry(1.8, 0.12, 16, 100);
+    const material = new THREE.MeshStandardMaterial({
+        color: 0xd4af37,
+        metalness: 0.9,
+        roughness: 0.2,
+    });
+    const ringMesh = new THREE.Mesh(geometry, material);
+    scene.add(ringMesh);
+
+    function animate() {
+        requestAnimationFrame(animate);
+        ringMesh.rotation.z += 0.003;
+        renderer.render(scene, camera);
+    }
+    animate();
+} 
