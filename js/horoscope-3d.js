@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gltfLoader.setDRACOLoader(dracoLoader);
 
     gltfLoader.load(
-        './assets/zodiac-statue.glb',
+        'https://github.com/umesharavinda119-cyber/soul-matrix-decoder/releases/download/v1.0.0/zodiac-statue.glb',
         (gltf) => {
             const loadedModel = gltf.scene;
 
