@@ -272,29 +272,59 @@
         </div>
     </div>
 
-    <!-- DUAL 3D HOROSCOPE MODAL -->
+    <!-- DUAL 3D HOROSCOPE MODAL WITH 12-HOUSE CHART OVERLAYS -->
     <div id="horoscope-modal" class="horoscope-modal-overlay">
         <div class="horoscope-modal-card">
             <button class="close-modal-btn" id="close-modal-btn">&times;</button>
             <h2 class="modal-title">ඔබගේ ජන්ම පත්‍ර විශ්ලේෂණය</h2>
             
             <div class="dual-wheels-wrapper">
+                <!-- 1. ලග්න චක්‍රය -->
                 <div class="wheel-box">
                     <h3>ලග්න චක්‍රය</h3>
                     <div class="ring-container">
                         <canvas id="lagna-3d-canvas"></canvas>
-                        <div class="zodiac-center-grid">
-                            <div class="center-label" id="lagna-name-display">මේෂ<br>ලග්නය</div>
+                        <div class="zodiac-center-grid lagna-bg">
+                            <div class="chart-center-title" id="lagna-name-display">මේෂ<br>ලග්නය</div>
+                            <div class="house-grid" id="lagna-houses">
+                                <div class="h-box h1"></div>
+                                <div class="h-box h2"></div>
+                                <div class="h-box h3"></div>
+                                <div class="h-box h4"></div>
+                                <div class="h-box h5"></div>
+                                <div class="h-box h6"></div>
+                                <div class="h-box h7"></div>
+                                <div class="h-box h8"></div>
+                                <div class="h-box h9"></div>
+                                <div class="h-box h10"></div>
+                                <div class="h-box h11"></div>
+                                <div class="h-box h12"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- 2. නවාංශක චක්‍රය -->
                 <div class="wheel-box">
                     <h3>නවාංශක චක්‍රය</h3>
                     <div class="ring-container">
                         <canvas id="navamsha-3d-canvas"></canvas>
-                        <div class="zodiac-center-grid">
-                            <div class="center-label" id="navamsha-name-display">කන්‍යා<br>නවාංශකය</div>
+                        <div class="zodiac-center-grid navamsha-bg">
+                            <div class="chart-center-title" id="navamsha-name-display">කන්‍යා<br>නවාංශකය</div>
+                            <div class="house-grid" id="navamsha-houses">
+                                <div class="h-box h1"></div>
+                                <div class="h-box h2"></div>
+                                <div class="h-box h3"></div>
+                                <div class="h-box h4"></div>
+                                <div class="h-box h5"></div>
+                                <div class="h-box h6"></div>
+                                <div class="h-box h7"></div>
+                                <div class="h-box h8"></div>
+                                <div class="h-box h9"></div>
+                                <div class="h-box h10"></div>
+                                <div class="h-box h11"></div>
+                                <div class="h-box h12"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
