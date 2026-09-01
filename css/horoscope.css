@@ -350,6 +350,15 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
 .val-gold { color: #f59e0b !important; }
 .val-cyan { color: #38bdf8 !important; }
 .val-green { color: #4ade80 !important; }
+.val-red { color: #f43f5e !important; }
+.val-locked { 
+    color: #fbbf24 !important; 
+    background: rgba(245, 158, 11, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px dashed rgba(245, 158, 11, 0.4);
+    font-size: 0.75rem !important;
+}
 
 /* RESPONSIVE DESIGN */
 @media (max-width: 950px) {
