@@ -72,7 +72,7 @@ function initPlanetaryWidget() {
     setInterval(updatePlanets, 60000);
 }
 
-// 3. BACKGROUND MUSIC CONTROLLER & VISUALIZER
+// 3. BACKGROUND MUSIC CONTROLLER & WAVE VISUALIZER
 function initAudioControls() {
     const audio = document.getElementById('bg-audio');
     const toggleBtn = document.getElementById('audio-toggle-btn');
@@ -81,24 +81,52 @@ function initAudioControls() {
 
     if (!audio || !toggleBtn) return;
 
-    toggleBtn.addEventListener('click', () => {
+    // Initial state setup
+    audio.volume = 0.5; // Default volume 50%
+    visBars.forEach(bar => bar.style.animationPlayState = 'paused'); // Stop waves initially
+
+    toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent document click interference
+
         if (audio.paused) {
             audio.play().then(() => {
                 if (audioIcon) {
                     audioIcon.classList.remove('fa-volume-xmark');
                     audioIcon.classList.add('fa-volume-high');
                 }
-                visBars.forEach(bar => bar.style.animationPlayState = 'running');
-            }).catch(err => console.log("Audio play blocked by browser:", err));
+                toggleBtn.style.borderColor = 'var(--accent-purple)';
+                toggleBtn.style.boxShadow = '0 0 15px var(--accent-purple)';
+                // Start Wave Animation
+                visBars.forEach(bar => {
+                    bar.style.animation = 'equalizer 1s ease-in-out infinite alternate';
+                    bar.style.animationPlayState = 'running';
+                });
+            }).catch(err => console.log("Audio play blocked by browser. User interaction needed:", err));
         } else {
             audio.pause();
             if (audioIcon) {
                 audioIcon.classList.remove('fa-volume-high');
                 audioIcon.classList.add('fa-volume-xmark');
             }
-            visBars.forEach(bar => bar.style.animationPlayState = 'paused');
+            toggleBtn.style.borderColor = 'rgba(255,255,255,0.15)';
+            toggleBtn.style.boxShadow = 'none';
+            // Stop Wave Animation
+            visBars.forEach(bar => {
+                bar.style.animationPlayState = 'paused';
+                bar.style.height = '4px'; // Reset height
+            });
         }
     });
+
+    // Optional: Add basic equalizer keyframes if not in CSS
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @keyframes equalizer {
+            0% { height: 4px; }
+            100% { height: 18px; background-color: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); }
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // 4. COLOR THEME PICKER SWITCHER
