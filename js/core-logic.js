@@ -3,12 +3,7 @@
 // =================================================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. AUDIO ENGINE (Music & UI Soft Clicks) ---
-    const audio = document.getElementById('bg-audio');
-    const audioBtn = document.getElementById('audio-toggle-btn');
-    const audioIcon = document.getElementById('audio-icon');
-    let isAudioPlaying = false;
-
+    // --- 1. AUDIO ENGINE (UI Soft Clicks Only) ---
     let audioCtx;
     function playClickSound() {
         try {
@@ -39,44 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
             playClickSound();
         }
     });
-
-    function playToneAudio() {
-        try {
-            if (audio && !isAudioPlaying) {
-                audio.play().then(() => {
-                    if (audioIcon) audioIcon.className = 'fa-solid fa-volume-high';
-                    if (audioBtn) {
-                        audioBtn.style.borderColor = 'var(--accent-purple)';
-                        audioBtn.style.boxShadow = '0 0 15px var(--accent-purple)';
-                    }
-                    isAudioPlaying = true;
-                }).catch(() => {});
-            }
-        } catch(e) {}
-    }
-    window.addEventListener('click', playToneAudio, { once: true });
-    window.addEventListener('keypress', playToneAudio, { once: true });
-
-    if (audioBtn) {
-        audioBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            try {
-                if (audio.paused) {
-                    audio.play(); 
-                    if (audioIcon) audioIcon.className = 'fa-solid fa-volume-high'; 
-                    audioBtn.style.borderColor = 'var(--accent-purple)'; 
-                    audioBtn.style.boxShadow = '0 0 15px var(--accent-purple)'; 
-                    isAudioPlaying = true;
-                } else {
-                    audio.pause(); 
-                    if (audioIcon) audioIcon.className = 'fa-solid fa-volume-xmark'; 
-                    audioBtn.style.borderColor = 'rgba(255,255,255,0.15)'; 
-                    audioBtn.style.boxShadow = 'none'; 
-                    isAudioPlaying = false;
-                }
-            } catch(e) {}
-        });
-    }
 
     // --- 2. CLOCK LOGIC ---
     setInterval(() => { 
@@ -109,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const dateVal = birthdateInput ? birthdateInput.value : null;
             if (!dateVal) { alert('කරුණාකර උපන් දිනය තෝරන්න!'); return; }
             
-            playToneAudio();
             const inputGroup = document.getElementById('input-group');
             if(inputGroup) inputGroup.style.opacity = '0';
             
@@ -264,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 }); // End DOMContentLoaded
 
-// --- 7. 3D HOROSCOPE RINGS ENGINE (420px RESOLUTION) ---
+// --- 7. 3D HOROSCOPE RINGS ENGINE ---
 function open3DHoroscopeRings() {
     const modal = document.getElementById('horoscope-modal');
     if (modal) {
