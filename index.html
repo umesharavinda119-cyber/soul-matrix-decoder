@@ -91,89 +91,82 @@
                 </div>
             </div>
 
-            <div class="calc-card">
-                <div class="hud-corner hud-tl"></div>
-                <div class="hud-corner hud-tr"></div>
-                <div class="hud-corner hud-bl"></div>
-                <div class="hud-corner hud-br"></div>
+            <!-- ANIMATED BORDER WRAPPER -->
+            <div class="calc-card-border-wrapper">
+                <div class="calc-card">
+                    <div class="hud-corner hud-tl"></div>
+                    <div class="hud-corner hud-tr"></div>
+                    <div class="hud-corner hud-bl"></div>
+                    <div class="hud-corner hud-br"></div>
 
-                <div class="tab-menu" id="main-tabs" style="display: none;">
-                    <button class="tab-btn" onclick="goHome()" tabindex="0" title="Back to Home"><i class="fa-solid fa-house"></i></button>
-                    <button class="tab-btn active" onclick="openTab('pkg-1', this)" tabindex="0">MINI</button>
-                    <button class="tab-btn" onclick="openTab('pkg-2', this)" tabindex="0">MICRO</button>
-                    <button class="tab-btn blueprint-btn" onclick="openTab('pkg-3', this)" tabindex="0">BLUEPRINT</button>
-                    <button class="tab-btn vvip-btn" onclick="openTab('pkg-4', this)" tabindex="0">VVIP</button>
-                    <button class="tab-btn portal-btn" onclick="openTab('portal', this)" tabindex="0"><i class="fa-solid fa-lock"></i></button>
-                </div>
-
-                <div id="initial-decoder" class="tab-content active">
-                    <h3>FREE SOUL MATRIX DECODER</h3>
-                    <p style="font-size: 0.88rem; color: var(--text-sub);" data-si="ඔබගේ උපන් දිනය ලබා දී නොමිලේ මූලික ආත්මීය කම්පනය පරීක්ෂා කරන්න." data-en="Enter your birthdate to decode your primary soul vibration for free.">ඔබගේ උපන් දිනය ලබා දී නොමිලේ මූලික ආත්මීය කම්පනය පරීක්ෂා කරන්න.</p>
-                    <div class="input-group" id="input-group">
-                        <input type="date" id="birthdate" class="date-input" required tabindex="0">
-                        <button class="decode-btn" id="decode-btn" tabindex="0">DECODE</button>
+                    <div class="tab-menu" id="main-tabs" style="display: none;">
+                        <button class="tab-btn" onclick="goHome()" tabindex="0" title="Back to Home"><i class="fa-solid fa-house"></i></button>
+                        <button class="tab-btn active" onclick="openTab('pkg-1', this)" tabindex="0">MINI</button>
+                        <button class="tab-btn" onclick="openTab('pkg-2', this)" tabindex="0">MICRO</button>
+                        <button class="tab-btn blueprint-btn" onclick="openTab('pkg-3', this)" tabindex="0">BLUEPRINT</button>
+                        <button class="tab-btn vvip-btn" onclick="openTab('pkg-4', this)" tabindex="0">VVIP</button>
+                        <button class="tab-btn portal-btn" onclick="openTab('portal', this)" tabindex="0"><i class="fa-solid fa-lock"></i></button>
                     </div>
-                    
-                    <!-- SOUL COMPATIBILITY QUICK MATCHER -->
-                    <div class="compat-box">
-                        <div class="compat-title"><i class="fa-solid fa-heart-pulse"></i> SOUL COMPATIBILITY MATCHER</div>
-                        <div class="compat-inputs">
-                            <input type="text" id="compat-name1" placeholder="ඔබගේ නම">
-                            <input type="text" id="compat-name2" placeholder="සහකරුගේ නම">
+
+                    <div id="initial-decoder" class="tab-content active">
+                        <h3>FREE SOUL MATRIX DECODER</h3>
+                        <p style="font-size: 0.88rem; color: var(--text-sub);" data-si="ඔබගේ උපන් දිනය ලබා දී නොමිලේ මූලික ආත්මීය කම්පනය පරීක්ෂා කරන්න." data-en="Enter your birthdate to decode your primary soul vibration for free.">ඔබගේ උපන් දිනය ලබා දී නොමිලේ මූලික ආත්මීය කම්පනය පරීක්ෂා කරන්න.</p>
+                        
+                        <div class="input-group" id="input-group">
+                            <input type="date" id="birthdate" class="date-input" required tabindex="0">
+                            <button class="decode-btn" id="decode-btn" tabindex="0">DECODE MATRIX</button>
                         </div>
-                        <button class="submit-btn-3d" id="calc-compat-btn" style="padding: 0.6rem; font-size: 0.8rem;">CHECK COMPATIBILITY</button>
-                        <div id="compat-result" class="compat-res"></div>
+
+                        <!-- RESULT BOX -->
+                        <div class="result-box" id="result-box">
+                            <div class="number-circle" id="res-number">0</div>
+                            <div id="res-hook" style="color: #e5e7eb; font-size: 0.95rem; line-height: 1.5; text-align: center; margin-bottom: 15px;"></div>
+                            <button class="upgrade-btn-3d" id="view-packages-btn" tabindex="0">
+                                <i class="fa-solid fa-gem"></i> VIEW UPGRADE PACKAGES
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="result-box" id="result-box">
-                        <div class="number-circle" id="res-number">0</div>
-                        <div id="res-hook" style="color: #e5e7eb; font-size: 0.95rem; line-height: 1.5; text-align: center; margin-bottom: 15px;"></div>
-                        <button class="upgrade-btn-3d" id="view-packages-btn" tabindex="0">
-                            <i class="fa-solid fa-gem"></i> VIEW UPGRADE PACKAGES
-                        </button>
+                    <div id="pkg-1" class="tab-content" style="display: none;">
+                        <h3>MINI CHECK <span>(කෙටි පරීක්ෂාව)</span></h3>
+                        <div class="price-tag">රු. 1260/-</div>
+                        <a href="https://wa.me/94700000000?text=I%20need%20the%20MINI%20CHECK%20package" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
+                    </div>
+
+                    <div id="pkg-2" class="tab-content" style="display: none;">
+                        <h3>MICRO PACKAGE <span>(මූලික පලාපල)</span></h3>
+                        <div class="price-tag">රු. 2,700/-</div>
+                        <a href="https://wa.me/94700000000?text=I%20need%20the%20MICRO%20PACKAGE" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
+                    </div>
+
+                    <div id="pkg-3" class="tab-content" style="display: none;">
+                        <h3 class="highlight-title">THE SOUL BLUEPRINT 🚀 <span>[Best Seller]</span></h3>
+                        <div class="price-tag highlight">රු. 7,200/-</div>
+                        <a href="https://wa.me/94700000000?text=I%20need%20THE%20SOUL%20BLUEPRINT" target="_blank" class="order-btn blueprint" tabindex="0">ORDER VIA WHATSAPP</a>
+                    </div>
+
+                    <div id="pkg-4" class="tab-content" style="display: none;">
+                        <h3 class="vip-title">VVIP PACKAGE 👑 <span>(Royal Family Service)</span></h3>
+                        <div class="price-tag vip">රු. 9,900/-</div>
+                        <a href="https://wa.me/94700000000?text=I%20need%20the%20VVIP%20PACKAGE" target="_blank" class="order-btn vvip" tabindex="0">ORDER VIA WHATSAPP</a>
+                    </div>
+
+                    <div id="portal" class="tab-content" style="display: none; text-align: center;">
+                        <i class="fa-solid fa-book-journal-whills portal-icon"></i>
+                        <h3 style="color: var(--accent-gold); margin-top: 15px;">ACCESS YOUR GRIMOIRE</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 20px;">ඔබට ලැබුණු රහස්‍ය කේතය (Security Code) මෙහි ඇතුළත් කරන්න.</p>
+                        <div class="input-group" style="justify-content: center;">
+                            <input type="text" id="security-code" class="date-input" placeholder="e.g. URM-2026-A8B" style="text-align: center; letter-spacing: 2px; text-transform: uppercase;" tabindex="0">
+                            <button class="decode-btn full-width" id="unlock-book-btn" tabindex="0" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; margin-top: 10px; width: 100%;">UNLOCK BLUEPRINT</button>
+                        </div>
+                    </div>
+
+                    <div class="scanner-overlay" id="scanner">
+                        <div class="laser-line"></div>
+                        <div class="scan-status">SCANNING SOUL MATRIX...</div>
+                        <div class="scan-progress" id="scan-prog">0%</div>
                     </div>
                 </div>
-
-                <div id="pkg-1" class="tab-content" style="display: none;">
-                    <h3>MINI CHECK <span>(කෙටි පරීක්ෂාව)</span></h3>
-                    <div class="price-tag">රු. 1260/-</div>
-                    <a href="https://wa.me/94700000000?text=I%20need%20the%20MINI%20CHECK%20package" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
-                </div>
-
-                <div id="pkg-2" class="tab-content" style="display: none;">
-                    <h3>MICRO PACKAGE <span>(මූලික පලාපල)</span></h3>
-                    <div class="price-tag">රු. 2,700/-</div>
-                    <a href="https://wa.me/94700000000?text=I%20need%20the%20MICRO%20PACKAGE" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
-                </div>
-
-                <div id="pkg-3" class="tab-content" style="display: none;">
-                    <h3 class="highlight-title">THE SOUL BLUEPRINT 🚀 <span>[Best Seller]</span></h3>
-                    <div class="price-tag highlight">රු. 7,200/-</div>
-                    <a href="https://wa.me/94700000000?text=I%20need%20THE%20SOUL%20BLUEPRINT" target="_blank" class="order-btn blueprint" tabindex="0">ORDER VIA WHATSAPP</a>
-                </div>
-
-                <div id="pkg-4" class="tab-content" style="display: none;">
-                    <h3 class="vip-title">VVIP PACKAGE 👑 <span>(Royal Family Service)</span></h3>
-                    <div class="price-tag vip">රු. 9,900/-</div>
-                    <a href="https://wa.me/94700000000?text=I%20need%20the%20VVIP%20PACKAGE" target="_blank" class="order-btn vvip" tabindex="0">ORDER VIA WHATSAPP</a>
-                </div>
-
-                <div id="portal" class="tab-content" style="display: none; text-align: center;">
-                    <i class="fa-solid fa-book-journal-whills portal-icon"></i>
-                    <h3 style="color: var(--accent-gold); margin-top: 15px;">ACCESS YOUR GRIMOIRE</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 20px;">ඔබට ලැබුණු රහස්‍ය කේතය (Security Code) මෙහි ඇතුළත් කරන්න.</p>
-                    <div class="input-group" style="justify-content: center;">
-                        <input type="text" id="security-code" class="date-input" placeholder="e.g. URM-2026-A8B" style="text-align: center; letter-spacing: 2px; text-transform: uppercase;" tabindex="0">
-                        <button class="decode-btn full-width" id="unlock-book-btn" tabindex="0" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; margin-top: 10px; width: 100%;">UNLOCK BLUEPRINT</button>
-                    </div>
-                </div>
-
-                <div class="scanner-overlay" id="scanner">
-                    <div class="laser-line"></div>
-                    <div class="scan-status">SCANNING SOUL MATRIX...</div>
-                    <div class="scan-progress" id="scan-prog">0%</div>
-                </div>
-
             </div>
         </div>
     </section>
@@ -275,15 +268,12 @@
 
     <!-- DUAL 3D HOROSCOPE MODAL WITH TECHNICAL METRICS DASHBOARD -->
     <div id="horoscope-modal" class="horoscope-modal-overlay">
-        <!-- ANIMATED QUANTUM PARTICLE BACKGROUND CANVAS -->
         <canvas id="modal-bg-canvas"></canvas>
-
         <div class="horoscope-modal-card" id="horoscope-3d-card">
             <button class="close-modal-btn" id="close-modal-btn">&times;</button>
             <h2 class="modal-title">ජන්ම පත්‍ර ගණිතමය විශ්ලේෂණය (TECHNICAL METRICS)</h2>
             
             <div class="dual-wheels-wrapper">
-                <!-- 1. ලග්න චක්‍රය -->
                 <div class="wheel-box">
                     <h3>ලග්න චක්‍රය (D1)</h3>
                     <div class="ring-container">
@@ -300,7 +290,6 @@
                     </div>
                 </div>
 
-                <!-- 2. නවාංශක චක්‍රය -->
                 <div class="wheel-box">
                     <h3>නවාංශක චක්‍රය (D9)</h3>
                     <div class="ring-container">
@@ -318,7 +307,6 @@
                 </div>
             </div>
 
-            <!-- RAW CALCULATED ASTROLOGICAL VALUES & CONVERSION TEASERS GRID -->
             <div id="v12-report-container" class="v12-report-grid">
                 <div class="report-card">
                     <h4><i class="fa-solid fa-calculator"></i> පංචාංග අගයන්</h4>
