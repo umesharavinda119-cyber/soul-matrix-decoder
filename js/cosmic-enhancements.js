@@ -72,7 +72,7 @@ function initPlanetaryWidget() {
     setInterval(updatePlanets, 60000);
 }
 
-// 3. BACKGROUND MUSIC CONTROLLER & WAVE VISUALIZER
+// 3. BACKGROUND MUSIC CONTROLLER & MULTI-COLOR WAVE VISUALIZER
 function initAudioControls() {
     const audio = document.getElementById('bg-audio');
     const toggleBtn = document.getElementById('audio-toggle-btn');
@@ -81,12 +81,36 @@ function initAudioControls() {
 
     if (!audio || !toggleBtn) return;
 
-    // Initial state setup
     audio.volume = 0.5; // Default volume 50%
-    visBars.forEach(bar => bar.style.animationPlayState = 'paused'); // Stop waves initially
 
+    // Assign Multi-Colors and Staggered Animations to Bars
+    const waveColors = ['#f59e0b', '#38bdf8', '#4ade80', '#a855f7', '#f43f5e']; // Gold, Cyan, Green, Purple, Red
+
+    visBars.forEach((bar, index) => {
+        bar.style.backgroundColor = waveColors[index % waveColors.length];
+        bar.style.boxShadow = `0 0 10px ${waveColors[index % waveColors.length]}`;
+        bar.style.animationDuration = `${0.4 + Math.random() * 0.5}s`; // Different speed for each bar
+        bar.style.animationDelay = `${index * 0.15}s`; // Staggered start times
+        bar.style.animationPlayState = 'paused';
+    });
+
+    // Inject Equalizer Keyframes
+    if (!document.getElementById('eq-style-fix')) {
+        const style = document.createElement('style');
+        style.id = 'eq-style-fix';
+        style.innerHTML = `
+            @keyframes multiEqualizer {
+                0% { height: 4px; opacity: 0.5; }
+                100% { height: 20px; opacity: 1; filter: brightness(1.3); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Single central toggle logic
     toggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent document click interference
+        e.preventDefault();
+        e.stopPropagation();
 
         if (audio.paused) {
             audio.play().then(() => {
@@ -94,14 +118,18 @@ function initAudioControls() {
                     audioIcon.classList.remove('fa-volume-xmark');
                     audioIcon.classList.add('fa-volume-high');
                 }
-                toggleBtn.style.borderColor = 'var(--accent-purple)';
-                toggleBtn.style.boxShadow = '0 0 15px var(--accent-purple)';
-                // Start Wave Animation
+                toggleBtn.style.borderColor = 'var(--accent-cyan)';
+                toggleBtn.style.boxShadow = '0 0 15px var(--accent-cyan)';
+                
+                // Play animation
                 visBars.forEach(bar => {
-                    bar.style.animation = 'equalizer 1s ease-in-out infinite alternate';
+                    bar.style.animationName = 'multiEqualizer';
+                    bar.style.animationIterationCount = 'infinite';
+                    bar.style.animationDirection = 'alternate';
+                    bar.style.animationTimingFunction = 'ease-in-out';
                     bar.style.animationPlayState = 'running';
                 });
-            }).catch(err => console.log("Audio play blocked by browser. User interaction needed:", err));
+            }).catch(err => console.log("Audio play blocked by browser:", err));
         } else {
             audio.pause();
             if (audioIcon) {
@@ -110,23 +138,21 @@ function initAudioControls() {
             }
             toggleBtn.style.borderColor = 'rgba(255,255,255,0.15)';
             toggleBtn.style.boxShadow = 'none';
-            // Stop Wave Animation
+            
+            // Stop animation & reset height
             visBars.forEach(bar => {
                 bar.style.animationPlayState = 'paused';
-                bar.style.height = '4px'; // Reset height
+                bar.style.height = '4px'; 
             });
         }
     });
 
-    // Optional: Add basic equalizer keyframes if not in CSS
-    const style = document.createElement('style');
-    style.innerHTML = `
-        @keyframes equalizer {
-            0% { height: 4px; }
-            100% { height: 18px; background-color: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); }
+    // Auto-play attempt on first user interaction anywhere on the page
+    window.addEventListener('click', () => {
+        if (audio.paused && !toggleBtn.hasAttribute('data-user-muted')) {
+            toggleBtn.click();
         }
-    `;
-    document.head.appendChild(style);
+    }, { once: true });
 }
 
 // 4. COLOR THEME PICKER SWITCHER
