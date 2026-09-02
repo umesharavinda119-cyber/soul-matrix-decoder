@@ -1,5 +1,5 @@
 // =================================================================
-// ULTIMATE COSMIC ENGINE (PLANETARY WIDGET, AUDIO, THEME & COMPATIBILITY)
+// ULTIMATE COSMIC ENGINE (PLANETARY WIDGET, AUDIO, THEME)
 // =================================================================
 
 // 1. WEBAUDIO SCI-FI SOUND FX
@@ -84,17 +84,16 @@ function initAudioControls() {
     audio.volume = 0.5; // Default volume 50%
 
     // Assign Multi-Colors and Staggered Animations to Bars
-    const waveColors = ['#f59e0b', '#38bdf8', '#4ade80', '#a855f7', '#f43f5e']; // Gold, Cyan, Green, Purple, Red
+    const waveColors = ['#f59e0b', '#38bdf8', '#4ade80', '#a855f7', '#f43f5e'];
 
     visBars.forEach((bar, index) => {
         bar.style.backgroundColor = waveColors[index % waveColors.length];
         bar.style.boxShadow = `0 0 10px ${waveColors[index % waveColors.length]}`;
-        bar.style.animationDuration = `${0.4 + Math.random() * 0.5}s`; // Different speed for each bar
-        bar.style.animationDelay = `${index * 0.15}s`; // Staggered start times
+        bar.style.animationDuration = `${0.4 + Math.random() * 0.5}s`;
+        bar.style.animationDelay = `${index * 0.15}s`;
         bar.style.animationPlayState = 'paused';
     });
 
-    // Inject Equalizer Keyframes
     if (!document.getElementById('eq-style-fix')) {
         const style = document.createElement('style');
         style.id = 'eq-style-fix';
@@ -107,7 +106,6 @@ function initAudioControls() {
         document.head.appendChild(style);
     }
 
-    // Single central toggle logic
     toggleBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -121,7 +119,6 @@ function initAudioControls() {
                 toggleBtn.style.borderColor = 'var(--accent-cyan)';
                 toggleBtn.style.boxShadow = '0 0 15px var(--accent-cyan)';
                 
-                // Play animation
                 visBars.forEach(bar => {
                     bar.style.animationName = 'multiEqualizer';
                     bar.style.animationIterationCount = 'infinite';
@@ -139,7 +136,6 @@ function initAudioControls() {
             toggleBtn.style.borderColor = 'rgba(255,255,255,0.15)';
             toggleBtn.style.boxShadow = 'none';
             
-            // Stop animation & reset height
             visBars.forEach(bar => {
                 bar.style.animationPlayState = 'paused';
                 bar.style.height = '4px'; 
@@ -147,7 +143,6 @@ function initAudioControls() {
         }
     });
 
-    // Auto-play attempt on first user interaction anywhere on the page
     window.addEventListener('click', () => {
         if (audio.paused && !toggleBtn.hasAttribute('data-user-muted')) {
             toggleBtn.click();
@@ -168,50 +163,11 @@ function initThemePicker() {
     });
 }
 
-// 5. PYTHAGOREAN NUMEROLOGY MATCHING
-function getPythagoreanValue(name) {
-    if (!name) return 0;
-    const map = {
-        a:1, j:1, s:1, b:2, k:2, t:2, c:3, l:3, u:3, d:4, m:4, v:4,
-        e:5, n:5, w:5, f:6, o:6, x:6, g:7, p:7, y:7, h:8, q:8, z:8, i:9, r:9
-    };
-    let sum = 0;
-    const cleanName = name.toLowerCase().replace(/[^a-z]/g, '');
-    for (let char of cleanName) {
-        sum += map[char] || 0;
-    }
-    while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
-        sum = sum.toString().split('').reduce((acc, curr) => acc + parseInt(curr), 0);
-    }
-    return sum;
-}
-
-function initCompatibilityMatcher() {
-    const btn = document.getElementById('calc-compat-btn');
-    const name1 = document.getElementById('compat-name1');
-    const name2 = document.getElementById('compat-name2');
-    const res = document.getElementById('compat-result');
-
-    if (!btn || !name1 || !name2 || !res) return;
-
-    btn.addEventListener('click', () => {
-        const v1 = getPythagoreanValue(name1.value);
-        const v2 = getPythagoreanValue(name2.value);
-        if (!v1 || !v2) {
-            res.innerHTML = "<span style='color:#ef4444;'>කරුණාකර නම් දෙකම ඇතුළත් කරන්න.</span>";
-            return;
-        }
-        const score = Math.min(100, Math.max(45, Math.abs(100 - (Math.abs(v1 - v2) * 8))));
-        res.innerHTML = `ආත්මීය ගැලපීම: <strong style="color:var(--accent-gold, #f59e0b);">${score}%</strong>`;
-    });
-}
-
-// 6. INITIALIZE ALL ON DOM LOAD
+// 5. INITIALIZE ALL ON DOM LOAD
 document.addEventListener('DOMContentLoaded', () => {
     initPlanetaryWidget();
     initAudioControls();
     initThemePicker();
-    initCompatibilityMatcher();
 
     document.querySelectorAll('button, input, select').forEach(el => {
         el.addEventListener('click', () => CosmicAudio.playClick());
