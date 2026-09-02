@@ -1,8 +1,8 @@
-/* HOROSCOPE APP WRAPPER (DESKTOP DEFAULT) */
+/* HOROSCOPE APP WRAPPER (DESKTOP DEFAULT) - ADJUSTED MORE TO THE RIGHT */
 #horoscope-app-wrapper {
     position: fixed;
-    right: 14%;
-    top: 50%;
+    right: 6%; /* Moved further right from 14% to 6% */
+    top: 52%;  /* Slightly lowered */
     transform: translateY(-50%);
     width: 380px;
     height: 620px;
@@ -13,7 +13,7 @@
     justify-content: center;
 }
 
-/* 3D ZODIAC CANVAS */
+/* 3D ZODIAC CANVAS (SRI YANTRA) */
 #zodiac-3d-canvas {
     width: 460px;
     height: 400px;
@@ -40,7 +40,7 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
     font-family: 'Noto Sans Sinhala', 'Inter', sans-serif !important;
 }
 
-/* TRIGGER BUTTON */
+/* TRIGGER BUTTON ("ජන්ම පත්‍ර සැකසීම") */
 .glow-btn {
     position: absolute;
     top: 480px;
@@ -404,7 +404,7 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
 /* MOBILE RESPONSIVE OVERLAPPING FIXES */
 @media (max-width: 768px) {
     .hero {
-        padding-top: 140px !important; /* Prevents fixed header from cutting off hero text */
+        padding-top: 140px !important; 
         min-height: auto !important;
     }
     .hero h1 {
@@ -446,6 +446,7 @@ p, .hero p, .panel-desc, .tab-content p, label, input {
         width: 250px !important;
         height: 250px !important;
     }
+    /* Reset right alignment on mobile so it centers properly */
     #horoscope-app-wrapper {
         position: relative;
         right: auto;
