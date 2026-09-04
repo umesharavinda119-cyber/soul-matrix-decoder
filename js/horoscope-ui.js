@@ -50,6 +50,74 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderPlanetsToGrid(containerId, planetMap) {
+        for (let i = 1; i <= 12; i++) {
+            const box = document.querySelector(`#${containerId} .h${i}`);
+            if (box) box.innerHTML = '';
+        }
+
+        if (planetMap) {
+            Object.keys(planetMap).forEach(houseNum => {
+                const box = document.querySelector(`#${containerId} .h${houseNum}`);
+                if (box && Array.isArray(planetMap[houseNum]) && planetMap[houseNum].length > 0) {
+                    box.innerHTML = planetMap[houseNum]
+                        .map(p => `<span class="p-symbol">${p}</span>`)
+                        .join('');
+                }
+            });
+        }
+    }
+
+    function renderV12ReportData(report) {
+        if (!report) return;
+
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = val !== undefined && val !== null ? val : '-';
+        };
+
+        setVal('m-ayanamsha', report.ayanamsha);
+        setVal('m-nakshatra', report.nakshatra);
+        setVal('m-nak-lord', report.nakshatra_lord);
+        setVal('m-tithi', report.tithi);
+        setVal('m-yoni-gana-nadi', `${report.yoni} / ${report.gana} / ${report.nadi}`);
+
+        if (report.current_dasha) {
+            setVal('m-maha-dasha', report.current_dasha.maha_dasha);
+            setVal('m-antar-dasha', report.current_dasha.antar_dasha);
+            setVal('m-pratyantar-dasha', report.current_dasha.pratyantar_dasha);
+        }
+
+        setVal('m-golden-window', report.golden_window);
+        setVal('m-wealth-score', report.wealth_potential);
+
+        if (report.special_lagnas) {
+            setVal('m-indu-lagna', report.special_lagnas.indu_lagna);
+            setVal('m-arudha-lagna', report.special_lagnas.arudha_lagna);
+        }
+
+        setVal('m-yogas', Array.isArray(report.yogas) ? report.yogas.join(', ') : report.yogas);
+        setVal('m-marriage-window', report.marriage_window);
+        setVal('m-soulmate-match', report.soulmate_match);
+
+        if (report.spouse_info) {
+            setVal('m-spouse-dir', `${report.spouse_info.seventh_lord} (${report.spouse_info.direction})`);
+            setVal('m-spouse-letter', `'${report.spouse_info.first_letter}'`);
+        }
+
+        setVal('m-karmic-level', report.karmic_level);
+
+        if (report.doshas) {
+            setVal('m-kuja-dosha', report.doshas.kuja_dosha);
+            setVal('m-sade-sati', report.doshas.sade_sati);
+            setVal('m-tara-bala', report.doshas.tara_bala);
+        }
+
+        setVal('m-sav-total', `${report.sav_total} / 337`);
+        setVal('m-lucky-freq', report.lucky_freq);
+        setVal('m-power-gem', report.power_gem);
+    }
+
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -73,8 +141,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 lon: window.selectedLon || 79.8612
             };
 
-            console.log("Sending Payload:", payload);
-            
+            try {
+                // Actual Fetch API Call to Python Backend
+                const res = await fetch('/api/index', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    const result = await res.json();
+                    
+                    if (result.lagna && document.getElementById('lagna-name-display')) {
+                        document.getElementById('lagna-name-display').innerHTML = result.lagna;
+                    }
+                    if (result.navamsha && document.getElementById('navamsha-name-display')) {
+                        document.getElementById('navamsha-name-display').innerHTML = result.navamsha;
+                    }
+
+                    if (result.lagna_planets) renderPlanetsToGrid('lagna-houses', result.lagna_planets);
+                    if (result.navamsha_planets) renderPlanetsToGrid('navamsha-houses', result.navamsha_planets);
+                    if (result.v12_report) renderV12ReportData(result.v12_report);
+                }
+            } catch (err) {
+                console.warn("Backend not connected yet. Running UI Demo mode.");
+            }
+
             setTimeout(() => {
                 if (panel) panel.classList.remove('active');
                 if (openBtn) {
@@ -85,10 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (loadingDiv) loadingDiv.style.display = 'none';
                 form.reset();
 
+                // OPEN THE HOROSCOPE MODAL AFTER CALCULATING
                 if (typeof window.open3DHoroscopeRings === 'function') {
                     window.open3DHoroscopeRings();
                 }
-            }, 800);
+            }, 1000);
         });
     }
 });
