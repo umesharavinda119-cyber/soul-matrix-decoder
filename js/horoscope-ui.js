@@ -59,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Dynamic Render Planets into 12 Chart Boxes Cleanly
     function renderPlanetsToGrid(containerId, planetMap) {
         for (let i = 1; i <= 12; i++) {
             const box = document.querySelector(`#${containerId} .h${i}`);
@@ -78,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Map Calculated V12 Numeric & Metric Values Directly to UI
     function renderV12ReportData(report) {
         if (!report) return;
 
@@ -143,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dateParts = dateVal.split('-');
             const timeParts = timeVal.split(':');
 
+            // Send Real Selected Lat/Lon to Backend
             const payload = {
                 name: document.getElementById('h-name') ? document.getElementById('h-name').value : '',
                 year: parseInt(dateParts[0]) || 1990,
@@ -150,12 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 day: parseInt(dateParts[2]) || 1,
                 hour: parseInt(timeParts[0]) || 12,
                 minute: parseInt(timeParts[1]) || 0,
-                lat: 6.9271, // Colombo Latitude (Default)
-                lon: 79.8612  // Colombo Longitude (Default)
+                lat: window.selectedLat || 6.9271,
+                lon: window.selectedLon || 79.8612
             };
 
             try {
-                // Call Real Python Swiss Ephemeris API
                 const res = await fetch('/api/index', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -172,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('navamsha-name-display').innerHTML = result.navamsha;
                     }
 
-                    // Render EXACT Live Python Calculations to 12 Houses
                     if (result.lagna_planets) {
                         renderPlanetsToGrid('lagna-houses', result.lagna_planets);
                     }
@@ -180,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderPlanetsToGrid('navamsha-houses', result.navamsha_planets);
                     }
 
-                    // Render V12 Metric Values
                     if (result.v12_report) {
                         renderV12ReportData(result.v12_report);
                     }
@@ -280,15 +276,11 @@ document.addEventListener('DOMContentLoaded', () => {
         animate();
     }
 
-    // -------------------------------------------------------------------------
-    // 4. INTERACTIVE 3D PARALLAX MOUSE & GYRO TILT FOR MODAL CARD
-    // -------------------------------------------------------------------------
     function initModal3DTilt() {
         const overlay = document.getElementById('horoscope-modal');
         const card = document.getElementById('horoscope-3d-card');
         if (!overlay || !card) return;
 
-        // Desktop Mouse Motion
         overlay.addEventListener('mousemove', (e) => {
             const { clientX, clientY } = e;
             const { innerWidth, innerHeight } = window;
@@ -303,7 +295,6 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.transform = `rotateX(0deg) rotateY(0deg) translateZ(0px)`;
         });
 
-        // Mobile Gyroscope Motion
         if (window.DeviceOrientationEvent) {
             window.addEventListener('deviceorientation', (e) => {
                 if (overlay.style.display === 'flex') {
@@ -318,3 +309,35 @@ document.addEventListener('DOMContentLoaded', () => {
     initModalParticleBg();
     initModal3DTilt();
 });
+
+// =================================================================
+// GOOGLE PLACES AUTOCOMPLETE & LAT/LON CAPTURE
+// =================================================================
+window.selectedLat = 6.9271;
+window.selectedLon = 79.8612;
+
+function initGooglePlaces() {
+    const placeInput = document.getElementById('h-place');
+    if (!placeInput) return;
+
+    const autocomplete = new google.maps.places.Autocomplete(placeInput, {
+        types: ['(cities)'] 
+    });
+
+    autocomplete.setFields(['geometry', 'name']);
+
+    autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        
+        if (!place.geometry || !place.geometry.location) {
+            console.warn("No details available for input: '" + place.name + "'");
+            return;
+        }
+
+        window.selectedLat = place.geometry.location.lat();
+        window.selectedLon = place.geometry.location.lng();
+        
+        console.log(`📍 Location Selected: ${place.name} | Lat: ${window.selectedLat}, Lon: ${window.selectedLon}`);
+    });
+}
+window.initGooglePlaces = initGooglePlaces;
