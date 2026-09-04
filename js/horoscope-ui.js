@@ -129,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const dateParts = dateVal.split('-');
             const timeParts = timeVal.split(':');
 
-            // Send Real Selected Lat/Lon to Backend
             const payload = {
                 name: document.getElementById('h-name') ? document.getElementById('h-name').value : '',
                 year: parseInt(dateParts[0]) || 1990,
@@ -142,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                // Actual Fetch API Call to Python Backend
                 const res = await fetch('/api/index', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -177,9 +175,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (loadingDiv) loadingDiv.style.display = 'none';
                 form.reset();
 
-                // OPEN THE HOROSCOPE MODAL AFTER CALCULATING
-                if (typeof window.open3DHoroscopeRings === 'function') {
-                    window.open3DHoroscopeRings();
+                // 100% FORCE OPEN THE HOROSCOPE MODAL AFTER CALCULATING
+                const horoscopeModal = document.getElementById('horoscope-modal');
+                if (horoscopeModal) {
+                    horoscopeModal.style.display = 'flex';
+                    
+                    try {
+                        if (typeof initSingleRing === 'function') {
+                            initSingleRing('lagna-3d-canvas');
+                            initSingleRing('navamsha-3d-canvas');
+                        }
+                    } catch(e) {
+                        console.warn("3D Rings Initializing Error:", e);
+                    }
                 }
             }, 1000);
         });
