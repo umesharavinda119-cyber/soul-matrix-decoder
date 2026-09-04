@@ -37,7 +37,6 @@
         <div class="header-controls">
             <button id="lang-toggle-btn" class="lang-btn">SI | EN</button>
 
-            <!-- 4-DAY COSMIC TIMER -->
             <div class="celestial-badge">
                 <i class="fa-solid fa-hourglass-half"></i> CYCLE ENDS: <span id="celestial-timer">04d 00h 00m 00s</span>
             </div>
@@ -91,7 +90,6 @@
                 </div>
             </div>
 
-            <!-- ANIMATED BORDER WRAPPER -->
             <div class="calc-card-border-wrapper">
                 <div class="calc-card">
                     <div class="hud-corner hud-tl"></div>
@@ -117,7 +115,6 @@
                             <button class="decode-btn" id="decode-btn" tabindex="0">DECODE MATRIX</button>
                         </div>
 
-                        <!-- RESULT BOX -->
                         <div class="result-box" id="result-box">
                             <div class="number-circle" id="res-number">0</div>
                             <div id="res-hook" style="color: #e5e7eb; font-size: 0.95rem; line-height: 1.5; text-align: center; margin-bottom: 15px;"></div>
@@ -132,25 +129,21 @@
                         <div class="price-tag">රු. 1260/-</div>
                         <a href="https://wa.me/94700000000?text=I%20need%20the%20MINI%20CHECK%20package" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
                     </div>
-
                     <div id="pkg-2" class="tab-content" style="display: none;">
                         <h3>MICRO PACKAGE <span>(මූලික පලාපල)</span></h3>
                         <div class="price-tag">රු. 2,700/-</div>
                         <a href="https://wa.me/94700000000?text=I%20need%20the%20MICRO%20PACKAGE" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
                     </div>
-
                     <div id="pkg-3" class="tab-content" style="display: none;">
                         <h3 class="highlight-title">THE SOUL BLUEPRINT 🚀 <span>[Best Seller]</span></h3>
                         <div class="price-tag highlight">රු. 7,200/-</div>
                         <a href="https://wa.me/94700000000?text=I%20need%20THE%20SOUL%20BLUEPRINT" target="_blank" class="order-btn blueprint" tabindex="0">ORDER VIA WHATSAPP</a>
                     </div>
-
                     <div id="pkg-4" class="tab-content" style="display: none;">
                         <h3 class="vip-title">VVIP PACKAGE 👑 <span>(Royal Family Service)</span></h3>
                         <div class="price-tag vip">රු. 9,900/-</div>
                         <a href="https://wa.me/94700000000?text=I%20need%20the%20VVIP%20PACKAGE" target="_blank" class="order-btn vvip" tabindex="0">ORDER VIA WHATSAPP</a>
                     </div>
-
                     <div id="portal" class="tab-content" style="display: none; text-align: center;">
                         <i class="fa-solid fa-book-journal-whills portal-icon"></i>
                         <h3 style="color: var(--accent-gold); margin-top: 15px;">ACCESS YOUR GRIMOIRE</h3>
@@ -171,7 +164,7 @@
         </div>
     </section>
 
-    <!-- RIGHT SIDE PANEL (Initially Hidden - Unhides after Decode) -->
+    <!-- RIGHT SIDE PANEL -->
     <div id="horoscope-app-wrapper" style="display: none;">
         <canvas id="zodiac-3d-canvas"></canvas>
         <button id="open-horoscope-btn" class="glow-btn" tabindex="0" data-si='<i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම' data-en='<i class="fa-solid fa-compass"></i> GENERATE HOROSCOPE'>
@@ -243,7 +236,6 @@
     <button id="oracle-toggle-btn" class="oracle-btn" title="Ask Matrix Oracle">
         <i class="fa-solid fa-headset"></i>
     </button>
-
     <div id="oracle-modal" class="oracle-modal">
         <div class="oracle-header">
             <span><i class="fa-solid fa-atom"></i> MATRIX ORACLE</span>
@@ -266,103 +258,33 @@
         </div>
     </div>
 
-    <!-- DUAL 3D HOROSCOPE MODAL WITH TECHNICAL METRICS DASHBOARD -->
-    <div id="horoscope-modal" class="horoscope-modal-overlay">
-        <canvas id="modal-bg-canvas"></canvas>
-        <div class="horoscope-modal-card" id="horoscope-3d-card">
-            <button class="close-modal-btn" id="close-modal-btn">&times;</button>
-            <h2 class="modal-title">ජන්ම පත්‍ර ගණිතමය විශ්ලේෂණය (TECHNICAL METRICS)</h2>
-            
-            <div class="dual-wheels-wrapper">
-                <div class="wheel-box">
-                    <h3>ලග්න චක්‍රය (D1)</h3>
-                    <div class="ring-container">
-                        <canvas id="lagna-3d-canvas"></canvas>
-                        <div class="zodiac-center-grid lagna-bg">
-                            <div class="chart-center-title" id="lagna-name-display">මේෂ<br>ලග්නය</div>
-                            <div class="house-grid" id="lagna-houses">
-                                <div class="h-box h1"></div><div class="h-box h2"></div><div class="h-box h3"></div>
-                                <div class="h-box h4"></div><div class="h-box h5"></div><div class="h-box h6"></div>
-                                <div class="h-box h7"></div><div class="h-box h8"></div><div class="h-box h9"></div>
-                                <div class="h-box h10"></div><div class="h-box h11"></div><div class="h-box h12"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div id="horoscope-modal" class="horoscope-modal-overlay"></div> 
 
-                <div class="wheel-box">
-                    <h3>නවාංශක චක්‍රය (D9)</h3>
-                    <div class="ring-container">
-                        <canvas id="navamsha-3d-canvas"></canvas>
-                        <div class="zodiac-center-grid navamsha-bg">
-                            <div class="chart-center-title" id="navamsha-name-display">කන්‍යා<br>නවාංශකය</div>
-                            <div class="house-grid" id="navamsha-houses">
-                                <div class="h-box h1"></div><div class="h-box h2"></div><div class="h-box h3"></div>
-                                <div class="h-box h4"></div><div class="h-box h5"></div><div class="h-box h6"></div>
-                                <div class="h-box h7"></div><div class="h-box h8"></div><div class="h-box h9"></div>
-                                <div class="h-box h10"></div><div class="h-box h11"></div><div class="h-box h12"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- GOOGLE MAPS API & AUTOCOMPLETE LOGIC -->
+    <script>
+        window.selectedLat = 6.9271;
+        window.selectedLon = 79.8612;
+        
+        window.initGooglePlaces = function() {
+            const placeInput = document.getElementById('h-place');
+            if (!placeInput || !window.google) return;
 
-            <div id="v12-report-container" class="v12-report-grid">
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-calculator"></i> පංචාංග අගයන්</h4>
-                    <div class="metric-row"><span>ලහිරි අයනාංශය:</span> <strong id="m-ayanamsha">0.00°</strong></div>
-                    <div class="metric-row"><span>නැකත & පදය:</span> <strong id="m-nakshatra">-</strong></div>
-                    <div class="metric-row"><span>නැකත් අධිපති:</span> <strong id="m-nak-lord">-</strong></div>
-                    <div class="metric-row"><span>තිථිය & පක්ෂය:</span> <strong id="m-tithi">-</strong></div>
-                    <div class="metric-row"><span>යෝනි / ගණ / නාඩි:</span> <strong id="m-yoni-gana-nadi">-</strong></div>
-                </div>
+            const autocomplete = new google.maps.places.Autocomplete(placeInput, {
+                types: ['(cities)'],
+                fields: ['geometry', 'name'] 
+            });
 
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-clock"></i> දශා කාල & Golden Window</h4>
-                    <div class="metric-row"><span>මහ දශාව:</span> <strong id="m-maha-dasha" class="val-gold">-</strong></div>
-                    <div class="metric-row"><span>අන්තර දශාව:</span> <strong id="m-antar-dasha" class="val-cyan">-</strong></div>
-                    <div class="metric-row"><span>ප්‍රත්‍යන්තර දශාව:</span> <strong id="m-pratyantar-dasha">-</strong></div>
-                    <div class="metric-row"><span>ජීවන රන්මය කාලය:</span> <strong id="m-golden-window" class="val-green">-</strong></div>
-                </div>
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry || !place.geometry.location) return;
 
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-sack-dollar"></i> ධන සම්පත් & Indu Matrix</h4>
-                    <div class="metric-row"><span>ධන & බල Potential:</span> <strong id="m-wealth-score" class="val-gold">0%</strong></div>
-                    <div class="metric-row"><span>ඉන්දු ලග්නය (Wealth):</span> <strong id="m-indu-lagna">-</strong></div>
-                    <div class="metric-row"><span>අරුඪ ලග්නය (AL):</span> <strong id="m-arudha-lagna">-</strong></div>
-                    <div class="metric-row"><span>ප්‍රධාන යෝග:</span> <strong id="m-yogas" class="val-green">-</strong></div>
-                </div>
-
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-ring"></i> විවාහ & Soulmate Vector</h4>
-                    <div class="metric-row"><span>විවාහ වීමේ කාලසීමාව:</span> <strong id="m-marriage-window" class="val-cyan">-</strong></div>
-                    <div class="metric-row"><span>Soulmate Match %:</span> <strong id="m-soulmate-match" class="val-gold">-</strong></div>
-                    <div class="metric-row"><span>7 අධිපති / දිශාව:</span> <strong id="m-spouse-dir">-</strong></div>
-                    <div class="metric-row"><span>නමේ මූලික ශබ්දය:</span> <strong id="m-spouse-letter" class="val-gold">-</strong></div>
-                </div>
-
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-shield-halved"></i> කර්මජ බාධක & Doshas</h4>
-                    <div class="metric-row"><span>කර්මජ බාධක මට්ටම:</span> <strong id="m-karmic-level" class="val-red">-</strong></div>
-                    <div class="metric-row"><span>කුජ දෝෂය:</span> <strong id="m-kuja-dosha">-</strong></div>
-                    <div class="metric-row"><span>ඒරාෂ්ටක / ඡායා:</span> <strong id="m-sade-sati">-</strong></div>
-                    <div class="metric-row"><span>SAV මුළු බිංදු:</span> <strong id="m-sav-total" class="val-cyan">0 / 337</strong></div>
-                </div>
-
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-gem"></i> ශක්ති නාලිකා & Pratikarma</h4>
-                    <div class="metric-row"><span>ලග්න ශක්ති කම්පනය:</span> <strong id="m-lucky-freq" class="val-cyan">-</strong></div>
-                    <div class="metric-row"><span>අද දින තාරා බලය:</span> <strong id="m-tara-bala">-</strong></div>
-                    <div class="metric-row"><span>වාසනාවන්ත මැණික:</span> <strong id="m-power-gem" class="val-locked">🔒 LOCKED</strong></div>
-                    <div class="metric-row"><span>අනුරූපී ව්‍යාපාර:</span> <strong class="val-locked">🔒 LOCKED (In Blueprint)</strong></div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- GOOGLE MAPS PLACES API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpm-5S3L49RYxiwkL9u8xq7hX_WgT8mSE&libraries=places&callback=initGooglePlaces" async defer></script>
+                window.selectedLat = place.geometry.location.lat();
+                window.selectedLon = place.geometry.location.lng();
+                console.log(`📍 Selected: ${place.name} | Lat: ${window.selectedLat}, Lon: ${window.selectedLon}`);
+            });
+        };
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpm-5S3L49RYxiwkL9u8xq7hX_WgT8mSE&libraries=places&callback=initGooglePlaces" defer></script>
 
     <script src="js/three-universe.js" defer></script>
     <script src="js/core-logic.js" defer></script>
