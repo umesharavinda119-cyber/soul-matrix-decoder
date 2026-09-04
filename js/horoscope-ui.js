@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('horoscope-form');
     const loadingDiv = document.getElementById('loading-matrix');
 
-    // 1. 4-DAY ROLLING COSMIC TIMER LOGIC
     function start4DayTimer() {
         let endTime = localStorage.getItem('matrix_timer_end');
         if (!endTime || new Date().getTime() > parseInt(endTime)) {
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     start4DayTimer();
 
-    // 2. UI PANEL TOGGLE (මේක මැකිලා තිබ්බේ)
     if (openBtn && panel) {
         openBtn.addEventListener('click', () => {
             panel.classList.add('active');
@@ -136,6 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 lon: window.selectedLon || 79.8612
             };
 
+            let isSuccess = false;
+            let errorMsg = "";
+
             try {
                 const res = await fetch('/api/index', {
                     method: 'POST',
@@ -143,49 +144,71 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(payload)
                 });
 
-                const result = await res.json();
-
-                if (res.ok && result.status === "success") {
-                    if (result.lagna) document.getElementById('lagna-name-display').innerHTML = result.lagna;
-                    if (result.navamsha) document.getElementById('navamsha-name-display').innerHTML = result.navamsha;
-                    if (result.lagna_planets) renderPlanetsToGrid('lagna-houses', result.lagna_planets);
-                    if (result.navamsha_planets) renderPlanetsToGrid('navamsha-houses', result.navamsha_planets);
-                    if (result.v12_report) renderV12ReportData(result.v12_report);
-
-                    setTimeout(() => {
-                        if (panel) panel.classList.remove('active');
-                        if (openBtn) {
-                            openBtn.style.opacity = '1';
-                            openBtn.style.pointerEvents = 'all';
-                        }
-                        form.style.display = 'block';
-                        if (loadingDiv) loadingDiv.style.display = 'none';
-                        form.reset();
-
-                        const horoscopeModal = document.getElementById('horoscope-modal');
-                        if (horoscopeModal) {
-                            horoscopeModal.style.display = 'flex';
-                            try {
-                                if (typeof initSingleRing === 'function') {
-                                    initSingleRing('lagna-3d-canvas');
-                                    initSingleRing('navamsha-3d-canvas');
-                                }
-                            } catch(e) {
-                                console.warn("3D Rings Initializing Error:", e);
-                            }
-                        }
-                    }, 500);
-
-                } else {
-                    alert("Python Error: " + (result.message || "Unknown Server Error"));
-                    form.style.display = 'block';
-                    if (loadingDiv) loadingDiv.style.display = 'none';
+                const text = await res.text(); 
+                try {
+                    const result = JSON.parse(text);
+                    if (res.ok && result.status === "success") {
+                        if (result.lagna) document.getElementById('lagna-name-display').innerHTML = result.lagna;
+                        if (result.navamsha) document.getElementById('navamsha-name-display').innerHTML = result.navamsha;
+                        if (result.lagna_planets) renderPlanetsToGrid('lagna-houses', result.lagna_planets);
+                        if (result.navamsha_planets) renderPlanetsToGrid('navamsha-houses', result.navamsha_planets);
+                        if (result.v12_report) renderV12ReportData(result.v12_report);
+                        isSuccess = true;
+                    } else {
+                        errorMsg = result.message || "Python Server Error";
+                    }
+                } catch (e) {
+                    errorMsg = "Server Returned HTML instead of JSON (Vercel Build Error)";
                 }
             } catch (err) {
-                alert("Network/Vercel Error: " + err.message);
+                errorMsg = "Network Fetch Error: " + err.message;
+            }
+
+            // PYTHON එකේ මොන අවුල ගියත් 100% කේන්දර සටහන Open කිරීම
+            if (!isSuccess) {
+                document.getElementById('lagna-name-display').innerHTML = "සිංහ<br>ලග්නය";
+                document.getElementById('navamsha-name-display').innerHTML = "ධනු<br>නවාංශකය";
+                renderPlanetsToGrid('lagna-houses', { 1: ['☉', '☿'], 4: ['☽'], 5: ['♃'], 7: ['♂'], 9: ['♄'], 11: ['♀'] });
+                renderPlanetsToGrid('navamsha-houses', { 2: ['☉'], 4: ['☽', '♂'], 10: ['♃', '♄'] });
+                renderV12ReportData({
+                    ayanamsha: "24.15° (Demo)", nakshatra: "මා / 2", nakshatra_lord: "කේතු",
+                    tithi: "ශුක්ල පක්ෂ අෂ්ටමි", yoni: "මූෂික", gana: "රාක්ෂ", nadi: "අන්ත්‍ය",
+                    current_dasha: { maha_dasha: "ගුරු", antar_dasha: "සෙනසුරු", pratyantar_dasha: "බුධ" },
+                    golden_window: "2027 - 2030", wealth_potential: "85%",
+                    special_lagnas: { indu_lagna: "මකර", arudha_lagna: "මේෂ" },
+                    yogas: ["ගජ කේශරී", "රුචක"], marriage_window: "2026 මැද", soulmate_match: "92%",
+                    spouse_info: { seventh_lord: "ශනි", direction: "බස්නාහිර", first_letter: "ක/ග" },
+                    karmic_level: "මධ්‍යම", doshas: { kuja_dosha: "නැත", sade_sati: "පවතිනවා", tara_bala: "සුබයි" },
+                    sav_total: "32", lucky_freq: "432Hz", power_gem: "Yellow Sapphire"
+                });
+                
+                alert("⚠️ Python Error: " + errorMsg + "\n\n(හැබැයි අපි UI එක වැඩද බලන්න Demo දත්ත දාලා කේන්දර සටහන පෙන්වනවා!)");
+            }
+
+            setTimeout(() => {
+                if (panel) panel.classList.remove('active');
+                if (openBtn) {
+                    openBtn.style.opacity = '1';
+                    openBtn.style.pointerEvents = 'all';
+                }
                 form.style.display = 'block';
                 if (loadingDiv) loadingDiv.style.display = 'none';
-            }
+                form.reset();
+
+                const horoscopeModal = document.getElementById('horoscope-modal');
+                if (horoscopeModal) {
+                    horoscopeModal.style.display = 'flex';
+                    try {
+                        if (typeof window.initSingleRing === 'function') {
+                            window.initSingleRing('lagna-3d-canvas');
+                            window.initSingleRing('navamsha-3d-canvas');
+                        } else if (typeof initSingleRing === 'function') {
+                            initSingleRing('lagna-3d-canvas');
+                            initSingleRing('navamsha-3d-canvas');
+                        }
+                    } catch(e) { console.warn("Rings Init Error:", e); }
+                }
+            }, 800);
         });
     }
 });
