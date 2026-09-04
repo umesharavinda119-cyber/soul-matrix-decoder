@@ -86,9 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     renderTeaserResult(dateVal);
 
+                    // DISPLAY FLEX BUG FIX
                     const horoscopeAppWrapper = document.getElementById('horoscope-app-wrapper');
                     if (horoscopeAppWrapper) {
-                        horoscopeAppWrapper.style.display = 'block';
+                        horoscopeAppWrapper.style.display = 'flex'; 
                     }
                 }
             }, 50);
