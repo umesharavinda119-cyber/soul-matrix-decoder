@@ -35,18 +35,21 @@ class handler(BaseHTTPRequestHandler):
             jd = swe.julday(year, month, day, utc_hour)
             ayanamsha = swe.get_ayanamsa_ut(jd)
 
-            cusps, ascmc = swe.houses_ex(jd, lat, lon, b"P", swe.FLG_SIDEREAL)
+            # FIX: Force built-in Moshier Ephemeris (No external files needed)
+            flags = swe.FLG_SIDEREAL | swe.FLG_SPEED | swe.FLG_MOSEPH
+
+            cusps, ascmc = swe.houses_ex(jd, lat, lon, b"P", flags)
             asc_deg = ascmc[0]
 
             swe_p = {1: swe.SUN, 2: swe.MOON, 3: swe.MARS, 4: swe.MERCURY, 5: swe.JUPITER, 6: swe.VENUS, 7: swe.SATURN}
             planets, speeds = {0: asc_deg}, {0: 0.0}
-            flags = swe.FLG_SIDEREAL | swe.FLG_SPEED
 
             for p_id, s_id in swe_p.items():
                 pos, _ = swe.calc_ut(jd, s_id, flags)
                 planets[p_id], speeds[p_id] = pos[0], pos[3]
 
-            rahu_pos, _ = swe.calc_ut(jd, swe.TRUE_NODE, flags)
+            # FIX: Use MEAN_NODE to avoid Ephemeris File crash
+            rahu_pos, _ = swe.calc_ut(jd, swe.MEAN_NODE, flags)
             planets[8], planets[9] = rahu_pos[0], (rahu_pos[0] + 180) % 360
             speeds[8] = speeds[9] = 0.0
 
@@ -90,7 +93,7 @@ class handler(BaseHTTPRequestHandler):
             nakshatra_table = [("Ashwini", "Horse", "Deva", "Adhi"), ("Bharani", "Elephant", "Manushya", "Madhya"), ("Krittika", "Goat", "Rakshasa", "Antya"), ("Rohini", "Serpent", "Manushya", "Antya"), ("Mrigashira", "Serpent", "Deva", "Madhya"), ("Ardra", "Dog", "Manushya", "Adhi"), ("Punarvasu", "Cat", "Deva", "Adhi"), ("Pushya", "Goat", "Deva", "Madhya"), ("Ashlesha", "Cat", "Rakshasa", "Antya"), ("Magha", "Rat", "Rakshasa", "Antya"), ("Purva Phalguni", "Rat", "Manushya", "Madhya"), ("Uttara Phalguni", "Cow", "Manushya", "Adhi"), ("Hasta", "Buffalo", "Deva", "Adhi"), ("Chitra", "Tiger", "Rakshasa", "Madhya"), ("Swati", "Buffalo", "Deva", "Antya"), ("Vishakha", "Tiger", "Rakshasa", "Antya"), ("Anuradha", "Deer", "Deva", "Madhya"), ("Jyeshta", "Deer", "Rakshasa", "Adhi"), ("Mula", "Dog", "Rakshasa", "Adhi"), ("Purva Ashadha", "Monkey", "Manushya", "Madhya"), ("Uttara Ashadha", "Mongoose", "Manushya", "Antya"), ("Shravana", "Monkey", "Deva", "Antya"), ("Dhanishta", "Lion", "Rakshasa", "Madhya"), ("Shatabhisha", "Horse", "Rakshasa", "Adhi"), ("Purva Bhadrapada", "Lion", "Manushya", "Adhi"), ("Uttara Bhadrapada", "Cow", "Manushya", "Madhya"), ("Revati", "Elephant", "Deva", "Antya")]
             nak_name, yoni, gana, nadi = nakshatra_table[moon_nak_idx]
 
-            # Yogas & Special Lagnas
+            # Yogas
             exalted = {1: 1, 2: 2, 3: 10, 4: 6, 5: 4, 6: 12, 7: 7}
             own_house = {1: [5], 2: [4], 3: [1, 8], 4: [3, 6], 5: [9, 12], 6: [2, 7], 7: [10, 11]}
             yogas_detected = []
@@ -115,7 +118,7 @@ class handler(BaseHTTPRequestHandler):
             ul_sign = (get_d1(planets[lord_map[h12_s]]) + (get_d1(planets[lord_map[h12_s]]) - h12_s)%12) % 12 or 12
             if ul_sign == h12_s: ul_sign = (ul_sign + 9) % 12 or 12
 
-            # SAV Bindus & Wealth Potential
+            # SAV Bindus
             sav = [0] * 12
             bav_rules = {
                 1: {1: [1,2,4,7,8,9,10,11], 2: [3,6,10,11], 3: [1,2,4,7,8,9,10,11], 4: [3,5,6,9,10,11,12], 5: [5,6,9,11], 6: [6,7,12], 7: [1,2,4,7,8,9,10,11], 0: [3,4,6,10,11,12]},
@@ -146,11 +149,11 @@ class handler(BaseHTTPRequestHandler):
             nama_akshara = [["Chu","Che","Cho","La"], ["Li","Lu","Le","Lo"], ["A","I","U","E"], ["O","Va","Vi","Vu"], ["Ve","Vo","Ka","Ki"], ["Ku","Gha","Ng","Chha"], ["Ke","Ko","Ha","Hi"], ["Hu","He","Ho","Da"], ["Di","Du","De","Do"], ["Ma","Mi","Mu","Me"], ["Mo","Ta","Ti","Tu"], ["Te","To","Pa","Pi"], ["Pu","Sha","Na","Tha"], ["Pe","Po","Ra","Ri"], ["Ru","Re","Ro","Ta"], ["Ti","Tu","Te","To"], ["Na","Ni","Nu","Ne"], ["No","Ya","Yi","Yu"], ["Ye","Yo","Bha","Bhi"], ["Bhu","Dha","Bha","Dha"], ["Bhe","Bho","Ja","Ji"], ["Ju","Je","Jo","Gha"], ["Ga","Gi","Gu","Ge"], ["Go","Sa","Si","Su"], ["Se","So","Da","Di"], ["Du","Tha","Jha","Na"], ["De","Do","Cha","Chi"]]
             spouse_letter = nama_akshara[sl_nak_idx][sl_pada - 1]
 
-            # Doshas & Transits
+            # Doshas
             now = datetime.now(timezone.utc)
             t_jd = swe.julday(now.year, now.month, now.day, now.hour + now.minute/60.0)
-            t_moon = swe.calc_ut(t_jd, swe.MOON, swe.FLG_SIDEREAL)[0][0]
-            t_sat = get_d1(swe.calc_ut(t_jd, swe.SATURN, swe.FLG_SIDEREAL)[0][0])
+            t_moon = swe.calc_ut(t_jd, swe.MOON, flags)[0][0]
+            t_sat = get_d1(swe.calc_ut(t_jd, swe.SATURN, flags)[0][0])
             s_from_m = (t_sat - get_d1(planets[2])) % 12 + 1
             mars_h = (get_d1(planets[3]) - asc_s) % 12 + 1
 
@@ -160,7 +163,7 @@ class handler(BaseHTTPRequestHandler):
             tara_idx = (int(t_moon / nak_span) - moon_nak_idx) % 9
             tara_names = ["Janma", "Sampat", "Vipat", "Kshema", "Pratyak", "Sadhaka", "Naidhana", "Mitra", "Parama Mitra"]
 
-            # Dashas & Golden Windows
+            # Dashas
             bal_y = (1 - ((planets[2] % nak_span) / nak_span)) * dasha_years[moon_nak_idx % 9]
             c_date, d_end = now.date(), date(year, month, day) + timedelta(days=bal_y*365.25)
             c_idx = moon_nak_idx % 9
@@ -181,7 +184,6 @@ class handler(BaseHTTPRequestHandler):
                 if pd_strt <= c_date <= pd_end: break
                 pd_strt, pd_idx = pd_end, (pd_idx + 1) % 9
 
-            # Conversion Teasers Calculation
             current_age = (now.date() - date(year, month, day)).days // 365
             m_age_start = max(current_age + 1, 27)
             marriage_window = f"Age {m_age_start} - {m_age_start + 3}"
@@ -244,5 +246,6 @@ class handler(BaseHTTPRequestHandler):
         except Exception as e:
             self.send_response(500)
             self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode('utf-8'))
