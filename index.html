@@ -171,7 +171,7 @@
         </div>
     </section>
 
-    <!-- RIGHT SIDE PANEL (Initially Hidden - Unhides after Decode) -->
+    <!-- RIGHT SIDE PANEL -->
     <div id="horoscope-app-wrapper" style="display: none;">
         <canvas id="zodiac-3d-canvas"></canvas>
         <button id="open-horoscope-btn" class="glow-btn" tabindex="0" data-si='<i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම' data-en='<i class="fa-solid fa-compass"></i> GENERATE HOROSCOPE'>
@@ -265,7 +265,7 @@
         </div>
     </div>
 
-    <!-- DUAL 3D HOROSCOPE MODAL WITH TECHNICAL METRICS DASHBOARD (FULL CODE RESTORED) -->
+    <!-- DUAL 3D HOROSCOPE MODAL WITH TECHNICAL METRICS DASHBOARD -->
     <div id="horoscope-modal" class="horoscope-modal-overlay">
         <canvas id="modal-bg-canvas"></canvas>
         <div class="horoscope-modal-card" id="horoscope-3d-card">
@@ -273,7 +273,6 @@
             <h2 class="modal-title">ජන්ම පත්‍ර ගණිතමය විශ්ලේෂණය (TECHNICAL METRICS)</h2>
             
             <div class="dual-wheels-wrapper">
-                <!-- 1. ලග්න චක්‍රය -->
                 <div class="wheel-box">
                     <h3>ලග්න චක්‍රය (D1)</h3>
                     <div class="ring-container">
@@ -290,7 +289,6 @@
                     </div>
                 </div>
 
-                <!-- 2. නවාංශක චක්‍රය -->
                 <div class="wheel-box">
                     <h3>නවාංශක චක්‍රය (D9)</h3>
                     <div class="ring-container">
@@ -361,7 +359,7 @@
         </div>
     </div>
 
-    <!-- GOOGLE MAPS API & AUTOCOMPLETE LOGIC (SRI LANKA RESTRICTED) -->
+    <!-- GOOGLE MAPS API & AUTOCOMPLETE LOGIC (ALL PLACES ENABLED FOR SRI LANKA) -->
     <script>
         window.selectedLat = 6.9271;
         window.selectedLon = 79.8612;
@@ -370,9 +368,7 @@
             const placeInput = document.getElementById('h-place');
             if (!placeInput || !window.google) return;
 
-            // Restrict Search strictly to Sri Lanka (lk)
             const autocomplete = new google.maps.places.Autocomplete(placeInput, {
-                types: ['(cities)'],
                 componentRestrictions: { country: "lk" }, 
                 fields: ['geometry', 'name'] 
             });
