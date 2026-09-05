@@ -314,8 +314,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     text-align: center !important;
     color: #f59e0b !important;
     font-family: 'Orbitron', sans-serif !important;
-    margin-bottom: 20px !important;
-    font-size: 1.4rem !important;
+    margin-bottom: 25px !important;
+    font-size: 1.5rem !important;
     letter-spacing: 2px !important;
     text-shadow: 0 0 10px rgba(245, 158, 11, 0.5) !important;
 }
@@ -324,8 +324,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     display: flex !important;
     justify-content: space-around !important;
     flex-wrap: wrap !important;
-    gap: 15px !important;
-    margin-bottom: 25px !important;
+    gap: 20px !important;
+    margin-bottom: 30px !important;
 }
 
 #horoscope-modal .wheel-box {
@@ -335,7 +335,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     text-align: center !important;
     border: none !important;
     position: relative !important;
-    width: 320px !important; 
+    width: 370px !important; 
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -344,52 +344,51 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
 
 #horoscope-modal .wheel-box h3 {
     color: #06b6d4 !important;
-    font-size: 1.15rem !important;
+    font-size: 1.25rem !important;
     margin-top: 0 !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 12px !important;
     font-family: 'Orbitron', sans-serif !important;
     position: relative !important;
     z-index: 25 !important;
     text-shadow: 0 0 10px rgba(6, 182, 212, 0.6) !important;
 }
 
-/* Scaled Ring Container to 290px x 290px */
+/* 350px x 350px Large Canvas Box */
 #horoscope-modal .ring-container {
     position: relative !important;
-    width: 290px !important;
-    height: 290px !important;
+    width: 350px !important;
+    height: 350px !important;
     margin: 0 auto !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
 }
 
-/* Three.js Canvas matching 290px */
 #horoscope-modal .ring-container canvas {
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 290px !important;
-    height: 290px !important;
+    width: 350px !important;
+    height: 350px !important;
     pointer-events: none !important;
     z-index: 10 !important;
 }
 
-/* Sized to 232px to fit cleanly inside the 290px 3D Ring */
+/* Perfect 318px scaling: Restores original bold chart size while tucking under 3D Gold Ring */
 #horoscope-modal .zodiac-center-grid {
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 232px !important;
-    height: 232px !important;
+    width: 318px !important;
+    height: 318px !important;
     border-radius: 50% !important;
     z-index: 5 !important;
     background-color: transparent !important;
     border: none !important;
     overflow: hidden !important;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8) !important;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8) !important;
 }
 
 #horoscope-modal .lagna-bg {
@@ -417,8 +416,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     align-items: center !important;
     justify-content: center !important;
     font-weight: 800 !important;
-    font-size: 0.82rem !important;
-    line-height: 1.2 !important;
+    font-size: 0.95rem !important;
+    line-height: 1.3 !important;
     color: #8b0000 !important;
     text-align: center !important;
     z-index: 10 !important;
@@ -432,8 +431,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 68% !important;
-    height: 68% !important;
+    width: 70% !important;
+    height: 70% !important;
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
     grid-template-rows: repeat(4, 1fr) !important;
@@ -448,14 +447,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     flex-wrap: wrap !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 0.82rem !important;
+    font-size: 0.95rem !important;
     line-height: 1.1 !important;
     color: #000000 !important;
     font-weight: 900 !important;
     text-shadow: none !important;
     word-break: break-all !important;
     text-align: center !important;
-    padding: 1px !important;
+    padding: 2px !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
 }
@@ -464,7 +463,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
 #horoscope-modal .h-box .p-symbol {
     color: #000000 !important;
     font-weight: 900 !important;
-    font-size: 0.82rem !important;
+    font-size: 0.95rem !important;
     text-shadow: none !important;
     display: inline-block !important;
     margin: 0 1px !important;
