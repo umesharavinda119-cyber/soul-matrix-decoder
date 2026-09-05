@@ -271,7 +271,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
 }
 
 .h-box {
-    border: 1px solid rgba(245, 158, 11, 0.25);
+    border: none !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -317,3 +317,24 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
 .val-green { color: #4ade80; font-weight: bold; }
 .val-red { color: #f43f5e; font-weight: bold; }
 .val-locked { color: #9ca3af; font-style: italic; }
+
+/* =================================================================
+   4. CHART BACKGROUND IMAGES (LAGNA & NAVAMSHA)
+   ================================================================= */
+.lagna-bg {
+    background-image: url('../assets/lagna-chart.jpg');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.navamsha-bg {
+    background-image: url('../assets/navamsha-chart.jpg');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: none !important;
+    background-color: transparent !important;
+}
