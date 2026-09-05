@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/horoscope.css?v=2.0">
+    <link rel="stylesheet" href="css/horoscope.css?v=2.1">
     
     <!-- THREE.JS, GLTFLOADER & DRACO DECODER -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -191,6 +191,13 @@
                         <input type="text" id="h-name" placeholder="Ex: Umesh (Mars/No.9)" required>
                     </div>
                     <div class="input-grp">
+                        <label><i class="fa-solid fa-heart"></i> විවාහක / අවිවාහක බව</label>
+                        <select id="h-status" required style="width: 100%; padding: 0.8rem 1rem; background: rgba(2, 2, 10, 0.85); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.9rem;">
+                            <option value="single">අවිවාහක (Single)</option>
+                            <option value="married">විවාහක (Married)</option>
+                        </select>
+                    </div>
+                    <div class="input-grp">
                         <label><i class="fa-solid fa-calendar-days"></i> උපන් දිනය</label>
                         <input type="date" id="h-date" required>
                     </div>
@@ -334,7 +341,7 @@
 
                 <div class="report-card">
                     <h4><i class="fa-solid fa-ring"></i> විවාහ & Soulmate Vector</h4>
-                    <div class="metric-row"><span>විවාහ වීමේ කාලසීමාව:</span> <strong id="m-marriage-window" class="val-cyan">-</strong></div>
+                    <div class="metric-row"><span id="lbl-marriage-window">විවාහ වීමේ කාලසීමාව:</span> <strong id="m-marriage-window" class="val-cyan">-</strong></div>
                     <div class="metric-row"><span>Soulmate Match %:</span> <strong id="m-soulmate-match" class="val-gold">-</strong></div>
                     <div class="metric-row"><span>7 අධිපති / දිශාව:</span> <strong id="m-spouse-dir">-</strong></div>
                     <div class="metric-row"><span>නමේ මූලික ශබ්දය:</span> <strong id="m-spouse-letter" class="val-gold">-</strong></div>
@@ -359,7 +366,7 @@
         </div>
     </div>
 
-    <!-- GOOGLE MAPS API & AUTOCOMPLETE LOGIC (ALL PLACES ENABLED FOR SRI LANKA) -->
+    <!-- GOOGLE MAPS API & AUTOCOMPLETE LOGIC -->
     <script>
         window.selectedLat = 6.9271;
         window.selectedLon = 79.8612;
