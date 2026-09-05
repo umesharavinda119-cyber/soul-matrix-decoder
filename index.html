@@ -5,29 +5,225 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RADIANCE OF NUMBERS | Ultimate Real Universe</title>
     
+    <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;800&family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;600;700&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Orbitron:wght@400;600;800;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/horoscope.css?v=2.1">
-    
-    <!-- THREE.JS, GLTFLOADER & DRACO DECODER -->
+    <!-- Three.js (For Floating Numbers & Dust) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --card-bg: rgba(6, 6, 18, 0.65);
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+            --accent-gold: #f59e0b;
+            --text-main: #f3f4f6;
+            --text-sub: #9ca3af;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 1. CINEMATIC BACKGROUND */
+        .real-bg {
+            position: fixed;
+            top: -5%; left: -5%; 
+            width: 110vw; height: 110vh;
+            background: url('bg.jpg') no-repeat center center;
+            background-size: cover;
+            z-index: 0;
+            animation: cinematicPan 40s linear infinite alternate;
+        }
+        @keyframes cinematicPan {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.08) translate(-15px, -15px); }
+        }
+
+        .ambient-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.2) 20%, rgba(0,0,0,0.9) 100%);
+            z-index: 1; pointer-events: none;
+        }
+
+        #webgl-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 2; pointer-events: none;
+        }
+
+        /* Header Navigation */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.2rem 5%;
+            background: rgba(2, 2, 8, 0.5); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.25);
+            position: fixed; width: 100%; top: 0; z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 900; letter-spacing: 2px;
+            background: linear-gradient(135deg, #fff, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .header-controls { display: flex; align-items: center; gap: 18px; }
+
+        .live-clock {
+            font-family: 'Orbitron', sans-serif; font-size: 0.85rem; color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.08); padding: 0.4rem 0.9rem; border-radius: 4px;
+            border: 1px solid rgba(6, 182, 212, 0.3); letter-spacing: 1px;
+        }
+
+        .audio-toggle {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; justify-content: center; align-items: center;
+            color: #fff; cursor: pointer; transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding-top: 140px; padding-bottom: 60px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            max-width: 1100px; margin: 0 auto; position: relative; z-index: 20;
+        }
+
+        .badge {
+            font-family: 'Orbitron', sans-serif;
+            background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent-gold);
+            color: var(--accent-gold); padding: 0.4rem 1.2rem; border-radius: 4px;
+            font-size: 0.75rem; letter-spacing: 2px; margin-bottom: 1.2rem;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+        }
+
+        .hero h1 {
+            font-family: 'Cinzel', serif; font-size: 3.5rem; font-weight: 900; line-height: 1.2; margin-bottom: 0.8rem;
+            background: linear-gradient(180deg, #ffffff 40%, var(--accent-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .hero p { color: var(--text-main); font-size: 1.05rem; max-width: 650px; line-height: 1.6; margin-bottom: 2rem; }
+
+        /* Trigger Button for Form Modal */
+        .open-modal-btn {
+            position: relative;
+            z-index: 10;
+            padding: 1.1rem 2.5rem;
+            background: linear-gradient(135deg, var(--accent-gold), #d97706);
+            border: 1px solid #fef08a; border-radius: 50px;
+            color: #000; font-family: 'Orbitron', sans-serif; font-size: 0.95rem; font-weight: 800;
+            cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
+            display: inline-flex; align-items: center; gap: 12px;
+        }
+        .open-modal-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(245, 158, 11, 0.8); }
+
+        /* ================================================================= */
+        /* MODAL POPUP & OVERLAY LAYER FIX (100% OVERLAY PROOF) */
+        /* ================================================================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(2, 2, 10, 0.88);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            z-index: 99999; /* HIGHEST LAYER TO COVER EVERYTHING */
+            display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-card {
+            background: rgba(8, 8, 22, 0.95);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            border-radius: 18px; padding: 2.2rem; width: 100%; max-width: 500px;
+            position: relative; z-index: 100000;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), inset 0 0 30px rgba(245, 158, 11, 0.1);
+            max-height: 90vh; overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', sans-serif; font-size: 1.25rem; font-weight: 800;
+            color: var(--accent-gold); letter-spacing: 1.5px;
+        }
+
+        .close-btn {
+            background: none; border: none; color: #fff; font-size: 1.5rem;
+            cursor: pointer; transition: color 0.2s;
+        }
+        .close-btn:hover { color: var(--accent-purple); }
+
+        .form-subtext { font-size: 0.85rem; color: var(--text-sub); margin-bottom: 1.5rem; line-height: 1.5; }
+
+        .form-group { margin-bottom: 1.2rem; text-align: left; }
+        .form-group label {
+            display: block; font-size: 0.82rem; font-family: 'Inter', sans-serif;
+            color: var(--accent-cyan); margin-bottom: 0.4rem; font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%; padding: 0.85rem 1rem;
+            background: rgba(2, 2, 10, 0.9); border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus { border-color: var(--accent-purple); box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+
+        select.form-control option { background: #060612; color: #fff; }
+
+        .submit-btn {
+            width: 100%; padding: 1rem; margin-top: 1rem;
+            background: linear-gradient(135deg, var(--accent-gold), #d97706);
+            border: none; border-radius: 8px; color: #000; font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        .submit-btn:hover { box-shadow: 0 0 25px rgba(245, 158, 11, 0.6); transform: translateY(-2px); }
+
+        /* HUD Corners */
+        .hud-corner { position: absolute; width: 10px; height: 10px; border: 2px solid var(--accent-gold); pointer-events: none; }
+        .hud-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .hud-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+        .hud-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+        .hud-br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .modal-card { padding: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
 
     <audio id="bg-audio" loop preload="auto">
-        <source src="assets/Tone.mp3" type="audio/mpeg">
+        <source src="Tone.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="real-bg" id="universe-bg"></div>
+    <div class="real-bg"></div>
     <div class="ambient-overlay"></div>
     <canvas id="webgl-canvas"></canvas>
-    <canvas id="meteor-canvas"></canvas>
 
     <header>
         <div class="logo">
@@ -35,370 +231,156 @@
             RADIANCE OF NUMBERS
         </div>
         <div class="header-controls">
-            <button id="lang-toggle-btn" class="lang-btn">SI | EN</button>
-
-            <!-- 4-DAY COSMIC TIMER -->
-            <div class="celestial-badge">
-                <i class="fa-solid fa-hourglass-half"></i> CYCLE ENDS: <span id="celestial-timer">04d 00h 00m 00s</span>
-            </div>
-
-            <div class="daily-badge" id="daily-cosmic-badge">
-                <i class="fa-solid fa-atom"></i> TODAY MATRIX: <strong>CALCULATING...</strong>
-            </div>
-
-            <div class="theme-picker">
-                <span class="theme-dot gold" data-theme="gold" title="Solar Gold"></span>
-                <span class="theme-dot cyan" data-theme="cyan" title="Quantum Cyan"></span>
-                <span class="theme-dot violet" data-theme="violet" title="Mystic Violet"></span>
-            </div>
-
-            <div class="audio-vis-container">
-                <span class="audio-vis-bar"></span>
-                <span class="audio-vis-bar"></span>
-                <span class="audio-vis-bar"></span>
-                <span class="audio-vis-bar"></span>
-                <span class="audio-vis-bar"></span>
-            </div>
-
-            <select id="audio-freq-select" class="freq-select">
-                <option value="default">Original Track</option>
-                <option value="432">432Hz Cosmic</option>
-                <option value="528">528Hz Healing</option>
-            </select>
-
             <div class="live-clock" id="clock-display">00:00:00 AM</div>
-            <div class="audio-toggle" id="audio-toggle-btn" title="Toggle Cosmic Track" tabindex="0">
-                <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
-            </div>
-            <div class="social-links">
-                <a href="https://wa.me/94700000000" target="_blank" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
-            </div>
+            <div class="audio-toggle" id="audio-toggle-btn"><i class="fa-solid fa-volume-xmark" id="audio-icon"></i></div>
         </div>
     </header>
 
     <section class="hero">
         <div class="badge">ULTIMATE REALITY MATRIX</div>
         <h1>DECODE YOUR SOUL MATRIX</h1>
-        <p data-si="ආත්මයේ සංඛ්‍යා න්‍යාසය සහ ජ්‍යොතිෂමය කර්මජ දත්ත එකම තාක්ෂණික පද්ධතියකින් නිවැරදිවම විශ්ලේෂණය කරගන්න." data-en="Precisely analyze your soul's numerical matrix and karmic data through a unified cosmic engine.">ආත්මයේ සංඛ්‍යා න්‍යාසය සහ ජ්‍යොතිෂමය කර්මජ දත්ත එකම තාක්ෂණික පද්ධතියකින් නිවැරදිවම විශ්ලේෂණය කරගන්න.</p>
+        <p>ආත්මයේ සංඛ්‍යා න්‍යාසය සහ ජ්‍යොතිෂමය කර්මජ දත්ත එකම තාක්ෂණික පද්ධතියකින් නිවැරදිවම විශ්ලේෂණය කරගන්න.</p>
 
-        <div class="wheel-wrapper" id="wheel-card">
-            
-            <div class="scroll-wrapper" id="master-scroll" style="display: none;">
-                <div class="scroll-clipper">
-                    <div class="scroll-bg">
-                        <ul class="pkg-features scroll-content-list" id="scroll-content-list"></ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ANIMATED BORDER WRAPPER -->
-            <div class="calc-card-border-wrapper">
-                <div class="calc-card">
-                    <div class="hud-corner hud-tl"></div>
-                    <div class="hud-corner hud-tr"></div>
-                    <div class="hud-corner hud-bl"></div>
-                    <div class="hud-corner hud-br"></div>
-
-                    <div class="tab-menu" id="main-tabs" style="display: none;">
-                        <button class="tab-btn" onclick="goHome()" tabindex="0" title="Back to Home"><i class="fa-solid fa-house"></i></button>
-                        <button class="tab-btn active" onclick="openTab('pkg-1', this)" tabindex="0">MINI</button>
-                        <button class="tab-btn" onclick="openTab('pkg-2', this)" tabindex="0">MICRO</button>
-                        <button class="tab-btn blueprint-btn" onclick="openTab('pkg-3', this)" tabindex="0">BLUEPRINT</button>
-                        <button class="tab-btn vvip-btn" onclick="openTab('pkg-4', this)" tabindex="0">VVIP</button>
-                        <button class="tab-btn portal-btn" onclick="openTab('portal', this)" tabindex="0"><i class="fa-solid fa-lock"></i></button>
-                    </div>
-
-                    <div id="initial-decoder" class="tab-content active">
-                        <h3>FREE SOUL MATRIX DECODER</h3>
-                        <p style="font-size: 0.88rem; color: var(--text-sub);" data-si="ඔබගේ උපන් දිනය ලබා දී නොමිලේ මූලික ආත්මීය කම්පනය පරීක්ෂා කරන්න." data-en="Enter your birthdate to decode your primary soul vibration for free.">ඔබගේ උපන් දිනය ලබා දී නොමිලේ මූලික ආත්මීය කම්පනය පරීක්ෂා කරන්න.</p>
-                        
-                        <div class="input-group" id="input-group">
-                            <input type="date" id="birthdate" class="date-input" required tabindex="0">
-                            <button class="decode-btn" id="decode-btn" tabindex="0">DECODE MATRIX</button>
-                        </div>
-
-                        <!-- RESULT BOX -->
-                        <div class="result-box" id="result-box">
-                            <div class="number-circle" id="res-number">0</div>
-                            <div id="res-hook" style="color: #e5e7eb; font-size: 0.95rem; line-height: 1.5; text-align: center; margin-bottom: 15px;"></div>
-                            <button class="upgrade-btn-3d" id="view-packages-btn" tabindex="0">
-                                <i class="fa-solid fa-gem"></i> VIEW UPGRADE PACKAGES
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="pkg-1" class="tab-content" style="display: none;">
-                        <h3>MINI CHECK <span>(කෙටි පරීක්ෂාව)</span></h3>
-                        <div class="price-tag">රු. 1260/-</div>
-                        <a href="https://wa.me/94700000000" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
-                    </div>
-
-                    <div id="pkg-2" class="tab-content" style="display: none;">
-                        <h3>MICRO PACKAGE <span>(මූලික පලාපල)</span></h3>
-                        <div class="price-tag">රු. 2,700/-</div>
-                        <a href="https://wa.me/94700000000" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
-                    </div>
-
-                    <div id="pkg-3" class="tab-content" style="display: none;">
-                        <h3 class="highlight-title">THE SOUL BLUEPRINT 🚀 <span>[Best Seller]</span></h3>
-                        <div class="price-tag highlight">රු. 7,200/-</div>
-                        <a href="https://wa.me/94700000000" target="_blank" class="order-btn blueprint" tabindex="0">ORDER VIA WHATSAPP</a>
-                    </div>
-
-                    <div id="pkg-4" class="tab-content" style="display: none;">
-                        <h3 class="vip-title">VVIP PACKAGE 👑 <span>(Royal Family Service)</span></h3>
-                        <div class="price-tag vip">රු. 9,900/-</div>
-                        <a href="https://wa.me/94700000000" target="_blank" class="order-btn vvip" tabindex="0">ORDER VIA WHATSAPP</a>
-                    </div>
-
-                    <div id="portal" class="tab-content" style="display: none; text-align: center;">
-                        <i class="fa-solid fa-book-journal-whills portal-icon"></i>
-                        <h3 style="color: var(--accent-gold); margin-top: 15px;">ACCESS YOUR GRIMOIRE</h3>
-                        <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 20px;">ඔබට ලැබුණු රහස්‍ය කේතය (Security Code) මෙහි ඇතුළත් කරන්න.</p>
-                        <div class="input-group" style="justify-content: center;">
-                            <input type="text" id="security-code" class="date-input" placeholder="e.g. URM-2026-A8B" style="text-align: center; letter-spacing: 2px; text-transform: uppercase;" tabindex="0">
-                            <button class="decode-btn full-width" id="unlock-book-btn" tabindex="0" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; margin-top: 10px; width: 100%;">UNLOCK BLUEPRINT</button>
-                        </div>
-                    </div>
-
-                    <div class="scanner-overlay" id="scanner">
-                        <div class="laser-line"></div>
-                        <div class="scan-status">SCANNING SOUL MATRIX...</div>
-                        <div class="scan-progress" id="scan-prog">0%</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Main Button to Open Modal -->
+        <button class="open-modal-btn" id="trigger-btn" onclick="openModal()">
+            <i class="fa-solid fa-compass"></i> ජන්ම පත්‍රය සැකසීම
+        </button>
     </section>
 
-    <!-- RIGHT SIDE PANEL -->
-    <div id="horoscope-app-wrapper" style="display: none;">
-        <canvas id="zodiac-3d-canvas"></canvas>
-        <button id="open-horoscope-btn" class="glow-btn" tabindex="0" data-si='<i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම' data-en='<i class="fa-solid fa-compass"></i> GENERATE HOROSCOPE'>
-            <i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම
-        </button>
+    <!-- ================================================================= -->
+    <!-- FIXED FORM MODAL (OVERLAY-PROOF WITH MARITAL STATUS FIXED) -->
+    <!-- ================================================================= -->
+    <div class="modal-overlay" id="decoder-modal">
+        <div class="modal-card">
+            <div class="hud-corner hud-tl"></div>
+            <div class="hud-corner hud-tr"></div>
+            <div class="hud-corner hud-bl"></div>
+            <div class="hud-corner hud-br"></div>
 
-        <div id="horoscope-panel" class="glass-panel">
-            <div class="panel-header">
-                <h3>SOUL MATRIX DECODER</h3>
-                <button id="close-panel-btn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header">
+                <div class="modal-title">SOUL MATRIX DECODER</div>
+                <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="panel-body">
-                <p class="panel-desc">නිවැරදි ජ්‍යොතිෂමය දත්ත සඳහා ඔබගේ උපන් තොරතුරු ලබා දෙන්න.</p>
-                <form id="horoscope-form">
-                    <div class="input-grp">
-                        <label><i class="fa-solid fa-user"></i> සම්පූර්ණ නම</label>
-                        <input type="text" id="h-name" placeholder="Ex: Umesh (Mars/No.9)" required>
-                    </div>
-                    <div class="input-grp">
-                        <label><i class="fa-solid fa-heart"></i> විවාහක / අවිවාහක බව</label>
-                        <select id="h-status" required style="width: 100%; padding: 0.8rem 1rem; background: rgba(2, 2, 10, 0.85); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.9rem;">
-                            <option value="single">අවිවාහක (Single)</option>
-                            <option value="married">විවාහක (Married)</option>
-                        </select>
-                    </div>
-                    <div class="input-grp">
-                        <label><i class="fa-solid fa-calendar-days"></i> උපන් දිනය</label>
-                        <input type="date" id="h-date" required>
-                    </div>
-                    <div class="input-grp">
-                        <label><i class="fa-solid fa-clock"></i> උපන් වෙලාව (පැය 24)</label>
-                        <input type="time" id="h-time" step="60" required>
-                    </div>
-                    <div class="input-grp">
-                        <label><i class="fa-solid fa-hospital"></i> උපන් ස්ථානය / නගරය</label>
-                        <input type="text" id="h-place" placeholder="Ex: Castle Hospital, Colombo" required>
-                    </div>
-                    <button type="submit" class="submit-btn-3d" id="generate-matrix-btn">
-                        <i class="fa-solid fa-atom"></i> GENERATE MATRIX
-                    </button>
-                </form>
-                <div id="loading-matrix" style="display: none;">
-                    <div class="spinner"></div>
-                    <p>කේන්දර සටහන ගණනය කරමින් පවතී...</p>
+
+            <p class="form-subtext">නිවැරදි ජ්‍යොතිෂමය දත්ත සඳහා ඔබගේ උපන් තොරතුරු ලබා දෙන්න.</p>
+
+            <form id="matrix-form" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user"></i> සම්පූර්ණ නම</label>
+                    <input type="text" class="form-control" placeholder="Ex: Umesh (Mars/No.9)" required>
                 </div>
-            </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-heart"></i> විවාහක / අවිවාහක බව</label>
+                    <select class="form-control" id="marital-status" required>
+                        <option value="single">අවිවාහක (Single)</option>
+                        <option value="married">විවාහක (Married)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-calendar-days"></i> උපන් දිනය</label>
+                    <input type="date" class="form-control" id="dob" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-clock"></i> උපන් වේලාව (පැය 24)</label>
+                    <input type="time" class="form-control" id="birthtime" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-location-dot"></i> උපන් ස්ථානය</label>
+                    <input type="text" class="form-control" placeholder="Ex: Castle Hospital, Colombo" required>
+                </div>
+
+                <button type="submit" class="submit-btn">GENERATE MATRIX</button>
+            </form>
         </div>
     </div>
 
-    <!-- RIGHT SIDE 3D PLANETARY POSITIONS WIDGET -->
-    <div class="planetary-widget-right">
-        <div class="planet-row">
-            <div class="planet-sphere sun">☉</div>
-            <div class="planet-info">
-                <span class="planet-title">රවි (SUN)</span>
-                <strong id="pos-sun">ගණනය වෙමින්...</strong>
-            </div>
-        </div>
-        <div class="planet-row">
-            <div class="planet-sphere moon">☽</div>
-            <div class="planet-info">
-                <span class="planet-title">සඳු (MOON)</span>
-                <strong id="pos-moon">ගණනය වෙමින්...</strong>
-            </div>
-        </div>
-        <div class="planet-row">
-            <div class="planet-sphere jupiter">♃</div>
-            <div class="planet-info">
-                <span class="planet-title">ගුරු (JUPITER)</span>
-                <strong id="pos-jup">ගණනය වෙමින්...</strong>
-            </div>
-        </div>
-    </div>
-
-    <!-- MATRIX ORACLE CHAT WIDGET -->
-    <button id="oracle-toggle-btn" class="oracle-btn" title="Ask Matrix Oracle">
-        <i class="fa-solid fa-headset"></i>
-    </button>
-    <div id="oracle-modal" class="oracle-modal">
-        <div class="oracle-header">
-            <span><i class="fa-solid fa-atom"></i> MATRIX ORACLE</span>
-            <button id="close-oracle-btn">&times;</button>
-        </div>
-        <div class="oracle-body" id="oracle-chat-body">
-            <div class="oracle-msg ai">ආයුබෝවන්! මම Soul Matrix විශ්වීය උපදේශක. ඔබගේ පැනය යොමු කරන්න.</div>
-        </div>
-        <div class="oracle-footer">
-            <input type="text" id="oracle-input" placeholder="ප්‍රශ්නය ඇතුළත් කරන්න...">
-            <button id="send-oracle-btn"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <!-- BOTTOM RUNNING QUOTE BANNER -->
-    <div class="bottom-quote-ticker">
-        <div class="ticker-track">
-            <span>”අනාගතය යනු අහඹුවක් නොව, පරම නිහඬතාවය තුළ ඔබ විසින්ම ලියනු ලබන ක්වන්ටම් කේතයකි.”</span>
-            <span>”අනාගතය යනු අහඹුවක් නොව, පරම නිහඬතාවය තුළ ඔබ විසින්ම ලියනු ලබන ක්වන්ටම් කේතයකි.”</span>
-        </div>
-    </div>
-
-    <!-- DUAL 3D HOROSCOPE MODAL WITH TECHNICAL METRICS DASHBOARD -->
-    <div id="horoscope-modal" class="horoscope-modal-overlay" style="display: none;">
-        <canvas id="modal-bg-canvas"></canvas>
-        <div class="horoscope-modal-card" id="horoscope-3d-card">
-            <button class="close-modal-btn" id="close-modal-btn">&times;</button>
-            <h2 class="modal-title">ජන්ම පත්‍ර ගණිතමය විශ්ලේෂණය (TECHNICAL METRICS)</h2>
-            
-            <div class="dual-wheels-wrapper">
-                <div class="wheel-box">
-                    <h3>ලග්න චක්‍රය (D1)</h3>
-                    <div class="ring-container">
-                        <canvas id="lagna-3d-canvas"></canvas>
-                        <div class="zodiac-center-grid lagna-bg">
-                            <div class="chart-center-title" id="lagna-name-display">මේෂ<br>ලග්නය</div>
-                            <div class="house-grid" id="lagna-houses">
-                                <div class="h-box h1"></div><div class="h-box h2"></div><div class="h-box h3"></div>
-                                <div class="h-box h4"></div><div class="h-box h5"></div><div class="h-box h6"></div>
-                                <div class="h-box h7"></div><div class="h-box h8"></div><div class="h-box h9"></div>
-                                <div class="h-box h10"></div><div class="h-box h11"></div><div class="h-box h12"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="wheel-box">
-                    <h3>නවාංශක චක්‍රය (D9)</h3>
-                    <div class="ring-container">
-                        <canvas id="navamsha-3d-canvas"></canvas>
-                        <div class="zodiac-center-grid navamsha-bg">
-                            <div class="chart-center-title" id="navamsha-name-display">කන්‍යා<br>නවාංශකය</div>
-                            <div class="house-grid" id="navamsha-houses">
-                                <div class="h-box h1"></div><div class="h-box h2"></div><div class="h-box h3"></div>
-                                <div class="h-box h4"></div><div class="h-box h5"></div><div class="h-box h6"></div>
-                                <div class="h-box h7"></div><div class="h-box h8"></div><div class="h-box h9"></div>
-                                <div class="h-box h10"></div><div class="h-box h11"></div><div class="h-box h12"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="v12-report-container" class="v12-report-grid">
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-calculator"></i> පංචාංග අගයන්</h4>
-                    <div class="metric-row"><span>ලහිරි අයනාංශය:</span> <strong id="m-ayanamsha">0.00°</strong></div>
-                    <div class="metric-row"><span>නැකත & පදය:</span> <strong id="m-nakshatra">-</strong></div>
-                    <div class="metric-row"><span>නැකත් අධිපති:</span> <strong id="m-nak-lord">-</strong></div>
-                    <div class="metric-row"><span>තිථිය & පක්ෂය:</span> <strong id="m-tithi">-</strong></div>
-                    <div class="metric-row"><span>යෝනි / ගණ / නාඩි:</span> <strong id="m-yoni-gana-nadi">-</strong></div>
-                </div>
-
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-clock"></i> දශා කාල & Golden Window</h4>
-                    <div class="metric-row"><span>මහ දශාව:</span> <strong id="m-maha-dasha" class="val-gold">-</strong></div>
-                    <div class="metric-row"><span>අන්තර දශාව:</span> <strong id="m-antar-dasha" class="val-cyan">-</strong></div>
-                    <div class="metric-row"><span>ප්‍රත්‍යන්තර දශාව:</span> <strong id="m-pratyantar-dasha">-</strong></div>
-                    <div class="metric-row"><span>ජීවන රන්මය කාලය:</span> <strong id="m-golden-window" class="val-green">-</strong></div>
-                </div>
-
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-sack-dollar"></i> ධන සම්පත් & Indu Matrix</h4>
-                    <div class="metric-row"><span>ධන & බල Potential:</span> <strong id="m-wealth-score" class="val-gold">0%</strong></div>
-                    <div class="metric-row"><span>ඉන්දු ලග්නය (Wealth):</span> <strong id="m-indu-lagna">-</strong></div>
-                    <div class="metric-row"><span>අරුඪ ලග්නය (AL):</span> <strong id="m-arudha-lagna">-</strong></div>
-                    <div class="metric-row"><span>ප්‍රධාන යෝග:</span> <strong id="m-yogas" class="val-green">-</strong></div>
-                </div>
-
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-ring"></i> විවාහ & Soulmate Vector</h4>
-                    <div class="metric-row"><span id="lbl-marriage-window">විවාහ වීමේ කාලසීමාව:</span> <strong id="m-marriage-window" class="val-cyan">-</strong></div>
-                    <div class="metric-row"><span>Soulmate Match %:</span> <strong id="m-soulmate-match" class="val-gold">-</strong></div>
-                    <div class="metric-row"><span>7 අධිපති / දිශාව:</span> <strong id="m-spouse-dir">-</strong></div>
-                    <div class="metric-row"><span>නමේ මූලික ශබ්දය:</span> <strong id="m-spouse-letter" class="val-gold">-</strong></div>
-                </div>
-
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-shield-halved"></i> කර්මජ බාධක & Doshas</h4>
-                    <div class="metric-row"><span>කර්මජ බාධක මට්ටම:</span> <strong id="m-karmic-level" class="val-red">-</strong></div>
-                    <div class="metric-row"><span>කුජ දෝෂය:</span> <strong id="m-kuja-dosha">-</strong></div>
-                    <div class="metric-row"><span>ඒරාෂ්ටක / ඡායා:</span> <strong id="m-sade-sati">-</strong></div>
-                    <div class="metric-row"><span>SAV මුළු බිංදු:</span> <strong id="m-sav-total" class="val-cyan">0 / 337</strong></div>
-                </div>
-
-                <div class="report-card">
-                    <h4><i class="fa-solid fa-gem"></i> ශක්ති නාලිකා & Pratikarma</h4>
-                    <div class="metric-row"><span>ලග්න ශක්ති කම්පනය:</span> <strong id="m-lucky-freq" class="val-cyan">-</strong></div>
-                    <div class="metric-row"><span>අද දින තාරා බලය:</span> <strong id="m-tara-bala">-</strong></div>
-                    <div class="metric-row"><span>වාසනාවන්ත මැණික:</span> <strong id="m-power-gem" class="val-locked">🔒 LOCKED</strong></div>
-                    <div class="metric-row"><span>අනුරූපී ව්‍යාපාර:</span> <strong class="val-locked">🔒 LOCKED (In Blueprint)</strong></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- GOOGLE MAPS API & AUTOCOMPLETE LOGIC -->
     <script>
-        window.selectedLat = 6.9271;
-        window.selectedLon = 79.8612;
-        
-        window.initGooglePlaces = function() {
-            const placeInput = document.getElementById('h-place');
-            if (!placeInput || !window.google) return;
+        // =================================================================
+        // MODAL OPEN / CLOSE CONTROLLER (HIDE TRIGGER BUTTON TO PREVENT OVERLAY)
+        // =================================================================
+        const modal = document.getElementById('decoder-modal');
+        const triggerBtn = document.getElementById('trigger-btn');
 
-            const autocomplete = new google.maps.places.Autocomplete(placeInput, {
-                componentRestrictions: { country: "lk" }, 
-                fields: ['geometry', 'name'] 
-            });
+        function openModal() {
+            modal.classList.add('active');
+            // Hide trigger button when modal opens to avoid overlap
+            if (triggerBtn) triggerBtn.style.visibility = 'hidden';
+        }
 
-            autocomplete.addListener('place_changed', () => {
-                const place = autocomplete.getPlace();
-                if (!place.geometry || !place.geometry.location) {
-                    console.warn("Location not found");
-                    return;
-                }
+        function closeModal() {
+            modal.classList.remove('active');
+            // Restore trigger button visibility when modal closes
+            if (triggerBtn) triggerBtn.style.visibility = 'visible';
+        }
 
-                window.selectedLat = place.geometry.location.lat();
-                window.selectedLon = place.geometry.location.lng();
-                console.log(`📍 Selected: ${place.name} | Lat: ${window.selectedLat}, Lon: ${window.selectedLon}`);
-            });
-        };
+        // Close on clicking backdrop
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const status = document.getElementById('marital-status').value;
+            alert('දත්ත සාර්ථකව පද්ධතියට ඇතුළත් විය! (' + (status === 'married' ? 'විවාහක' : 'අවිවාහක') + ' මෝඩය සක්‍රිය විය)');
+            closeModal();
+        }
+
+        // =================================================================
+        // AUDIO & THREE.JS ENGINE
+        // =================================================================
+        const audio = document.getElementById('bg-audio');
+        const audioBtn = document.getElementById('audio-toggle-btn');
+        const audioIcon = document.getElementById('audio-icon');
+
+        audioBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().catch(()=>{});
+                audioIcon.className = 'fa-solid fa-volume-high';
+            } else {
+                audio.pause();
+                audioIcon.className = 'fa-solid fa-volume-xmark';
+            }
+        });
+
+        // Clock
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock-display').innerText = now.toLocaleTimeString();
+        }, 1000);
+
+        // Three.js Dust background
+        const canvas = document.getElementById('webgl-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.z = 100;
+
+        const dustGeo = new THREE.BufferGeometry();
+        const dustCount = 600;
+        const dustPos = new Float32Array(dustCount * 3);
+        for(let i=0; i<dustCount*3; i++) dustPos[i] = (Math.random() - 0.5) * 400;
+        dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+        const dustMat = new THREE.PointsMaterial({ size: 1.2, color: 0xf59e0b, transparent: true, opacity: 0.5 });
+        const dustField = new THREE.Points(dustGeo, dustMat);
+        scene.add(dustField);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            dustField.rotation.y += 0.0006;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpm-5S3L49RYxiwkL9u8xq7hX_WgT8mSE&libraries=places&callback=initGooglePlaces" defer></script>
-
-    <script src="js/three-universe.js" defer></script>
-    <script src="js/core-logic.js" defer></script>
-    <script src="js/horoscope-3d.js" defer></script>
-    <script src="js/horoscope-ui.js" defer></script>
-    <script src="js/cosmic-enhancements.js" defer></script>
 </body>
 </html>
