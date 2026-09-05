@@ -90,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderer.setSize(340, 340);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        // Realistic Gold Metallic Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         scene.add(ambientLight);
 
@@ -102,8 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
         rimLight.position.set(-5, -5, 5);
         scene.add(rimLight);
 
-        // 3D Gold Metallic Torus Geometry
-        const geometry = new THREE.TorusGeometry(3.55, 0.38, 32, 100);
+        // Sleek 0.18 Thin Torus Ring - Frames the outer edge without covering the inner blue border
+        const geometry = new THREE.TorusGeometry(3.68, 0.18, 32, 100);
         const material = new THREE.MeshStandardMaterial({
             color: 0xf59e0b,
             metalness: 0.92,
@@ -121,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
         animateRing();
     }
 
-    // Initialize Modal Dual 3D Gold Rings
     createGoldRingScene('lagna-3d-canvas');
     createGoldRingScene('navamsha-3d-canvas');
 });
