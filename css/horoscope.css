@@ -327,7 +327,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
 #horoscope-modal .wheel-box {
     background: transparent !important;
     border-radius: 0 !important;
-    padding: 10px 5px !important;
+    padding: 0 !important;
     text-align: center !important;
     border: none !important;
     position: relative !important;
@@ -338,10 +338,12 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     box-shadow: none !important;
 }
 
+/* Moved title higher up away from top edge of the 3D ring */
 #horoscope-modal .wheel-box h3 {
     color: #06b6d4 !important;
     font-size: 1.25rem !important;
-    margin-bottom: 25px !important;
+    margin-top: -15px !important;
+    margin-bottom: 20px !important;
     font-family: 'Orbitron', sans-serif !important;
     position: relative !important;
     z-index: 25 !important;
@@ -367,10 +369,11 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     z-index: 10 !important;
 }
 
+/* Enlarged to 342px to eliminate all remaining black space */
 #horoscope-modal .zodiac-center-grid {
     position: absolute !important;
-    width: 338px !important;
-    height: 338px !important;
+    width: 342px !important;
+    height: 342px !important;
     border-radius: 50% !important;
     z-index: 5 !important;
     background-color: transparent !important;
@@ -414,14 +417,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     text-shadow: 0 0 2px rgba(255, 255, 255, 0.8) !important;
 }
 
-/* Reduced size to 66% so symbols fit perfectly inside each house box */
+/* Adjusted to 68% for grid alignment */
 #horoscope-modal .house-grid {
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 66% !important;
-    height: 66% !important;
+    width: 68% !important;
+    height: 68% !important;
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
     grid-template-rows: repeat(4, 1fr) !important;
@@ -429,7 +432,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     box-sizing: border-box !important;
 }
 
-/* Larger font size and strict containment inside box */
+/* Sized font to 0.88rem so planet symbols don't overlap house numbers like 11 */
 #horoscope-modal .h-box {
     border: none !important;
     display: flex !important;
@@ -437,14 +440,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     flex-wrap: wrap !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 1.05rem !important;
+    font-size: 0.88rem !important;
     line-height: 1.1 !important;
     color: #000000 !important;
     font-weight: 900 !important;
     text-shadow: none !important;
     word-break: break-all !important;
     text-align: center !important;
-    padding: 2px !important;
+    padding: 1px !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
 }
@@ -453,7 +456,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
 #horoscope-modal .h-box .p-symbol {
     color: #000000 !important;
     font-weight: 900 !important;
-    font-size: 1.05rem !important;
+    font-size: 0.88rem !important;
     text-shadow: none !important;
     display: inline-block !important;
     margin: 0 1px !important;
