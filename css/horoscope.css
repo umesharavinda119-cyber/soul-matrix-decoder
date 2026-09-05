@@ -374,14 +374,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     z-index: 10 !important;
 }
 
-/* 290px Diameter: Exposes 100% of lagna-chart.png including its outer blue jeweled border, seamlessly framed by the 3D Gold Ring */
+/* Expanded to 330px: Big, clear chart display seamlessly surrounded by the sleek 3D Gold Ring */
 #horoscope-modal .zodiac-center-grid {
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 290px !important;
-    height: 290px !important;
+    width: 330px !important;
+    height: 330px !important;
     border-radius: 50% !important;
     z-index: 5 !important;
     background-color: transparent !important;
