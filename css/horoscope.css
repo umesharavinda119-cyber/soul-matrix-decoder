@@ -322,7 +322,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
    4. CHART BACKGROUND IMAGES (LAGNA & NAVAMSHA)
    ================================================================= */
 .lagna-bg {
-    background-image: url('../assets/lagna-chart.jpg');
+    background-image: url('../assets/lagna-chart.png');
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -331,7 +331,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
 }
 
 .navamsha-bg {
-    background-image: url('../assets/navamsha-chart.jpg');
+    background-image: url('../assets/navamsha-chart.png');
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
