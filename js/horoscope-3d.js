@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         camera.position.set(0, 0, 10);
 
         const renderer = new THREE.WebGLRenderer({ canvas: ringCanvas, alpha: true, antialias: true });
-        renderer.setSize(350, 350);
+        renderer.setSize(380, 380);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
@@ -101,8 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
         rimLight.position.set(-5, -5, 5);
         scene.add(rimLight);
 
-        // Sleek Thin Gold Ring (Radius 3.90, Tube 0.12) - Perfectly frames 330px enlarged charts
-        const geometry = new THREE.TorusGeometry(3.90, 0.12, 32, 100);
+        // Perfectly scaled 3.68 Torus ring framing the enlarged 348px chart grid
+        const geometry = new THREE.TorusGeometry(3.68, 0.16, 32, 100);
         const material = new THREE.MeshStandardMaterial({
             color: 0xf59e0b,
             metalness: 0.95,
