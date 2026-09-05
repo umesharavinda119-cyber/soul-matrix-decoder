@@ -101,8 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
         rimLight.position.set(-5, -5, 5);
         scene.add(rimLight);
 
-        // Calibrated Radius (3.52) & Tube (0.2) to fit perfectly over the blue jeweled edge
-        const geometry = new THREE.TorusGeometry(3.52, 0.2, 32, 100);
+        // Precision Inner Diameter (3.44 units = 290px) Outer Frame around the Blue Jeweled Ring
+        const geometry = new THREE.TorusGeometry(3.72, 0.28, 32, 100);
         const material = new THREE.MeshStandardMaterial({
             color: 0xf59e0b,
             metalness: 0.92,
