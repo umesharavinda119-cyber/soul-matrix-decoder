@@ -338,7 +338,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     box-shadow: none !important;
 }
 
-/* Title above the ring - clearly separated */
 #horoscope-modal .wheel-box h3 {
     color: #06b6d4 !important;
     font-size: 1.25rem !important;
@@ -368,7 +367,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     z-index: 10 !important;
 }
 
-/* Sized to 338px to fill the inner torus without black space */
 #horoscope-modal .zodiac-center-grid {
     position: absolute !important;
     width: 338px !important;
@@ -400,8 +398,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 38% !important;
-    height: 38% !important;
+    width: 36% !important;
+    height: 36% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -416,20 +414,22 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     text-shadow: 0 0 2px rgba(255, 255, 255, 0.8) !important;
 }
 
+/* Reduced size to 66% so symbols fit perfectly inside each house box */
 #horoscope-modal .house-grid {
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 71% !important;
-    height: 71% !important;
+    width: 66% !important;
+    height: 66% !important;
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
     grid-template-rows: repeat(4, 1fr) !important;
     z-index: 6 !important;
+    box-sizing: border-box !important;
 }
 
-/* Black text color for planet symbols */
+/* Larger font size and strict containment inside box */
 #horoscope-modal .h-box {
     border: none !important;
     display: flex !important;
@@ -437,20 +437,26 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     flex-wrap: wrap !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 0.95rem !important;
+    font-size: 1.05rem !important;
+    line-height: 1.1 !important;
     color: #000000 !important;
     font-weight: 900 !important;
     text-shadow: none !important;
-    word-break: break-word !important;
+    word-break: break-all !important;
     text-align: center !important;
-    padding: 1px !important;
+    padding: 2px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
 }
 
 #horoscope-modal .h-box span,
 #horoscope-modal .h-box .p-symbol {
     color: #000000 !important;
     font-weight: 900 !important;
+    font-size: 1.05rem !important;
     text-shadow: none !important;
+    display: inline-block !important;
+    margin: 0 1px !important;
 }
 
 #horoscope-modal .h-box.h1  { grid-row: 1; grid-column: 2; }
