@@ -35,7 +35,7 @@ class handler(BaseHTTPRequestHandler):
             jd = swe.julday(year, month, day, utc_hour)
             ayanamsha = swe.get_ayanamsa_ut(jd)
 
-            # FIX: Force built-in Moshier Ephemeris (No external files needed)
+            # Force built-in Moshier Ephemeris
             flags = swe.FLG_SIDEREAL | swe.FLG_SPEED | swe.FLG_MOSEPH
 
             cusps, ascmc = swe.houses_ex(jd, lat, lon, b"P", flags)
@@ -48,7 +48,6 @@ class handler(BaseHTTPRequestHandler):
                 pos, _ = swe.calc_ut(jd, s_id, flags)
                 planets[p_id], speeds[p_id] = pos[0], pos[3]
 
-            # FIX: Use MEAN_NODE to avoid Ephemeris File crash
             rahu_pos, _ = swe.calc_ut(jd, swe.MEAN_NODE, flags)
             planets[8], planets[9] = rahu_pos[0], (rahu_pos[0] + 180) % 360
             speeds[8] = speeds[9] = 0.0
@@ -163,7 +162,7 @@ class handler(BaseHTTPRequestHandler):
             tara_idx = (int(t_moon / nak_span) - moon_nak_idx) % 9
             tara_names = ["Janma", "Sampat", "Vipat", "Kshema", "Pratyak", "Sadhaka", "Naidhana", "Mitra", "Parama Mitra"]
 
-            # Dashas
+            # Dashas Calculation
             bal_y = (1 - ((planets[2] % nak_span) / nak_span)) * dasha_years[moon_nak_idx % 9]
             c_date, d_end = now.date(), date(year, month, day) + timedelta(days=bal_y*365.25)
             c_idx = moon_nak_idx % 9
@@ -184,9 +183,49 @@ class handler(BaseHTTPRequestHandler):
                 if pd_strt <= c_date <= pd_end: break
                 pd_strt, pd_idx = pd_end, (pd_idx + 1) % 9
 
-            current_age = (now.date() - date(year, month, day)).days // 365
-            m_age_start = max(current_age + 1, 27)
-            marriage_window = f"Age {m_age_start} - {m_age_start + 3}"
+            # 1. DYNAMIC TRUE ASTROLOGICAL LUCKY FREQUENCY (Lagna Lord Based Solfeggio Frequency)
+            lagna_lord_id = lord_map[asc_s]
+            freq_map = {
+                1: "528Hz (Solar Leadership & Vitality)",       # Sun (Leo)
+                2: "432Hz (Chandra Emotional Balance)",         # Moon (Cancer)
+                3: "639Hz (Kuja Strength & Willpower)",         # Mars (Aries, Scorpio)
+                4: "741Hz (Budha Intellect & Clarity)",         # Mercury (Gemini, Virgo)
+                5: "852Hz (Guru Wisdom & Expansion)",           # Jupiter (Sagittarius, Pisces)
+                6: "639Hz (Sukra Attraction & Harmony)",        # Venus (Taurus, Libra)
+                7: "396Hz (Shani Karma & Grounding)"            # Saturn (Capricorn, Aquarius)
+            }
+            lucky_freq = freq_map.get(lagna_lord_id, "528Hz (Solar Healing)")
+
+            # 2. DYNAMIC VEDIC DASHA MARRIAGE WINDOW (Based on 7th Lord / Venus / Jupiter Antardashas)
+            dasha_id_map = [9, 6, 1, 2, 3, 8, 5, 7, 4]  # Ketu, Venus, Sun, Moon, Mars, Rahu, Jupiter, Saturn, Mercury
+            
+            scan_md, scan_ad, scan_date = c_idx, ad_idx, ad_strt
+            marriage_found, m_start_year, m_end_year = False, None, None
+
+            for _ in range(27):
+                ad_duration_days = (dasha_years[scan_md] * dasha_years[scan_ad] / 120.0) * 365.25
+                ad_finish = scan_date + timedelta(days=ad_duration_days)
+                
+                planet_in_ad = dasha_id_map[scan_ad]
+                planet_in_md = dasha_id_map[scan_md]
+                
+                # Active Antardasha of 7th Lord, Venus (6) or Jupiter (5) after current date
+                if (planet_in_ad in [seventh_lord_id, 6, 5] or planet_in_md == seventh_lord_id) and ad_finish >= c_date:
+                    m_start_year = max(scan_date, c_date).year
+                    m_end_year = ad_finish.year
+                    marriage_found = True
+                    break
+                
+                scan_date = ad_finish
+                scan_ad = (scan_ad + 1) % 9
+                if scan_ad == 0:
+                    scan_md = (scan_md + 1) % 9
+
+            if marriage_found and m_start_year:
+                marriage_window = f"{m_start_year} - {m_end_year}" if m_start_year != m_end_year else f"{m_start_year} - {m_start_year + 1}"
+            else:
+                marriage_window = f"{now.year + 1} - {now.year + 3}"
+
             golden_window = f"{ad_end.strftime('%Y %b')} - {(ad_end + timedelta(days=365*2)).strftime('%Y %b')}"
             karmic_level = "HIGH (Rahu/Ketu Active)" if kuja_dosha == "YES" and sade_sati != "NO" else ("MODERATE (Karmic Trigger)" if kuja_dosha == "YES" or sade_sati != "NO" else "STABLE / CLEAR")
 
@@ -203,7 +242,7 @@ class handler(BaseHTTPRequestHandler):
                 "marriage_window": marriage_window,
                 "soulmate_match": "89% - 94%",
                 "karmic_level": karmic_level,
-                "lucky_freq": "528Hz (Solar Healing)",
+                "lucky_freq": lucky_freq,
                 "power_gem": "🔒 LOCKED (In Blueprint)",
                 "special_lagnas": {
                     "indu_lagna": signs_en[indu_lagna-1],
