@@ -310,7 +310,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     text-align: center !important;
     color: #f59e0b !important;
     font-family: 'Orbitron', sans-serif !important;
-    margin-bottom: 25px !important;
+    margin-bottom: 35px !important;
     font-size: 1.5rem !important;
     letter-spacing: 2px !important;
     text-shadow: 0 0 10px rgba(245, 158, 11, 0.5) !important;
@@ -321,7 +321,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     justify-content: space-around !important;
     flex-wrap: wrap !important;
     gap: 20px !important;
-    margin-bottom: 30px !important;
+    margin-bottom: 40px !important;
 }
 
 #horoscope-modal .wheel-box {
@@ -338,7 +338,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     box-shadow: none !important;
 }
 
-/* Balanced Title Placement - Proper Gap from Main Title and Ring */
+/* Chart Title stays fixed at top */
 #horoscope-modal .wheel-box h3 {
     color: #06b6d4 !important;
     font-size: 1.25rem !important;
@@ -350,11 +350,12 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     text-shadow: 0 0 10px rgba(6, 182, 212, 0.6) !important;
 }
 
+/* Added margin-top: 25px to push 3D Rings & Charts downwards */
 #horoscope-modal .ring-container {
     position: relative !important;
     width: 340px !important;
     height: 340px !important;
-    margin: 0 auto !important;
+    margin: 25px auto 0 auto !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
@@ -369,7 +370,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     z-index: 10 !important;
 }
 
-/* 342px width/height fits the inner gold torus perfectly */
 #horoscope-modal .zodiac-center-grid {
     position: absolute !important;
     width: 342px !important;
@@ -431,7 +431,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     box-sizing: border-box !important;
 }
 
-/* Planet symbols centered vertically and horizontally inside house box */
 #horoscope-modal .h-box {
     border: none !important;
     display: flex !important;
