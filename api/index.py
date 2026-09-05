@@ -19,6 +19,7 @@ class handler(BaseHTTPRequestHandler):
             data = json.loads(post_data)
 
             client_name = data.get('name', 'Client')
+            marital_status = data.get('status', 'single')
             year = int(data.get('year', 1990))
             month = int(data.get('month', 1))
             day = int(data.get('day', 1))
@@ -35,7 +36,6 @@ class handler(BaseHTTPRequestHandler):
             jd = swe.julday(year, month, day, utc_hour)
             ayanamsha = swe.get_ayanamsa_ut(jd)
 
-            # Force built-in Moshier Ephemeris
             flags = swe.FLG_SIDEREAL | swe.FLG_SPEED | swe.FLG_MOSEPH
 
             cusps, ascmc = swe.houses_ex(jd, lat, lon, b"P", flags)
@@ -183,21 +183,21 @@ class handler(BaseHTTPRequestHandler):
                 if pd_strt <= c_date <= pd_end: break
                 pd_strt, pd_idx = pd_end, (pd_idx + 1) % 9
 
-            # 1. DYNAMIC TRUE ASTROLOGICAL LUCKY FREQUENCY (Lagna Lord Based Solfeggio Frequency)
+            # 1. DYNAMIC TRUE ASTROLOGICAL LUCKY FREQUENCY
             lagna_lord_id = lord_map[asc_s]
             freq_map = {
-                1: "528Hz (Solar Leadership & Vitality)",       # Sun (Leo)
-                2: "432Hz (Chandra Emotional Balance)",         # Moon (Cancer)
-                3: "639Hz (Kuja Strength & Willpower)",         # Mars (Aries, Scorpio)
-                4: "741Hz (Budha Intellect & Clarity)",         # Mercury (Gemini, Virgo)
-                5: "852Hz (Guru Wisdom & Expansion)",           # Jupiter (Sagittarius, Pisces)
-                6: "639Hz (Sukra Attraction & Harmony)",        # Venus (Taurus, Libra)
-                7: "396Hz (Shani Karma & Grounding)"            # Saturn (Capricorn, Aquarius)
+                1: "528Hz (Solar Leadership & Vitality)",
+                2: "432Hz (Chandra Emotional Balance)",
+                3: "639Hz (Kuja Strength & Willpower)",
+                4: "741Hz (Budha Intellect & Clarity)",
+                5: "852Hz (Guru Wisdom & Expansion)",
+                6: "639Hz (Sukra Attraction & Harmony)",
+                7: "396Hz (Shani Karma & Grounding)"
             }
             lucky_freq = freq_map.get(lagna_lord_id, "528Hz (Solar Healing)")
 
-            # 2. DYNAMIC VEDIC DASHA MARRIAGE WINDOW (Based on 7th Lord / Venus / Jupiter Antardashas)
-            dasha_id_map = [9, 6, 1, 2, 3, 8, 5, 7, 4]  # Ketu, Venus, Sun, Moon, Mars, Rahu, Jupiter, Saturn, Mercury
+            # 2. DYNAMIC VEDIC DASHA MARRIAGE WINDOW OR GOLDEN RELATIONSHIP WINDOW
+            dasha_id_map = [9, 6, 1, 2, 3, 8, 5, 7, 4]
             
             scan_md, scan_ad, scan_date = c_idx, ad_idx, ad_strt
             marriage_found, m_start_year, m_end_year = False, None, None
@@ -209,7 +209,6 @@ class handler(BaseHTTPRequestHandler):
                 planet_in_ad = dasha_id_map[scan_ad]
                 planet_in_md = dasha_id_map[scan_md]
                 
-                # Active Antardasha of 7th Lord, Venus (6) or Jupiter (5) after current date
                 if (planet_in_ad in [seventh_lord_id, 6, 5] or planet_in_md == seventh_lord_id) and ad_finish >= c_date:
                     m_start_year = max(scan_date, c_date).year
                     m_end_year = ad_finish.year
@@ -226,6 +225,12 @@ class handler(BaseHTTPRequestHandler):
             else:
                 marriage_window = f"{now.year + 1} - {now.year + 3}"
 
+            # CONDITIONAL LABEL BASED ON MARITAL STATUS
+            if marital_status == "married":
+                marriage_label = "සබඳතාවයේ ස්වර්ණමය කාලය:"
+            else:
+                marriage_label = "විවාහ වීමේ කාලසීමාව:"
+
             golden_window = f"{ad_end.strftime('%Y %b')} - {(ad_end + timedelta(days=365*2)).strftime('%Y %b')}"
             karmic_level = "HIGH (Rahu/Ketu Active)" if kuja_dosha == "YES" and sade_sati != "NO" else ("MODERATE (Karmic Trigger)" if kuja_dosha == "YES" or sade_sati != "NO" else "STABLE / CLEAR")
 
@@ -239,6 +244,7 @@ class handler(BaseHTTPRequestHandler):
                 "yogas": yogas_detected if yogas_detected else "Standard Configuration",
                 "wealth_potential": f"{wealth_score}% [HIGH]",
                 "golden_window": golden_window,
+                "marriage_label": marriage_label,
                 "marriage_window": marriage_window,
                 "soulmate_match": "89% - 94%",
                 "karmic_level": karmic_level,
