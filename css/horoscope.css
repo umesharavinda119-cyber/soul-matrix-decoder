@@ -374,7 +374,6 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     z-index: 10 !important;
 }
 
-/* Expanded to 348px: Large clear chart image framed cleanly inside the 380px 3D Ring */
 #horoscope-modal .zodiac-center-grid {
     position: absolute !important;
     top: 50% !important;
@@ -439,7 +438,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     box-sizing: border-box !important;
 }
 
-/* Alignment fix: Pushes symbols to bottom of cell so they never touch printed house numbers like 11 */
+/* Aligns symbols to the bottom of the box clear of printed house numbers like 11 */
 #horoscope-modal .h-box {
     border: none !important;
     display: flex !important;
@@ -447,15 +446,16 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     flex-wrap: wrap !important;
     align-items: flex-end !important;
     justify-content: center !important;
-    font-size: 0.9rem !important;
+    font-size: 0.82rem !important;
     line-height: 1.1 !important;
     color: #000000 !important;
     font-weight: 900 !important;
     text-shadow: none !important;
-    word-break: break-all !important;
+    word-break: normal !important;
+    white-space: nowrap !important;
     text-align: center !important;
-    padding-bottom: 4px !important;
-    padding-top: 10px !important;
+    padding-bottom: 6px !important;
+    padding-top: 14px !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
 }
@@ -464,7 +464,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
 #horoscope-modal .h-box .p-symbol {
     color: #000000 !important;
     font-weight: 900 !important;
-    font-size: 0.9rem !important;
+    font-size: 0.82rem !important;
     text-shadow: none !important;
     display: inline-block !important;
     margin: 0 1px !important;
