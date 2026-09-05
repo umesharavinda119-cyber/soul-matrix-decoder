@@ -90,24 +90,24 @@ document.addEventListener('DOMContentLoaded', () => {
         renderer.setSize(350, 350);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
         scene.add(ambientLight);
 
-        const sunLight = new THREE.DirectionalLight(0xf59e0b, 3.8);
+        const sunLight = new THREE.DirectionalLight(0xf59e0b, 4.0);
         sunLight.position.set(5, 5, 10);
         scene.add(sunLight);
 
-        const rimLight = new THREE.DirectionalLight(0xffffff, 2.2);
+        const rimLight = new THREE.DirectionalLight(0xffffff, 2.5);
         rimLight.position.set(-5, -5, 5);
         scene.add(rimLight);
 
-        // Precision Inner Diameter (3.44 units = 290px) Outer Frame around the Blue Jeweled Ring
-        const geometry = new THREE.TorusGeometry(3.72, 0.28, 32, 100);
+        // Sleek Thin Gold Ring (Radius 3.90, Tube 0.12) - Perfectly frames 330px enlarged charts
+        const geometry = new THREE.TorusGeometry(3.90, 0.12, 32, 100);
         const material = new THREE.MeshStandardMaterial({
             color: 0xf59e0b,
-            metalness: 0.92,
-            roughness: 0.18,
-            emissive: 0x332200
+            metalness: 0.95,
+            roughness: 0.15,
+            emissive: 0x221100
         });
         const ringMesh = new THREE.Mesh(geometry, material);
         scene.add(ringMesh);
