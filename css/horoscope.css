@@ -374,14 +374,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     z-index: 10 !important;
 }
 
-/* Sized to 338px so the blue jeweled border fits right inside the 3D Gold Ring */
+/* Sized to 318px: Perfectly reveals the outer blue jeweled ring right under the sleek gold torus frame */
 #horoscope-modal .zodiac-center-grid {
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 338px !important;
-    height: 338px !important;
+    width: 318px !important;
+    height: 318px !important;
     border-radius: 50% !important;
     z-index: 5 !important;
     background-color: transparent !important;
