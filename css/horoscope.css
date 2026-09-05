@@ -374,14 +374,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     z-index: 10 !important;
 }
 
-/* Sized to 320px: Aligns the blue jeweled ring exactly under the 3D Gold Torus */
+/* 290px Diameter: Exposes 100% of lagna-chart.png including its outer blue jeweled border, seamlessly framed by the 3D Gold Ring */
 #horoscope-modal .zodiac-center-grid {
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    width: 320px !important;
-    height: 320px !important;
+    width: 290px !important;
+    height: 290px !important;
     border-radius: 50% !important;
     z-index: 5 !important;
     background-color: transparent !important;
@@ -446,7 +446,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     flex-wrap: wrap !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 0.88rem !important;
+    font-size: 0.95rem !important;
     line-height: 1.1 !important;
     color: #000000 !important;
     font-weight: 900 !important;
@@ -462,7 +462,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
 #horoscope-modal .h-box .p-symbol {
     color: #000000 !important;
     font-weight: 900 !important;
-    font-size: 0.88rem !important;
+    font-size: 0.95rem !important;
     text-shadow: none !important;
     display: inline-block !important;
     margin: 0 1px !important;
