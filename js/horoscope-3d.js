@@ -87,10 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
         camera.position.set(0, 0, 10);
 
         const renderer = new THREE.WebGLRenderer({ canvas: ringCanvas, alpha: true, antialias: true });
-        renderer.setSize(340, 340);
+        renderer.setSize(350, 350);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
         scene.add(ambientLight);
 
         const sunLight = new THREE.DirectionalLight(0xf59e0b, 3.8);
@@ -101,8 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
         rimLight.position.set(-5, -5, 5);
         scene.add(rimLight);
 
-        // Sleek 0.18 Thin Torus Ring - Frames the outer edge without covering the inner blue border
-        const geometry = new THREE.TorusGeometry(3.68, 0.18, 32, 100);
+        // Calibrated Radius (3.52) & Tube (0.2) to fit perfectly over the blue jeweled edge
+        const geometry = new THREE.TorusGeometry(3.52, 0.2, 32, 100);
         const material = new THREE.MeshStandardMaterial({
             color: 0xf59e0b,
             metalness: 0.92,
