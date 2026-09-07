@@ -31,6 +31,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+
+    <!-- Firebase & Firestore SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <!-- PDF.js & 3D PageFlip Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 </head>
 <body>
 
@@ -171,7 +179,7 @@
                         <a href="https://wa.me/94757290085?text=%E0%B6%B8%E0%B6%B8%20Micro%20Package%20%E0%B6%B4%E0%B7%90%E0%B6%9A%E0%B7%9A%E0%B6%A2%E0%B6%BA%20%E0%B6%BD%E0%B6%B6%E0%B6%A0%E0%B6%9C%E0%B7%90%E0%B6%B1%E0%B7%B2%E0%B6%B8%E0%B6%A7%20%E0%B6%9A%E0%B7%90%E0%B6%B0%E0%B7%90%E0%B6%AD%E0%B7%92%E0%B6%BA%E0%B7%8F" target="_blank" class="order-btn" tabindex="0"><i class="fa-brands fa-whatsapp"></i> ORDER VIA WHATSAPP</a>
                     </div>
 
-                    <!-- PKG 3: PREMIUM PACKAGE (AURA & LIFE REPORT / BLUEPRINT) -->
+                    <!-- PKG 3: PREMIUM PACKAGE -->
                     <div id="pkg-3" class="tab-content" style="display: none;">
                         <h3 class="highlight-title">PREMIUM PACKAGE 🚀 <span>(Aura & Life Report | The Soul Blueprint)</span></h3>
                         <div class="price-tag highlight">රු. 7,200/-</div>
@@ -482,6 +490,18 @@
         </div>
     </div>
 
+    <!-- 3D FLIPBOOK MODAL OVERLAY -->
+    <div id="flipbook-modal" class="flipbook-overlay" style="display: none;">
+        <button id="close-flipbook-btn" class="close-flip-btn">&times;</button>
+        <div id="flipbook-loader" class="flip-loader">
+            <div class="spinner"></div>
+            <p id="flip-status">ඩිජිටල් ග්‍රන්ථය සූදානම් වෙමින් පවතී...</p>
+        </div>
+        <div class="flipbook-container" style="display: none;">
+            <div id="flipbook"></div>
+        </div>
+    </div>
+
     <!-- GOOGLE MAPS API & AUTOCOMPLETE LOGIC -->
     <script>
         window.selectedLat = 6.9271;
@@ -517,5 +537,146 @@
     <script src="js/horoscope-ui.js" defer></script>
     <script src="js/numerology-ui.js" defer></script>
     <script src="js/cosmic-enhancements.js" defer></script>
+
+    <!-- FIREBASE & FLIPBOOK LOGIC -->
+    <script>
+        // 1. Firebase Configuration (ඔබගේ යාවත්කාලීන කළ දත්ත)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAS1LHsxDHPFwxe7w8ByzbIdFbJogwnYq8",
+            authDomain: "soul-matrix-b0fdf.firebaseapp.com",
+            projectId: "soul-matrix-b0fdf",
+            storageBucket: "soul-matrix-b0fdf.firebasestorage.app",
+            messagingSenderId: "68411238048",
+            appId: "1:68411238048:web:8ea31ad61d8c985d474bc5"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // 2. PDF.js Worker Setup
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        // 3. Elements
+        const unlockBtn = document.getElementById('unlock-book-btn');
+        const securityInput = document.getElementById('security-code');
+        const flipModal = document.getElementById('flipbook-modal');
+        const closeFlipBtn = document.getElementById('close-flipbook-btn');
+        const flipLoader = document.getElementById('flipbook-loader');
+        const flipContainer = document.querySelector('.flipbook-container');
+        const flipbookDiv = document.getElementById('flipbook');
+        
+        let pageFlipInstance = null;
+
+        // 4. Unlock Button Event
+        if(unlockBtn) {
+            unlockBtn.addEventListener('click', async () => {
+                const code = securityInput.value.trim();
+                if(!code) {
+                    alert("කරුණාකර ඔබගේ Security Code එක ඇතුළත් කරන්න.");
+                    return;
+                }
+
+                unlockBtn.disabled = true;
+                unlockBtn.innerText = "VERIFYING MATRIX...";
+
+                try {
+                    const docRef = db.collection('blueprints').doc(code);
+                    const doc = await docRef.get();
+
+                    if(!doc.exists) {
+                        alert("ඔබ ඇතුළත් කළ කේතය වැරදියි හෝ තවමත් වාර්තාව සක්‍රීය කර නොමැත.");
+                        unlockBtn.disabled = false;
+                        unlockBtn.innerText = "UNLOCK BLUEPRINT";
+                        return;
+                    }
+
+                    const data = doc.data();
+                    const pdfUrl = data.pdfUrl;
+
+                    flipModal.style.display = 'flex';
+                    flipLoader.style.display = 'block';
+                    flipContainer.style.display = 'none';
+                    document.getElementById('flip-status').innerText = 'ආකේතනය කළ PDF වාර්තාව බාගත වෙමින් පවතී...';
+
+                    await loadAndRenderPDF(pdfUrl);
+
+                } catch (err) {
+                    console.error(err);
+                    alert("දත්ත සමුදායට සම්බන්ධ වීමේදී දෝෂයක් මතු විය.");
+                } finally {
+                    unlockBtn.disabled = false;
+                    unlockBtn.innerText = "UNLOCK BLUEPRINT";
+                }
+            });
+        }
+
+        // 5. Close Modal Event
+        if(closeFlipBtn) {
+            closeFlipBtn.addEventListener('click', () => {
+                flipModal.style.display = 'none';
+                if(pageFlipInstance) {
+                    pageFlipInstance.destroy();
+                    pageFlipInstance = null;
+                }
+                flipbookDiv.innerHTML = ''; 
+            });
+        }
+
+        // 6. PDF Rendering Engine
+        async function loadAndRenderPDF(url) {
+            try {
+                const loadingTask = pdfjsLib.getDocument(url);
+                const pdf = await loadingTask.promise;
+                const numPages = pdf.numPages;
+                
+                document.getElementById('flip-status').innerText = `පිටු ${numPages} ක් සැකසෙමින් පවතී...`;
+                flipbookDiv.innerHTML = ''; 
+                
+                // Extract pages into canvases
+                for(let i = 1; i <= numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 1.5 }); // High Quality Scale
+                    
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                    
+                    const pageDiv = document.createElement('div');
+                    pageDiv.className = 'flip-page';
+                    pageDiv.appendChild(canvas);
+                    flipbookDiv.appendChild(pageDiv);
+                }
+
+                // Initialize 3D Flipbook
+                flipLoader.style.display = 'none';
+                flipContainer.style.display = 'flex';
+
+                pageFlipInstance = new St.PageFlip(flipbookDiv, {
+                    width: 450, 
+                    height: 636, 
+                    size: "stretch",
+                    minWidth: 315,
+                    maxWidth: 1000,
+                    minHeight: 445,
+                    maxHeight: 1414,
+                    maxShadowOpacity: 0.5,
+                    showCover: true,
+                    mobileScrollSupport: false
+                });
+
+                pageFlipInstance.loadFromHTML(document.querySelectorAll('.flip-page'));
+
+            } catch(err) {
+                console.error("PDF Load Error:", err);
+                alert("PDF වාර්තාව කියවීමේදී දෝෂයක් මතු විය.");
+                flipModal.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
