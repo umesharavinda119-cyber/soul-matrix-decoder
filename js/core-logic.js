@@ -86,15 +86,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     renderTeaserResult(dateVal);
 
-                    // DISPLAY BOTH 3D WIDGETS (HOROSCOPE & NUMEROLOGY) ON DECODE SUCCESS
+                    // DISPLAY BOTH 3D WIDGETS VIA SHOW-WIDGET CLASS (PREVENTS CANVASES FROM BLANKING)
                     const horoscopeAppWrapper = document.getElementById('horoscope-app-wrapper');
                     if (horoscopeAppWrapper) {
-                        horoscopeAppWrapper.style.display = 'flex'; 
+                        horoscopeAppWrapper.classList.add('show-widget'); 
                     }
 
                     const numerologyAppWrapper = document.getElementById('numerology-app-wrapper');
                     if (numerologyAppWrapper) {
-                        numerologyAppWrapper.style.display = 'flex';
+                        numerologyAppWrapper.classList.add('show-widget');
                     }
                 }
             }, 50);
