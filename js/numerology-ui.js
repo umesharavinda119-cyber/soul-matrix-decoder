@@ -47,9 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
             (err) => console.error("NUMEROLOGY GLB LOAD ERROR:", err)
         );
 
+        // Oscillates back and forth smoothly instead of full 360 degree spin
+        let time = 0;
         function animate() {
             requestAnimationFrame(animate);
-            if (modelGroup) modelGroup.rotation.y += 0.008;
+            if (modelGroup) {
+                time += 0.015;
+                modelGroup.rotation.y = Math.sin(time) * 0.45; // Depeththata vitharak turn weema
+            }
             renderer.render(scene, camera);
         }
         animate();
@@ -111,7 +116,7 @@ function renderNumerologyReport(data) {
     const reportContent = document.getElementById('num-report-content');
     if (!reportModal || !reportContent) return;
 
-    // Planitary Attributes Mappings
+    // Planetary Attributes Mappings
     const planetMap = {
         1: { name: 'රවි', desc: 'නායකත්වය සහ පෞරුෂය', color: 'තැඹිලි / රතු', day: 'ඉරිදා' },
         2: { name: 'සඳු', desc: 'සංවේදීතාව සහ නිර්මාණශීලීත්වය', color: 'සුදු / රිදී', day: 'සඳුදා' },
