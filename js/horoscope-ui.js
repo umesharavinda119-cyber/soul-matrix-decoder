@@ -7,39 +7,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('horoscope-form');
     const loadingDiv = document.getElementById('loading-matrix');
 
-    const wheelCard = document.getElementById('wheel-card');
-    const numWrapper = document.getElementById('numerology-app-wrapper');
-    const horoWrapper = document.getElementById('horoscope-app-wrapper');
-
-    function hideCenterAndSideWidgets() {
-        if (wheelCard) { wheelCard.style.opacity = '0'; wheelCard.style.pointerEvents = 'none'; }
-        if (numWrapper) { numWrapper.style.opacity = '0'; numWrapper.style.pointerEvents = 'none'; }
-        if (horoWrapper) { horoWrapper.style.opacity = '0'; horoWrapper.style.pointerEvents = 'none'; }
-    }
-
-    function restoreCenterAndSideWidgets() {
-        if (wheelCard) { wheelCard.style.opacity = '1'; wheelCard.style.pointerEvents = 'all'; }
-        if (numWrapper) { numWrapper.style.opacity = '1'; numWrapper.style.pointerEvents = 'all'; }
-        if (horoWrapper) { horoWrapper.style.opacity = '1'; horoWrapper.style.pointerEvents = 'all'; }
-    }
-
     if (openBtn && glassPanel) {
         openBtn.addEventListener('click', () => {
             glassPanel.classList.add('active');
-            hideCenterAndSideWidgets();
+            if (typeof window.hideCenterAndSideWidgets === 'function') {
+                window.hideCenterAndSideWidgets();
+            }
         });
     }
 
     if (closePanelBtn && glassPanel) {
         closePanelBtn.addEventListener('click', () => {
             glassPanel.classList.remove('active');
-            restoreCenterAndSideWidgets();
+            if (typeof window.restoreCenterAndSideWidgets === 'function') {
+                window.restoreCenterAndSideWidgets();
+            }
         });
     }
 
     if (closeModalBtn && modalOverlay) {
         closeModalBtn.addEventListener('click', () => {
             modalOverlay.style.display = 'none';
+            if (typeof window.restoreCenterAndSideWidgets === 'function') {
+                window.restoreCenterAndSideWidgets();
+            }
         });
     }
 
@@ -90,12 +81,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (modalOverlay) modalOverlay.style.display = 'flex';
                 } else {
                     alert('ගණනය කිරීමේදී දෝෂයක් සිදු විය: ' + (data.message || 'Unknown error'));
-                    restoreCenterAndSideWidgets();
+                    if (typeof window.restoreCenterAndSideWidgets === 'function') {
+                        window.restoreCenterAndSideWidgets();
+                    }
                 }
             } catch (err) {
                 console.error('Fetch error:', err);
                 alert('සර්වර් සම්බන්ධතාවයේ දෝෂයක් පවතී. නැවත උත්සාහ කරන්න.');
-                restoreCenterAndSideWidgets();
+                if (typeof window.restoreCenterAndSideWidgets === 'function') {
+                    window.restoreCenterAndSideWidgets();
+                }
             } finally {
                 if (loadingDiv) loadingDiv.style.display = 'none';
             }
