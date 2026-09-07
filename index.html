@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="css/numerology.css">
     
     <style>
-        /* 3D Canvas Visibility Transition Styles */
         #numerology-app-wrapper, 
         #horoscope-app-wrapper {
             opacity: 0;
@@ -29,7 +28,6 @@
         }
     </style>
 
-    <!-- THREE.JS, GLTFLOADER & DRACO DECODER -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
@@ -53,7 +51,6 @@
         <div class="header-controls">
             <button id="lang-toggle-btn" class="lang-btn">SI | EN</button>
 
-            <!-- 4-DAY COSMIC TIMER -->
             <div class="celestial-badge">
                 <i class="fa-solid fa-hourglass-half"></i> CYCLE ENDS: <span id="celestial-timer">04d 00h 00m 00s</span>
             </div>
@@ -107,7 +104,6 @@
                 </div>
             </div>
 
-            <!-- ANIMATED BORDER WRAPPER -->
             <div class="calc-card-border-wrapper">
                 <div class="calc-card">
                     <div class="hud-corner hud-tl"></div>
@@ -133,7 +129,6 @@
                             <button class="decode-btn" id="decode-btn" tabindex="0">DECODE MATRIX</button>
                         </div>
 
-                        <!-- RESULT BOX -->
                         <div class="result-box" id="result-box">
                             <div class="number-circle" id="res-number">0</div>
                             <div id="res-hook" style="color: #e5e7eb; font-size: 0.95rem; line-height: 1.5; text-align: center; margin-bottom: 15px;"></div>
@@ -193,7 +188,7 @@
         <button id="num-trigger-btn" class="num-glow-btn">අංක විද්‍යාත්මක පරීක්ෂණ</button>
     </div>
 
-    <!-- NUMEROLOGY INPUT MODAL (CENTER POPUP WITH KEYBOARD BUTTONS) -->
+    <!-- NUMEROLOGY INPUT MODAL -->
     <div id="numerology-input-modal" class="num-glass-panel">
         <div class="num-panel-header">
             <h3>අංක විද්‍යාත්මක පරීක්ෂාව</h3>
@@ -227,7 +222,7 @@
     <!-- NUMEROLOGY REPORT MODAL -->
     <div id="numerology-report-modal">
         <div class="num-report-card">
-            <button class="num-close-btn" onclick="document.getElementById('numerology-report-modal').style.display='none'" style="position: absolute; top: 15px; right: 20px;">&times;</button>
+            <button class="num-close-btn" onclick="closeNumerologyReportModal()" style="position: absolute; top: 15px; right: 20px;">&times;</button>
             <div id="num-report-content"></div>
         </div>
     </div>
@@ -240,7 +235,7 @@
         </button>
     </div>
 
-    <!-- HOROSCOPE INPUT MODAL (NOW CENTERED INDEPENDENT POPUP) -->
+    <!-- HOROSCOPE INPUT MODAL -->
     <div id="horoscope-panel" class="glass-panel">
         <div class="panel-header">
             <h3>SOUL MATRIX DECODER</h3>
@@ -425,6 +420,8 @@
                     <div class="metric-row"><span>අනුරූපී ව්‍යාපාර:</span> <strong class="val-locked">🔒 LOCKED (In Blueprint)</strong></div>
                 </div>
             </div>
+
+            <div id="horoscope-cta-container"></div>
         </div>
     </div>
 
