@@ -577,7 +577,7 @@
     <script src="js/numerology-ui.js" defer></script>
     <script src="js/cosmic-enhancements.js" defer></script>
 
-    <!-- FIREBASE, 3D FLIPBOOK, DYNAMIC HIGH-DPI ZOOM & SYNTHESIZED SOUND LOGIC -->
+    <!-- FIREBASE, 3D FLIPBOOK, DYNAMIC HIGH-DPI ZOOM & REAL MP3 SOUND LOGIC -->
     <script>
         // 1. Firebase Configuration
         const firebaseConfig = {
@@ -624,57 +624,16 @@
         let activeRenderTasks = [];
         let wasAudioPlaying = false;
         let currentZoom = 1.0;
-        let globalAudioCtx = null;
 
-        // GLOBAL AUDIO CONTEXT INITIALIZATION & BROWSER UNLOCK
-        function initAudioContext() {
-            if (!globalAudioCtx) {
-                const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                globalAudioCtx = new AudioCtx();
-            }
-            if (globalAudioCtx.state === 'suspended') {
-                globalAudioCtx.resume();
-            }
-        }
+        // LOAD REAL CUSTOM MP3 FILE FOR PAGE TURN
+        const customFlipSound = new Audio('assets/page turn.mp3');
+        customFlipSound.volume = 0.8;
 
-        // REALISTIC PAPER SWISH & SNAP SOUND VIA WEB AUDIO API
         function playPageFlipSound() {
             try {
-                initAudioContext();
-                if (!globalAudioCtx) return;
-
-                const ctx = globalAudioCtx;
-
-                // Swish sound
-                const swishLength = ctx.sampleRate * 0.16;
-                const buffer = ctx.createBuffer(1, swishLength, ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < swishLength; i++) {
-                    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / swishLength, 2.5);
-                }
-
-                const noise = ctx.createBufferSource();
-                noise.buffer = buffer;
-
-                const filter = ctx.createBiquadFilter();
-                filter.type = 'bandpass';
-                filter.frequency.setValueAtTime(1800, ctx.currentTime);
-                filter.frequency.exponentialRampToValueAtTime(320, ctx.currentTime + 0.16);
-                filter.Q.value = 3.0;
-
-                const gain = ctx.createGain();
-                gain.gain.setValueAtTime(0.5, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
-
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(ctx.destination);
-
-                noise.start();
-                noise.stop(ctx.currentTime + 0.16);
-            } catch(e) {
-                console.warn("Sound play error:", e);
-            }
+                customFlipSound.currentTime = 0;
+                customFlipSound.play().catch(e => console.warn("Browser Audio Blocked:", e));
+            } catch(e) {}
         }
 
         // FULL CLEANUP ENGINE TO PREVENT SECOND UNLOCK ERRORS
@@ -739,8 +698,9 @@
         // 4. Unlock Button Event
         if(unlockBtn) {
             unlockBtn.addEventListener('click', async () => {
-                // Unlock browser audio context on explicit user gesture
-                initAudioContext();
+                
+                // FORCE UNLOCK BROWSER AUDIO POLICY ON FIRST CLICK
+                customFlipSound.play().then(() => { customFlipSound.pause(); customFlipSound.currentTime = 0; }).catch(()=>{});
 
                 const code = securityInput.value.trim();
                 if(!code) {
@@ -782,8 +742,10 @@
                     await loadAndRenderPDF(pdfUrl);
 
                 } catch (err) {
-                    console.error(err);
+                    console.error("Unlock Error:", err);
                     alert("දත්ත සමුදායට සම්බන්ධ වීමේදී දෝෂයක් මතු විය.");
+                    cleanupFlipbook();
+                    flipModal.style.display = 'none';
                 } finally {
                     unlockBtn.disabled = false;
                     unlockBtn.innerText = "UNLOCK BLUEPRINT";
@@ -817,13 +779,13 @@
             });
         }
 
-        // 6. HIGH-DPI PDF RENDERING ENGINE WITH DIRECT ARRAYBUFFER FETCH (PREVENTS WORKER CORS & RANGE ERRORS)
+        // 6. BULLETPROOF PDF FETCH VIA ARRAYBUFFER (FIXES 1ST LOAD ERROR & CORS)
         async function loadAndRenderPDF(url) {
             try {
                 document.getElementById('flip-status').innerText = 'PDF දත්ත බාගත වෙමින් පවතී...';
 
-                // Fetch PDF via ArrayBuffer to completely bypass PDF.js worker CORS & Range-header issues
-                const response = await fetch(url);
+                // Fetch PDF via ArrayBuffer to completely bypass PDF.js worker CORS & Range-header freezing issues
+                const response = await fetch(url, { mode: 'cors' });
                 if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
                 const pdfBuffer = await response.arrayBuffer();
 
