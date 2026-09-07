@@ -523,21 +523,24 @@
         </div>
 
         <div class="flipbook-container" style="display: none;">
-            <button id="prev-page-btn" class="flip-nav-btn prev-btn" title="Previous Page">
-                <i class="fa-solid fa-chevron-left"></i>
-            </button>
-            
             <div id="flipbook-zoom-wrapper" class="flipbook-zoom-wrapper">
+                
+                <!-- THE ARROWS ARE NOW INSIDE THE BOOK WRAPPER -->
                 <div class="book-3d-hardcover-wrapper">
+                    <button id="prev-page-btn" class="flip-nav-btn prev-btn" title="Previous Page">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    
                     <div class="paper-stack-edge left-stack"></div>
                     <div id="flipbook" class="real-3d-book"></div>
                     <div class="paper-stack-edge right-stack"></div>
+                    
+                    <button id="next-page-btn" class="flip-nav-btn next-btn" title="Next Page">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
                 </div>
-            </div>
 
-            <button id="next-page-btn" class="flip-nav-btn next-btn" title="Next Page">
-                <i class="fa-solid fa-chevron-right"></i>
-            </button>
+            </div>
         </div>
     </div>
 
