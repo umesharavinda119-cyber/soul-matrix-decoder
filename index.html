@@ -594,11 +594,9 @@
         }
         const db = firebase.firestore();
         
-        // FIREBASE TIMEOUT & CRASH FIX
+        // FIREBASE TIMEOUT FIX
         db.settings({ 
-            experimentalForceLongPolling: true, 
-            experimentalAutoDetectLongPolling: false, 
-            merge: true 
+            experimentalForceLongPolling: true
         });
 
         // 2. PDF.js Worker Setup
