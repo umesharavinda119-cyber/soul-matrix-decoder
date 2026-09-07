@@ -167,18 +167,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if(scrollWrapper) scrollWrapper.style.display = 'none'; 
         
         const inputGrp = document.getElementById('input-group');
-        if(inputGrp) {
-            inputGrp.style.display = 'flex';
-            inputGrp.style.opacity = '1';
+        const resBox = document.getElementById('result-box');
+        const initDecoder = document.getElementById('initial-decoder');
+        const resNum = document.getElementById('res-number');
+
+        // Check if calculation exists, then return to result view
+        if (resNum && resNum.innerText !== '0' && resNum.innerText !== '') {
+            if(inputGrp) inputGrp.style.display = 'none';
+            if(resBox) resBox.style.display = 'block';
+        } else {
+            if(inputGrp) {
+                inputGrp.style.display = 'flex';
+                inputGrp.style.opacity = '1';
+            }
+            if(resBox) resBox.style.display = 'none';
         }
         
-        const resBox = document.getElementById('result-box');
-        if(resBox) resBox.style.display = 'none';
-        
-        const bDay = document.getElementById('birthdate');
-        if(bDay) bDay.value = '';
-        
-        const initDecoder = document.getElementById('initial-decoder');
         if(initDecoder) initDecoder.style.display = 'block';
     };
 
