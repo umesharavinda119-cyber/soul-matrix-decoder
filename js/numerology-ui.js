@@ -71,28 +71,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const numWrapper = document.getElementById('numerology-app-wrapper');
     const horoWrapper = document.getElementById('horoscope-app-wrapper');
 
-    function hideCenterAndSideWidgets() {
+    window.hideCenterAndSideWidgets = function() {
         if (wheelCard) { wheelCard.style.opacity = '0'; wheelCard.style.pointerEvents = 'none'; }
         if (numWrapper) { numWrapper.style.opacity = '0'; numWrapper.style.pointerEvents = 'none'; }
         if (horoWrapper) { horoWrapper.style.opacity = '0'; horoWrapper.style.pointerEvents = 'none'; }
-    }
+    };
 
-    function restoreCenterAndSideWidgets() {
+    window.restoreCenterAndSideWidgets = function() {
         if (wheelCard) { wheelCard.style.opacity = '1'; wheelCard.style.pointerEvents = 'all'; }
         if (numWrapper) { numWrapper.style.opacity = '1'; numWrapper.style.pointerEvents = 'all'; }
         if (horoWrapper) { horoWrapper.style.opacity = '1'; horoWrapper.style.pointerEvents = 'all'; }
-    }
+    };
 
     if (triggerBtn && inputModal) {
         triggerBtn.addEventListener('click', () => {
             inputModal.classList.add('active');
-            hideCenterAndSideWidgets();
+            window.hideCenterAndSideWidgets();
         });
     }
     if (closeInputBtn && inputModal) {
         closeInputBtn.addEventListener('click', () => {
             inputModal.classList.remove('active');
-            restoreCenterAndSideWidgets();
+            window.restoreCenterAndSideWidgets();
         });
     }
 
@@ -122,15 +122,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     inputModal.classList.remove('active');
                     renderNumerologyReport(result.data);
                 } else {
-                    restoreCenterAndSideWidgets();
+                    window.restoreCenterAndSideWidgets();
                 }
             } catch (err) {
                 console.error("API ERROR:", err);
-                restoreCenterAndSideWidgets();
+                window.restoreCenterAndSideWidgets();
             }
         });
     }
 });
+
+// Close Report Modal and restore center card
+function closeNumerologyReportModal() {
+    const reportModal = document.getElementById('numerology-report-modal');
+    if (reportModal) reportModal.style.display = 'none';
+    if (typeof window.restoreCenterAndSideWidgets === 'function') {
+        window.restoreCenterAndSideWidgets();
+    }
+}
 
 // =============================================================
 // 3. RESULT REPORT RENDERER & WHATSAPP REDIRECT
@@ -180,6 +189,7 @@ function renderNumerologyReport(data) {
     const scorePercentage = Math.min(Math.round((data.total_points / 45) * 100), 100);
 
     reportContent.innerHTML = `
+        <button class="num-close-btn" onclick="closeNumerologyReportModal()" style="position: absolute; top: 15px; right: 20px;">&times;</button>
         <div style="text-align: center; margin-bottom: 25px;">
             <h2 style="color: #06b6d4; font-family: 'Orbitron', sans-serif; font-size: 1.6rem; margin-bottom: 5px;">
                 ${data.full_name_si || data.full_name_en}
