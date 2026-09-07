@@ -7,15 +7,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('horoscope-form');
     const loadingDiv = document.getElementById('loading-matrix');
 
+    const wheelCard = document.getElementById('wheel-card');
+    const numWrapper = document.getElementById('numerology-app-wrapper');
+    const horoWrapper = document.getElementById('horoscope-app-wrapper');
+
+    function hideCenterAndSideWidgets() {
+        if (wheelCard) { wheelCard.style.opacity = '0'; wheelCard.style.pointerEvents = 'none'; }
+        if (numWrapper) { numWrapper.style.opacity = '0'; numWrapper.style.pointerEvents = 'none'; }
+        if (horoWrapper) { horoWrapper.style.opacity = '0'; horoWrapper.style.pointerEvents = 'none'; }
+    }
+
+    function restoreCenterAndSideWidgets() {
+        if (wheelCard) { wheelCard.style.opacity = '1'; wheelCard.style.pointerEvents = 'all'; }
+        if (numWrapper) { numWrapper.style.opacity = '1'; numWrapper.style.pointerEvents = 'all'; }
+        if (horoWrapper) { horoWrapper.style.opacity = '1'; horoWrapper.style.pointerEvents = 'all'; }
+    }
+
     if (openBtn && glassPanel) {
         openBtn.addEventListener('click', () => {
             glassPanel.classList.add('active');
+            hideCenterAndSideWidgets();
         });
     }
 
     if (closePanelBtn && glassPanel) {
         closePanelBtn.addEventListener('click', () => {
             glassPanel.classList.remove('active');
+            restoreCenterAndSideWidgets();
         });
     }
 
@@ -72,10 +90,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (modalOverlay) modalOverlay.style.display = 'flex';
                 } else {
                     alert('ගණනය කිරීමේදී දෝෂයක් සිදු විය: ' + (data.message || 'Unknown error'));
+                    restoreCenterAndSideWidgets();
                 }
             } catch (err) {
                 console.error('Fetch error:', err);
                 alert('සර්වර් සම්බන්ධතාවයේ දෝෂයක් පවතී. නැවත උත්සාහ කරන්න.');
+                restoreCenterAndSideWidgets();
             } finally {
                 if (loadingDiv) loadingDiv.style.display = 'none';
             }
@@ -128,7 +148,6 @@ function renderHoroscopeResults(data) {
     setTxt('m-arudha-lagna', rep.special_lagnas.arudha_lagna);
     setTxt('m-yogas', Array.isArray(rep.yogas) ? rep.yogas.join(', ') : rep.yogas);
 
-    // Dynamic Marriage Label and Window
     setTxt('lbl-marriage-window', rep.marriage_label || 'විවාහ වීමේ කාලසීමාව:');
     setTxt('m-marriage-window', rep.marriage_window);
     setTxt('m-soulmate-match', rep.soulmate_match);
