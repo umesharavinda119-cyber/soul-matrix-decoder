@@ -1,1 +1,145 @@
+/* =================================================================
+   1. NUMEROLOGY LEFT SIDE WIDGET
+   ================================================================= */
+#numerology-app-wrapper {
+    position: fixed;
+    left: 6%;
+    top: 52%;
+    transform: translateY(-50%);
+    width: 380px;
+    height: 620px;
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
+#numerology-3d-canvas {
+    width: 440px;
+    height: 380px;
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 15;
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 20px rgba(6, 182, 212, 0.4));
+}
+
+.num-glow-btn {
+    position: absolute;
+    top: 490px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, rgba(15, 15, 30, 0.95), rgba(5, 5, 15, 0.95));
+    border: 2px solid #06b6d4;
+    color: #06b6d4;
+    padding: 0.85rem 2.2rem;
+    border-radius: 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.4), inset 0 0 12px rgba(6, 182, 212, 0.2);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+    z-index: 30;
+    white-space: nowrap;
+}
+
+.num-glow-btn:hover {
+    background: #06b6d4;
+    color: #000;
+    box-shadow: 0 0 35px #06b6d4;
+    transform: translateX(-50%) scale(1.08);
+}
+
+/* =================================================================
+   2. INPUT FORM MODAL (POPUP)
+   ================================================================= */
+.num-glass-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 450px;
+    background: linear-gradient(135deg, rgba(12, 12, 25, 0.98), rgba(4, 4, 12, 0.99));
+    border: 1.5px solid rgba(6, 182, 212, 0.5);
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.9), inset 0 0 15px rgba(6, 182, 212, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 99999;
+}
+
+.num-glass-panel.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.num-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    background: rgba(0, 0, 0, 0.6);
+    border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.num-panel-header h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #06b6d4;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.num-close-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.num-close-btn:hover {
+    color: #f43f5e;
+}
+
+.num-panel-body {
+    padding: 1.5rem;
+}
+
+/* =================================================================
+   3. RESULT REPORT MODAL
+   ================================================================= */
+#numerology-report-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(12px);
+    z-index: 999999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.num-report-card {
+    background: linear-gradient(135deg, rgba(12, 12, 25, 0.99), rgba(4, 4, 12, 1));
+    border: 2px solid #06b6d4;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 2rem;
+    position: relative;
+    box-shadow: 0 0 50px rgba(6, 182, 212, 0.35);
+}
