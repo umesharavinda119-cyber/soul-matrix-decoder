@@ -493,18 +493,46 @@
         </div>
     </div>
 
-    <!-- 3D FLIPBOOK MODAL OVERLAY WITH ARROWS & CONTROLS -->
+    <!-- 3D FLIPBOOK MODAL OVERLAY WITH ADVANCED TOOLBAR, SIDEBAR & ZOOM -->
     <div id="flipbook-modal" class="flipbook-overlay" style="display: none;">
-        <button id="close-flipbook-btn" class="close-flip-btn" title="Close Reader">&times;</button>
+        <div class="ambient-cosmic-glow"></div>
+        
+        <!-- TOP CONTROL TOOLBAR -->
+        <div class="flipbook-toolbar">
+            <button id="toggle-sidebar-btn" class="tb-btn" title="Toggle Page Previews"><i class="fa-solid fa-border-all"></i> Pages</button>
+            
+            <div class="zoom-controls-grp">
+                <button id="zoom-out-btn" class="tb-btn" title="Zoom Out (-)"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                <span id="zoom-level-text">100%</span>
+                <button id="zoom-in-btn" class="tb-btn" title="Zoom In (+)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                <button id="zoom-reset-btn" class="tb-btn" title="Reset Zoom"><i class="fa-solid fa-rotate-left"></i></button>
+            </div>
+
+            <button id="close-flipbook-btn" class="close-flip-btn" title="Close Reader">&times;</button>
+        </div>
+
+        <!-- LEFT PAGE THUMBNAILS SIDEBAR -->
+        <div id="thumbnail-sidebar" class="thumbnail-sidebar">
+            <div class="sidebar-header">
+                <span>PAGE INDEX</span>
+            </div>
+            <div id="thumbnail-list" class="thumbnail-list"></div>
+        </div>
+
         <div id="flipbook-loader" class="flip-loader">
             <div class="spinner"></div>
             <p id="flip-status">ඩිජිටල් ග්‍රන්ථය සූදානම් වෙමින් පවතී...</p>
         </div>
+
         <div class="flipbook-container" style="display: none;">
             <button id="prev-page-btn" class="flip-nav-btn prev-btn" title="Previous Page">
                 <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <div id="flipbook"></div>
+            
+            <div id="flipbook-zoom-wrapper" class="flipbook-zoom-wrapper">
+                <div id="flipbook" class="real-3d-book"></div>
+            </div>
+
             <button id="next-page-btn" class="flip-nav-btn next-btn" title="Next Page">
                 <i class="fa-solid fa-chevron-right"></i>
             </button>
@@ -547,7 +575,7 @@
     <script src="js/numerology-ui.js" defer></script>
     <script src="js/cosmic-enhancements.js" defer></script>
 
-    <!-- FIREBASE & FLIPBOOK LOGIC WITH SOUND, AUTO-SCALE & AUDIO MUTE -->
+    <!-- FIREBASE, 3D FLIPBOOK, SOUND, ZOOM & SIDEBAR LOGIC -->
     <script>
         // 1. Firebase Configuration
         const firebaseConfig = {
@@ -575,25 +603,37 @@
         const flipLoader = document.getElementById('flipbook-loader');
         const flipContainer = document.querySelector('.flipbook-container');
         const flipbookDiv = document.getElementById('flipbook');
+        const zoomWrapper = document.getElementById('flipbook-zoom-wrapper');
         const prevBtn = document.getElementById('prev-page-btn');
         const nextBtn = document.getElementById('next-page-btn');
         const bgAudio = document.getElementById('bg-audio');
         
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
+        const zoomResetBtn = document.getElementById('zoom-reset-btn');
+        const zoomText = document.getElementById('zoom-level-text');
+        
+        const sidebar = document.getElementById('thumbnail-sidebar');
+        const toggleSidebarBtn = document.getElementById('toggle-sidebar-btn');
+        const thumbnailList = document.getElementById('thumbnail-list');
+
         let pageFlipInstance = null;
         let wasAudioPlaying = false;
+        let currentZoom = 1.0;
 
-        // WEB AUDIO API - REALISTIC PAPER FLIP SOUND SYNTHESIZER
+        // REALISTIC DUAL-STAGE CRISP PAPER TURN SOUND SYNTHESIZER
         function playPageFlipSound() {
             try {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 const ctx = new AudioCtx();
                 if (ctx.state === 'suspended') ctx.resume();
 
-                const bufferSize = ctx.sampleRate * 0.12;
-                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                // Stage 1: Paper Swish (White Noise sweep)
+                const swishLength = ctx.sampleRate * 0.18;
+                const buffer = ctx.createBuffer(1, swishLength, ctx.sampleRate);
                 const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = Math.random() * 2 - 1;
+                for (let i = 0; i < swishLength; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / swishLength, 2);
                 }
 
                 const noise = ctx.createBufferSource();
@@ -601,23 +641,85 @@
 
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'bandpass';
-                filter.frequency.setValueAtTime(1200, ctx.currentTime);
-                filter.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.12);
-                filter.Q.value = 3;
+                filter.frequency.setValueAtTime(1600, ctx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(350, ctx.currentTime + 0.18);
+                filter.Q.value = 2.5;
 
                 const gain = ctx.createGain();
-                gain.gain.setValueAtTime(0.18, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.35, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
 
                 noise.connect(filter);
                 filter.connect(gain);
                 gain.connect(ctx.destination);
 
                 noise.start();
-                noise.stop(ctx.currentTime + 0.12);
+                noise.stop(ctx.currentTime + 0.18);
+
+                // Stage 2: Crisp Crease Snap
+                setTimeout(() => {
+                    try {
+                        const snapLen = ctx.sampleRate * 0.05;
+                        const snapBuf = ctx.createBuffer(1, snapLen, ctx.sampleRate);
+                        const snapData = snapBuf.getChannelData(0);
+                        for (let k = 0; k < snapLen; k++) snapData[k] = (Math.random() * 2 - 1);
+
+                        const snapSource = ctx.createBufferSource();
+                        snapSource.buffer = snapBuf;
+
+                        const snapFilter = ctx.createBiquadFilter();
+                        snapFilter.type = 'highpass';
+                        snapFilter.frequency.value = 2200;
+
+                        const snapGain = ctx.createGain();
+                        snapGain.gain.setValueAtTime(0.25, ctx.currentTime);
+                        snapGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+
+                        snapSource.connect(snapFilter);
+                        snapFilter.connect(snapGain);
+                        snapGain.connect(ctx.destination);
+
+                        snapSource.start();
+                        snapSource.stop(ctx.currentTime + 0.05);
+                    } catch (e) {}
+                }, 80);
+
             } catch (e) {
                 console.warn("Paper sound error:", e);
             }
+        }
+
+        // ZOOM LOGIC
+        function setZoom(newZoom) {
+            currentZoom = Math.min(Math.max(newZoom, 0.75), 2.2);
+            if (zoomWrapper) {
+                zoomWrapper.style.transform = `scale(${currentZoom})`;
+            }
+            if (zoomText) {
+                zoomText.innerText = `${Math.round(currentZoom * 100)}%`;
+            }
+        }
+
+        if (zoomInBtn) zoomInBtn.addEventListener('click', () => setZoom(currentZoom + 0.15));
+        if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => setZoom(currentZoom - 0.15));
+        if (zoomResetBtn) zoomResetBtn.addEventListener('click', () => setZoom(1.0));
+
+        // MOUSE WHEEL ZOOM ON FLIPBOOK CONTAINER
+        if (flipContainer) {
+            flipContainer.addEventListener('wheel', (e) => {
+                if (e.ctrlKey || e.altKey || flipModal.style.display === 'flex') {
+                    e.preventDefault();
+                    if (e.deltaY < 0) setZoom(currentZoom + 0.1);
+                    else setZoom(currentZoom - 0.1);
+                }
+            }, { passive: false });
+        }
+
+        // SIDEBAR TOGGLE
+        if (toggleSidebarBtn && sidebar) {
+            toggleSidebarBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
         }
 
         // 4. Unlock Button Event
@@ -646,7 +748,6 @@
                     const data = doc.data();
                     const pdfUrl = data.pdfUrl;
 
-                    // Mute/Pause Background Cosmic Tone when Flipbook Opens
                     if (bgAudio && !bgAudio.paused) {
                         wasAudioPlaying = true;
                         bgAudio.pause();
@@ -659,6 +760,7 @@
                     flipContainer.style.display = 'none';
                     document.getElementById('flip-status').innerText = 'ආකේතනය කළ PDF වාර්තාව බාගත වෙමින් පවතී...';
 
+                    setZoom(1.0);
                     await loadAndRenderPDF(pdfUrl);
 
                 } catch (err) {
@@ -675,13 +777,14 @@
         if(closeFlipBtn) {
             closeFlipBtn.addEventListener('click', () => {
                 flipModal.style.display = 'none';
+                if(sidebar) sidebar.classList.remove('open');
                 if(pageFlipInstance) {
                     pageFlipInstance.destroy();
                     pageFlipInstance = null;
                 }
                 flipbookDiv.innerHTML = ''; 
+                thumbnailList.innerHTML = '';
 
-                // Resume Background Tone if it was playing before
                 if (bgAudio && wasAudioPlaying) {
                     bgAudio.play().catch(e => console.warn(e));
                 }
@@ -700,7 +803,7 @@
             });
         }
 
-        // 6. PDF Rendering Engine with Dynamic Screen Scaling
+        // 6. PDF Rendering Engine with Dynamic Screen Scaling, Real 3D Flip & Thumbnails
         async function loadAndRenderPDF(url) {
             try {
                 const loadingTask = pdfjsLib.getDocument(url);
@@ -709,14 +812,14 @@
                 
                 document.getElementById('flip-status').innerText = `පිටු ${numPages} ක් සූදානම් වෙමින් පවතී...`;
                 flipbookDiv.innerHTML = ''; 
-                
-                // Calculate Dynamic Scale based on viewport height (82vh target to prevent clipping)
+                thumbnailList.innerHTML = '';
+
                 const firstPage = await pdf.getPage(1);
                 const unscaledViewport = firstPage.getViewport({ scale: 1.0 });
-                const targetHeight = Math.min(window.innerHeight * 0.82, 850);
+                const targetHeight = Math.min(window.innerHeight * 0.78, 820);
                 const optimalScale = targetHeight / unscaledViewport.height;
 
-                // Render all pages to canvases
+                // Render all pages & build thumbnail sidebar
                 for(let i = 1; i <= numPages; i++) {
                     const page = await pdf.getPage(i);
                     const viewport = page.getViewport({ scale: optimalScale });
@@ -732,6 +835,33 @@
                     pageDiv.className = 'flip-page';
                     pageDiv.appendChild(canvas);
                     flipbookDiv.appendChild(pageDiv);
+
+                    // Create Thumbnail for Sidebar
+                    const thumbBox = document.createElement('div');
+                    thumbBox.className = 'thumb-item';
+                    thumbBox.dataset.page = i - 1;
+                    
+                    const thumbCanvas = document.createElement('canvas');
+                    const thumbCtx = thumbCanvas.getContext('2d');
+                    const thumbViewport = page.getViewport({ scale: 0.22 });
+                    thumbCanvas.height = thumbViewport.height;
+                    thumbCanvas.width = thumbViewport.width;
+                    
+                    page.render({ canvasContext: thumbCtx, viewport: thumbViewport });
+                    
+                    const thumbLabel = document.createElement('span');
+                    thumbLabel.innerText = `Page ${i}`;
+                    
+                    thumbBox.appendChild(thumbCanvas);
+                    thumbBox.appendChild(thumbLabel);
+                    
+                    thumbBox.addEventListener('click', () => {
+                        if (pageFlipInstance) {
+                            pageFlipInstance.flip(parseInt(thumbBox.dataset.page));
+                        }
+                    });
+                    
+                    thumbnailList.appendChild(thumbBox);
                 }
 
                 flipLoader.style.display = 'none';
@@ -740,7 +870,7 @@
                 const calculatedWidth = Math.round(unscaledViewport.width * optimalScale);
                 const calculatedHeight = Math.round(targetHeight);
 
-                // Initialize 3D Flipbook Instance
+                // Initialize 3D PageFlip Engine (Real 1.2s smooth page turn)
                 pageFlipInstance = new St.PageFlip(flipbookDiv, {
                     width: calculatedWidth, 
                     height: calculatedHeight, 
@@ -749,17 +879,24 @@
                     maxWidth: 750,
                     minHeight: 380,
                     maxHeight: 1000,
-                    maxShadowOpacity: 0.55,
+                    maxShadowOpacity: 0.8,
                     showCover: true,
                     mobileScrollSupport: true,
+                    flippingTime: 1200, // 1.2 Seconds realistic flip animation
                     usePortrait: window.innerWidth < 768
                 });
 
                 pageFlipInstance.loadFromHTML(document.querySelectorAll('.flip-page'));
 
-                // Play Page Flip Sound on Every Flip
+                // Play Crisp Sound & Update Active Thumbnail on Flip
                 pageFlipInstance.on('flip', (e) => {
                     playPageFlipSound();
+                    
+                    const activeIndex = e.data;
+                    document.querySelectorAll('.thumb-item').forEach((item, idx) => {
+                        if (idx === activeIndex) item.classList.add('active');
+                        else item.classList.remove('active');
+                    });
                 });
 
             } catch(err) {
