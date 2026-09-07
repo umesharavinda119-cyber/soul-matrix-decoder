@@ -594,8 +594,12 @@
         }
         const db = firebase.firestore();
         
-        // FIREBASE TIMEOUT FIX (Forces long-polling to prevent 10s timeout on first load)
-        db.settings({ experimentalForceLongPolling: true, merge: true });
+        // FIREBASE TIMEOUT & CRASH FIX
+        db.settings({ 
+            experimentalForceLongPolling: true, 
+            experimentalAutoDetectLongPolling: false, 
+            merge: true 
+        });
 
         // 2. PDF.js Worker Setup
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
