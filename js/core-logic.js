@@ -132,13 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 5. TAB SWITCHING LOGIC ---
-    const packageDetails = {
-        'pkg-1': `<li><i class="fa-solid fa-check"></i> එක් ප්‍රධාන ගැටලුවකට පමණක් අංක විද්‍යාත්මක පිළිතුරු.</li><li><i class="fa-solid fa-check"></i> ජන්ම පත්‍රයේ පවතින ප්‍රධානම ග්‍රහ දෝෂය හඳුනා ගැනීම.</li><li class="note">මෙහිදි කලයුතු වත්පිළිවෙත් විස්තරාත්මක ලබා දීමක් සිදු නොවේ.</li>`,
-        'pkg-2': `<li><i class="fa-solid fa-check"></i> 2026 වසර සඳහා පූර්ණ පලාපල සහ පවතින බාධක.</li><li><i class="fa-solid fa-check"></i> ඔබේ ජන්ම අංකයට අදාළ වාසනාවන්ත වර්ණ, අංක සහ මූලික ශාන්තිකර්ම.</li>`,
-        'pkg-3': `<li><i class="fa-solid fa-fire"></i> ඔබේ ඡායාරූපය හරහා Aura (ප්‍රභා මණ්ඩල) පරීක්ෂාව.</li><li><i class="fa-solid fa-fire"></i> ඔබේ සැඟවුණු ක්වන්ටම් කේතය සහ ප්‍රාථමික සත්ව ආවේගය.</li><li><i class="fa-solid fa-fire"></i> වයස 35 න් පසු D9 නවාංශක පෙරළිය සහ කර්ම බාධක.</li><li><i class="fa-solid fa-fire"></i> පැළඳිය යුතු මැණික්, යන්ත්‍ර සහ ධන ආකර්ෂණ ප්‍රතිකර්ම.</li>`,
-        'pkg-4': `<p style="font-size:0.85rem; font-weight:bold; margin-bottom:10px; color:#fbbf24;">('Soul Blueprint' වාර්තාවේ සියලුම සේවාවන් ඇතුළත් වේ)</p><li><i class="fa-solid fa-crown"></i> <b>Bhoomi Check:</b> භූමියේ/නිවසේ දෝෂ පරීක්ෂාව.</li><li><i class="fa-solid fa-crown"></i> <b>Family Check:</b> පවුලේ තවත් අයෙකුගේ පරීක්ෂාව (නොමිලේ).</li><li><i class="fa-solid fa-crown"></i> <b>Direct Access:</b> පෞද්ගලික ගැටලු 05 කට සෘජු විසඳුම් සහ පසු සහාය.</li>`
-    };
-
     const viewPkgsBtn = document.getElementById('view-packages-btn');
     if (viewPkgsBtn) {
         viewPkgsBtn.addEventListener('click', () => {
@@ -160,21 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(btnElement) btnElement.classList.add('active');
 
         const scrollWrapper = document.getElementById('master-scroll');
-        const scrollClipper = document.querySelector('.scroll-clipper');
-        const scrollContent = document.getElementById('scroll-content-list');
-
-        if (packageDetails[tabId]) {
-            if(scrollWrapper) scrollWrapper.style.display = 'block';
-            if(scrollContent) scrollContent.innerHTML = packageDetails[tabId]; 
-            
-            if(scrollClipper) {
-                scrollClipper.style.animation = 'none';
-                scrollClipper.offsetHeight; 
-                scrollClipper.style.animation = 'unrollSmooth 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards';
-            }
-        } else {
-            if(scrollWrapper) scrollWrapper.style.display = 'none';
-        }
+        if (scrollWrapper) scrollWrapper.style.display = 'none';
     };
 
     window.goHome = function() {
