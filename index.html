@@ -493,10 +493,8 @@
         </div>
     </div>
 
-    <!-- 3D FLIPBOOK MODAL OVERLAY WITH ADVANCED TOOLBAR, SIDEBAR & ZOOM -->
+    <!-- 3D FLIPBOOK MODAL OVERLAY WITH CLEAN STATE MANAGEMENT & REAL SOUND -->
     <div id="flipbook-modal" class="flipbook-overlay" style="display: none;">
-        <div class="ambient-cosmic-glow"></div>
-        
         <!-- TOP CONTROL TOOLBAR -->
         <div class="flipbook-toolbar">
             <button id="toggle-sidebar-btn" class="tb-btn" title="Toggle Page Previews"><i class="fa-solid fa-border-all"></i> Pages</button>
@@ -575,7 +573,7 @@
     <script src="js/numerology-ui.js" defer></script>
     <script src="js/cosmic-enhancements.js" defer></script>
 
-    <!-- FIREBASE, 3D FLIPBOOK, SOUND, ZOOM & SIDEBAR LOGIC -->
+    <!-- FIREBASE, 3D FLIPBOOK, HIGH-QUALITY SOUND, ZOOM & SIDEBAR LOGIC -->
     <script>
         // 1. Firebase Configuration
         const firebaseConfig = {
@@ -618,18 +616,36 @@
         const thumbnailList = document.getElementById('thumbnail-list');
 
         let pageFlipInstance = null;
+        let activeLoadingTask = null;
+        let activeRenderTasks = [];
         let wasAudioPlaying = false;
         let currentZoom = 1.0;
 
-        // REALISTIC DUAL-STAGE CRISP PAPER TURN SOUND SYNTHESIZER
+        // REALISTIC CRISP PAPER PAGE-FLIP SOUND (AUDIO SAMPLE WITH FALLBACK SYNTH)
+        const flipAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.mp3');
+        flipAudio.volume = 0.6;
+
         function playPageFlipSound() {
+            try {
+                flipAudio.currentTime = 0;
+                const playPromise = flipAudio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        playFallbackSynthSound();
+                    });
+                }
+            } catch (e) {
+                playFallbackSynthSound();
+            }
+        }
+
+        function playFallbackSynthSound() {
             try {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 const ctx = new AudioCtx();
                 if (ctx.state === 'suspended') ctx.resume();
 
-                // Stage 1: Paper Swish (White Noise sweep)
-                const swishLength = ctx.sampleRate * 0.18;
+                const swishLength = ctx.sampleRate * 0.15;
                 const buffer = ctx.createBuffer(1, swishLength, ctx.sampleRate);
                 const data = buffer.getChannelData(0);
                 for (let i = 0; i < swishLength; i++) {
@@ -641,55 +657,50 @@
 
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'bandpass';
-                filter.frequency.setValueAtTime(1600, ctx.currentTime);
-                filter.frequency.exponentialRampToValueAtTime(350, ctx.currentTime + 0.18);
-                filter.Q.value = 2.5;
+                filter.frequency.setValueAtTime(1400, ctx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.15);
+                filter.Q.value = 2;
 
                 const gain = ctx.createGain();
-                gain.gain.setValueAtTime(0.35, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+                gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
 
                 noise.connect(filter);
                 filter.connect(gain);
                 gain.connect(ctx.destination);
 
                 noise.start();
-                noise.stop(ctx.currentTime + 0.18);
-
-                // Stage 2: Crisp Crease Snap
-                setTimeout(() => {
-                    try {
-                        const snapLen = ctx.sampleRate * 0.05;
-                        const snapBuf = ctx.createBuffer(1, snapLen, ctx.sampleRate);
-                        const snapData = snapBuf.getChannelData(0);
-                        for (let k = 0; k < snapLen; k++) snapData[k] = (Math.random() * 2 - 1);
-
-                        const snapSource = ctx.createBufferSource();
-                        snapSource.buffer = snapBuf;
-
-                        const snapFilter = ctx.createBiquadFilter();
-                        snapFilter.type = 'highpass';
-                        snapFilter.frequency.value = 2200;
-
-                        const snapGain = ctx.createGain();
-                        snapGain.gain.setValueAtTime(0.25, ctx.currentTime);
-                        snapGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
-
-                        snapSource.connect(snapFilter);
-                        snapFilter.connect(snapGain);
-                        snapGain.connect(ctx.destination);
-
-                        snapSource.start();
-                        snapSource.stop(ctx.currentTime + 0.05);
-                    } catch (e) {}
-                }, 80);
-
-            } catch (e) {
-                console.warn("Paper sound error:", e);
-            }
+                noise.stop(ctx.currentTime + 0.15);
+            } catch(e) {}
         }
 
-        // ZOOM LOGIC
+        // FULL CLEANUP ENGINE TO PREVENT SECOND UNLOCK ERRORS
+        function cleanupFlipbook() {
+            activeRenderTasks.forEach(task => {
+                if (task && task.cancel) {
+                    try { task.cancel(); } catch(e){}
+                }
+            });
+            activeRenderTasks = [];
+
+            if (activeLoadingTask) {
+                try { activeLoadingTask.destroy(); } catch(e){}
+                activeLoadingTask = null;
+            }
+
+            if (pageFlipInstance) {
+                try { pageFlipInstance.destroy(); } catch(e){}
+                pageFlipInstance = null;
+            }
+
+            if (flipbookDiv) flipbookDiv.innerHTML = '';
+            if (thumbnailList) thumbnailList.innerHTML = '';
+            currentZoom = 1.0;
+            if (zoomWrapper) zoomWrapper.style.transform = `scale(1.0)`;
+            if (zoomText) zoomText.innerText = `100%`;
+        }
+
+        // ZOOM CONTROLS LOGIC
         function setZoom(newZoom) {
             currentZoom = Math.min(Math.max(newZoom, 0.75), 2.2);
             if (zoomWrapper) {
@@ -704,13 +715,13 @@
         if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => setZoom(currentZoom - 0.15));
         if (zoomResetBtn) zoomResetBtn.addEventListener('click', () => setZoom(1.0));
 
-        // MOUSE WHEEL ZOOM ON FLIPBOOK CONTAINER
+        // MOUSE WHEEL ZOOM ON CONTAINER
         if (flipContainer) {
             flipContainer.addEventListener('wheel', (e) => {
                 if (e.ctrlKey || e.altKey || flipModal.style.display === 'flex') {
                     e.preventDefault();
-                    if (e.deltaY < 0) setZoom(currentZoom + 0.1);
-                    else setZoom(currentZoom - 0.1);
+                    if (e.deltaY < 0) setZoom(currentZoom + 0.08);
+                    else setZoom(currentZoom - 0.08);
                 }
             }, { passive: false });
         }
@@ -755,12 +766,13 @@
                         wasAudioPlaying = false;
                     }
 
+                    cleanupFlipbook();
+
                     flipModal.style.display = 'flex';
                     flipLoader.style.display = 'block';
                     flipContainer.style.display = 'none';
                     document.getElementById('flip-status').innerText = 'ආකේතනය කළ PDF වාර්තාව බාගත වෙමින් පවතී...';
 
-                    setZoom(1.0);
                     await loadAndRenderPDF(pdfUrl);
 
                 } catch (err) {
@@ -778,12 +790,8 @@
             closeFlipBtn.addEventListener('click', () => {
                 flipModal.style.display = 'none';
                 if(sidebar) sidebar.classList.remove('open');
-                if(pageFlipInstance) {
-                    pageFlipInstance.destroy();
-                    pageFlipInstance = null;
-                }
-                flipbookDiv.innerHTML = ''; 
-                thumbnailList.innerHTML = '';
+                
+                cleanupFlipbook();
 
                 if (bgAudio && wasAudioPlaying) {
                     bgAudio.play().catch(e => console.warn(e));
@@ -806,13 +814,11 @@
         // 6. PDF Rendering Engine with Dynamic Screen Scaling, Real 3D Flip & Thumbnails
         async function loadAndRenderPDF(url) {
             try {
-                const loadingTask = pdfjsLib.getDocument(url);
-                const pdf = await loadingTask.promise;
+                activeLoadingTask = pdfjsLib.getDocument(url);
+                const pdf = await activeLoadingTask.promise;
                 const numPages = pdf.numPages;
                 
                 document.getElementById('flip-status').innerText = `පිටු ${numPages} ක් සූදානම් වෙමින් පවතී...`;
-                flipbookDiv.innerHTML = ''; 
-                thumbnailList.innerHTML = '';
 
                 const firstPage = await pdf.getPage(1);
                 const unscaledViewport = firstPage.getViewport({ scale: 1.0 });
@@ -829,10 +835,12 @@
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
                     
-                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                    const renderTask = page.render({ canvasContext: ctx, viewport: viewport });
+                    activeRenderTasks.push(renderTask);
+                    await renderTask.promise;
                     
                     const pageDiv = document.createElement('div');
-                    pageDiv.className = 'flip-page';
+                    pageDiv.className = `flip-page ${i % 2 === 0 ? 'flip-page--left' : 'flip-page--right'}`;
                     pageDiv.appendChild(canvas);
                     flipbookDiv.appendChild(pageDiv);
 
@@ -879,7 +887,7 @@
                     maxWidth: 750,
                     minHeight: 380,
                     maxHeight: 1000,
-                    maxShadowOpacity: 0.8,
+                    maxShadowOpacity: 0.85,
                     showCover: true,
                     mobileScrollSupport: true,
                     flippingTime: 1200, // 1.2 Seconds realistic flip animation
@@ -900,9 +908,14 @@
                 });
 
             } catch(err) {
+                if (err && err.name === 'RenderingCancelledException') {
+                    console.log('PDF Render task canceled safely.');
+                    return;
+                }
                 console.error("PDF Load Error:", err);
                 alert("PDF වාර්තාව කියවීමේදී දෝෂයක් මතු විය.");
                 flipModal.style.display = 'none';
+                cleanupFlipbook();
                 if (bgAudio && wasAudioPlaying) bgAudio.play().catch(e => console.warn(e));
             }
         }
