@@ -12,6 +12,7 @@
     
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/horoscope.css?v=2.1">
+    <link rel="stylesheet" href="css/numerology.css">
     
     <!-- THREE.JS, GLTFLOADER & DRACO DECODER -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -71,7 +72,7 @@
                 <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
             </div>
             <div class="social-links">
-                <a href="https://wa.me/94700000000" target="_blank" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://wa.me/94757290085" target="_blank" class="social-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
             </div>
         </div>
     </header>
@@ -130,25 +131,25 @@
                     <div id="pkg-1" class="tab-content" style="display: none;">
                         <h3>MINI CHECK <span>(කෙටි පරීක්ෂාව)</span></h3>
                         <div class="price-tag">රු. 1260/-</div>
-                        <a href="https://wa.me/94700000000" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
+                        <a href="https://wa.me/94757290085" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
                     </div>
 
                     <div id="pkg-2" class="tab-content" style="display: none;">
                         <h3>MICRO PACKAGE <span>(මූලික පලාපල)</span></h3>
                         <div class="price-tag">රු. 2,700/-</div>
-                        <a href="https://wa.me/94700000000" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
+                        <a href="https://wa.me/94757290085" target="_blank" class="order-btn" tabindex="0">ORDER VIA WHATSAPP</a>
                     </div>
 
                     <div id="pkg-3" class="tab-content" style="display: none;">
                         <h3 class="highlight-title">THE SOUL BLUEPRINT 🚀 <span>[Best Seller]</span></h3>
                         <div class="price-tag highlight">රු. 7,200/-</div>
-                        <a href="https://wa.me/94700000000" target="_blank" class="order-btn blueprint" tabindex="0">ORDER VIA WHATSAPP</a>
+                        <a href="https://wa.me/94757290085" target="_blank" class="order-btn blueprint" tabindex="0">ORDER VIA WHATSAPP</a>
                     </div>
 
                     <div id="pkg-4" class="tab-content" style="display: none;">
                         <h3 class="vip-title">VVIP PACKAGE 👑 <span>(Royal Family Service)</span></h3>
                         <div class="price-tag vip">රු. 9,900/-</div>
-                        <a href="https://wa.me/94700000000" target="_blank" class="order-btn vvip" tabindex="0">ORDER VIA WHATSAPP</a>
+                        <a href="https://wa.me/94757290085" target="_blank" class="order-btn vvip" tabindex="0">ORDER VIA WHATSAPP</a>
                     </div>
 
                     <div id="portal" class="tab-content" style="display: none; text-align: center;">
@@ -171,8 +172,47 @@
         </div>
     </section>
 
-    <!-- RIGHT SIDE PANEL -->
-    <div id="horoscope-app-wrapper" style="display: none;">
+    <!-- LEFT SIDE WIDGET (NUMEROLOGY 3D & MODALS) -->
+    <div id="numerology-app-wrapper">
+        <canvas id="numerology-3d-canvas"></canvas>
+        <button id="num-trigger-btn" class="num-glow-btn">අංක විද්‍යාත්මක පරීක්ෂණ</button>
+    </div>
+
+    <!-- NUMEROLOGY INPUT MODAL -->
+    <div id="numerology-input-modal" class="num-glass-panel">
+        <div class="num-panel-header">
+            <h3>අංක විද්‍යාත්මක පරීක්ෂාව</h3>
+            <button id="close-num-input-btn" class="num-close-btn">&times;</button>
+        </div>
+        <div class="num-panel-body">
+            <form id="numerology-form">
+                <div class="input-grp">
+                    <label>සම්පූර්ණ නම (English)</label>
+                    <input type="text" id="num-name-en" placeholder="E.g. K. A. CHATHURA UMAGILIYA" required>
+                </div>
+                <div class="input-grp">
+                    <label>සම්පූර්ණ නම (සිංහල)</label>
+                    <input type="text" id="num-name-si" placeholder="උදා: කේ. ඒ. චතුර උමගිලිය">
+                </div>
+                <div class="input-grp">
+                    <label>උපන් දිනය (DOB)</label>
+                    <input type="date" id="num-dob" required>
+                </div>
+                <button type="submit" class="submit-btn-3d">පරීක්ෂා කරන්න</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- NUMEROLOGY REPORT MODAL -->
+    <div id="numerology-report-modal">
+        <div class="num-report-card">
+            <button class="num-close-btn" onclick="document.getElementById('numerology-report-modal').style.display='none'" style="position: absolute; top: 15px; right: 20px;">&times;</button>
+            <div id="num-report-content"></div>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE PANEL (HOROSCOPE 3D & INPUT PANEL) -->
+    <div id="horoscope-app-wrapper">
         <canvas id="zodiac-3d-canvas"></canvas>
         <button id="open-horoscope-btn" class="glow-btn" tabindex="0" data-si='<i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම' data-en='<i class="fa-solid fa-compass"></i> GENERATE HOROSCOPE'>
             <i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම
@@ -399,6 +439,7 @@
     <script src="js/core-logic.js" defer></script>
     <script src="js/horoscope-3d.js" defer></script>
     <script src="js/horoscope-ui.js" defer></script>
+    <script src="js/numerology-ui.js" defer></script>
     <script src="js/cosmic-enhancements.js" defer></script>
 </body>
 </html>
