@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="css/numerology.css">
     
     <style>
-        /* 3D Canvas Visibility Bug Fix */
+        /* 3D Canvas Visibility Transition Styles */
         #numerology-app-wrapper, 
         #horoscope-app-wrapper {
             opacity: 0;
@@ -193,7 +193,7 @@
         <button id="num-trigger-btn" class="num-glow-btn">අංක විද්‍යාත්මක පරීක්ෂණ</button>
     </div>
 
-    <!-- NUMEROLOGY INPUT MODAL -->
+    <!-- NUMEROLOGY INPUT MODAL (CENTER POPUP) -->
     <div id="numerology-input-modal" class="num-glass-panel">
         <div class="num-panel-header">
             <h3>අංක විද්‍යාත්මක පරීක්ෂාව</h3>
@@ -226,52 +226,53 @@
         </div>
     </div>
 
-    <!-- RIGHT SIDE PANEL (HOROSCOPE 3D & INPUT PANEL) -->
+    <!-- RIGHT SIDE PANEL (HOROSCOPE 3D WIDGET) -->
     <div id="horoscope-app-wrapper">
         <canvas id="zodiac-3d-canvas"></canvas>
         <button id="open-horoscope-btn" class="glow-btn" tabindex="0" data-si='<i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම' data-en='<i class="fa-solid fa-compass"></i> GENERATE HOROSCOPE'>
             <i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම
         </button>
+    </div>
 
-        <div id="horoscope-panel" class="glass-panel">
-            <div class="panel-header">
-                <h3>SOUL MATRIX DECODER</h3>
-                <button id="close-panel-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="panel-body">
-                <p class="panel-desc">නිවැරදි ජ්‍යොතිෂමය දත්ත සඳහා ඔබගේ උපන් තොරතුරු ලබා දෙන්න.</p>
-                <form id="horoscope-form">
-                    <div class="input-grp">
-                        <label><i class="fa-solid fa-user"></i> සම්පූර්ණ නම</label>
-                        <input type="text" id="h-name" placeholder="Ex: Umesh (Mars/No.9)" required>
-                    </div>
-                    <div class="input-grp">
-                        <label><i class="fa-solid fa-heart"></i> විවාහක / අවිවාහක බව</label>
-                        <select id="h-status" required style="width: 100%; padding: 0.8rem 1rem; background: rgba(2, 2, 10, 0.85); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.9rem;">
-                            <option value="single">අවිවාහක (Single)</option>
-                            <option value="married">විවාහක (Married)</option>
-                        </select>
-                    </div>
-                    <div class="input-grp">
-                        <label><i class="fa-solid fa-calendar-days"></i> උපන් දිනය</label>
-                        <input type="date" id="h-date" required>
-                    </div>
-                    <div class="input-grp">
-                        <label><i class="fa-solid fa-clock"></i> උපන් වෙලාව (පැය 24)</label>
-                        <input type="time" id="h-time" step="60" required>
-                    </div>
-                    <div class="input-grp">
-                        <label><i class="fa-solid fa-hospital"></i> උපන් ස්ථානය / නගරය</label>
-                        <input type="text" id="h-place" placeholder="Ex: Castle Hospital, Colombo" required>
-                    </div>
-                    <button type="submit" class="submit-btn-3d" id="generate-matrix-btn">
-                        <i class="fa-solid fa-atom"></i> GENERATE MATRIX
-                    </button>
-                </form>
-                <div id="loading-matrix" style="display: none;">
-                    <div class="spinner"></div>
-                    <p>කේන්දර සටහන ගණනය කරමින් පවතී...</p>
+    <!-- HOROSCOPE INPUT MODAL (NOW CENTERED INDEPENDENT POPUP) -->
+    <div id="horoscope-panel" class="glass-panel">
+        <div class="panel-header">
+            <h3>SOUL MATRIX DECODER</h3>
+            <button id="close-panel-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="panel-body">
+            <p class="panel-desc">නිවැරදි ජ්‍යොතිෂමය දත්ත සඳහා ඔබගේ උපන් තොරතුරු ලබා දෙන්න.</p>
+            <form id="horoscope-form">
+                <div class="input-grp">
+                    <label><i class="fa-solid fa-user"></i> සම්පූර්ණ නම</label>
+                    <input type="text" id="h-name" placeholder="Ex: Umesh (Mars/No.9)" required>
                 </div>
+                <div class="input-grp">
+                    <label><i class="fa-solid fa-heart"></i> විවාහක / අවිවාහක බව</label>
+                    <select id="h-status" required style="width: 100%; padding: 0.8rem 1rem; background: rgba(2, 2, 10, 0.85); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.9rem;">
+                        <option value="single">අවිවාහක (Single)</option>
+                        <option value="married">විවාහක (Married)</option>
+                    </select>
+                </div>
+                <div class="input-grp">
+                    <label><i class="fa-solid fa-calendar-days"></i> උපන් දිනය</label>
+                    <input type="date" id="h-date" required>
+                </div>
+                <div class="input-grp">
+                    <label><i class="fa-solid fa-clock"></i> උපන් වෙලාව (පැය 24)</label>
+                    <input type="time" id="h-time" step="60" required>
+                </div>
+                <div class="input-grp">
+                    <label><i class="fa-solid fa-hospital"></i> උපන් ස්ථානය / නගරය</label>
+                    <input type="text" id="h-place" placeholder="Ex: Castle Hospital, Colombo" required>
+                </div>
+                <button type="submit" class="submit-btn-3d" id="generate-matrix-btn">
+                    <i class="fa-solid fa-atom"></i> GENERATE MATRIX
+                </button>
+            </form>
+            <div id="loading-matrix" style="display: none;">
+                <div class="spinner"></div>
+                <p>කේන්දර සටහන ගණනය කරමින් පවතී...</p>
             </div>
         </div>
     </div>
