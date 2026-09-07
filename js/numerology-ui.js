@@ -47,13 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
             (err) => console.error("NUMEROLOGY GLB LOAD ERROR:", err)
         );
 
-        // Oscillates back and forth smoothly instead of full 360 degree spin
         let time = 0;
         function animate() {
             requestAnimationFrame(animate);
             if (modelGroup) {
                 time += 0.015;
-                modelGroup.rotation.y = Math.sin(time) * 0.45; // Depeththata vitharak turn weema
+                modelGroup.rotation.y = Math.sin(time) * 0.45; 
             }
             renderer.render(scene, camera);
         }
@@ -68,11 +67,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeInputBtn = document.getElementById('close-num-input-btn');
     const numForm = document.getElementById('numerology-form');
 
+    const wheelCard = document.getElementById('wheel-card');
+    const numWrapper = document.getElementById('numerology-app-wrapper');
+    const horoWrapper = document.getElementById('horoscope-app-wrapper');
+
+    function hideCenterAndSideWidgets() {
+        if (wheelCard) { wheelCard.style.opacity = '0'; wheelCard.style.pointerEvents = 'none'; }
+        if (numWrapper) { numWrapper.style.opacity = '0'; numWrapper.style.pointerEvents = 'none'; }
+        if (horoWrapper) { horoWrapper.style.opacity = '0'; horoWrapper.style.pointerEvents = 'none'; }
+    }
+
+    function restoreCenterAndSideWidgets() {
+        if (wheelCard) { wheelCard.style.opacity = '1'; wheelCard.style.pointerEvents = 'all'; }
+        if (numWrapper) { numWrapper.style.opacity = '1'; numWrapper.style.pointerEvents = 'all'; }
+        if (horoWrapper) { horoWrapper.style.opacity = '1'; horoWrapper.style.pointerEvents = 'all'; }
+    }
+
     if (triggerBtn && inputModal) {
-        triggerBtn.addEventListener('click', () => inputModal.classList.add('active'));
+        triggerBtn.addEventListener('click', () => {
+            inputModal.classList.add('active');
+            hideCenterAndSideWidgets();
+        });
     }
     if (closeInputBtn && inputModal) {
-        closeInputBtn.addEventListener('click', () => inputModal.classList.remove('active'));
+        closeInputBtn.addEventListener('click', () => {
+            inputModal.classList.remove('active');
+            restoreCenterAndSideWidgets();
+        });
     }
 
     if (numForm) {
@@ -100,9 +121,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.status === 'success') {
                     inputModal.classList.remove('active');
                     renderNumerologyReport(result.data);
+                } else {
+                    restoreCenterAndSideWidgets();
                 }
             } catch (err) {
                 console.error("API ERROR:", err);
+                restoreCenterAndSideWidgets();
             }
         });
     }
@@ -116,7 +140,6 @@ function renderNumerologyReport(data) {
     const reportContent = document.getElementById('num-report-content');
     if (!reportModal || !reportContent) return;
 
-    // Planetary Attributes Mappings
     const planetMap = {
         1: { name: 'රවි', desc: 'නායකත්වය සහ පෞරුෂය', color: 'තැඹිලි / රතු', day: 'ඉරිදා' },
         2: { name: 'සඳු', desc: 'සංවේදීතාව සහ නිර්මාණශීලීත්වය', color: 'සුදු / රිදී', day: 'සඳුදා' },
@@ -129,7 +152,6 @@ function renderNumerologyReport(data) {
         9: { name: 'කුජ', desc: 'ශක්තිය සහ ධෛර්යය', color: 'රතු', day: 'අඟහරුවාදා' }
     };
 
-    // Career Field Mappings based on Driver
     const careerMap = {
         1: 'ව්‍යාපාර කළමනාකරණය, රාජ්‍ය නායකත්ව තනතුරු',
         2: 'කලාව, උපදේශනය, මානසික සෞඛ්‍ය ක්ෂේත්‍ර',
@@ -145,7 +167,6 @@ function renderNumerologyReport(data) {
     const expPlanet = planetMap[data.expression_number] || planetMap[5];
     const driverPlanet = planetMap[data.driver_number] || planetMap[1];
 
-    // WhatsApp Dynamic Message Construction
     const waPhone = "94757290085";
     const waText = encodeURIComponent(
         `මගේ අංක විද්‍යාත්මක වාර්තාවේ සම්පූර්ණ ප්‍රතිකර්ම ලබාගැනීමට අවශ්‍යයි.\n\n` +
