@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeInputBtn && inputModal) {
         closeInputBtn.addEventListener('click', () => {
             inputModal.classList.remove('active');
+            closeVirtualKeyboard();
             window.restoreCenterAndSideWidgets();
         });
     }
@@ -120,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await res.json();
                 if (result.status === 'success') {
                     inputModal.classList.remove('active');
+                    closeVirtualKeyboard();
                     renderNumerologyReport(result.data);
                 } else {
                     window.restoreCenterAndSideWidgets();
@@ -130,7 +132,114 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Setup Virtual Keyboards for PC and Mobile
+    setupVirtualKeyboards();
 });
+
+// =============================================================
+// 3. VIRTUAL KEYBOARD ENGINE (PC & MOBILE SUPPORT)
+// =============================================================
+function setupVirtualKeyboards() {
+    const enKbdBtn = document.querySelector('.keyboard-toggle-btn:not(.sinhala-kbd-btn)');
+    const siKbdBtn = document.querySelector('.sinhala-kbd-btn');
+    const enInput = document.getElementById('num-name-en');
+    const siInput = document.getElementById('num-name-si');
+
+    if (enKbdBtn && enInput) {
+        enKbdBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleKeyboard('en', enInput);
+        });
+    }
+
+    if (siKbdBtn && siInput) {
+        siKbdBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleKeyboard('si', siInput);
+        });
+    }
+}
+
+let activeKbdContainer = null;
+
+function toggleKeyboard(type, targetInput) {
+    if (activeKbdContainer) {
+        const currentType = activeKbdContainer.dataset.kbdType;
+        closeVirtualKeyboard();
+        if (currentType === type) return; // Toggle off
+    }
+
+    const modalBody = document.querySelector('.num-panel-body');
+    if (!modalBody) return;
+
+    const kbdBox = document.createElement('div');
+    kbdBox.className = 'v-keyboard-box';
+    kbdBox.dataset.kbdType = type;
+
+    let keysLayout = [];
+    if (type === 'en') {
+        keysLayout = [
+            ['Q','W','E','R','T','Y','U','I','O','P'],
+            ['A','S','D','F','G','H','J','K','L'],
+            ['Z','X','C','V','B','N','M'],
+            ['SPACE', 'BACKSPACE', 'CLOSE']
+        ];
+    } else {
+        keysLayout = [
+            ['අ','ආ','ඇ','ඈ','ඉ','ඊ','උ','ඌ','එ','ඒ','ඔ','ඕ'],
+            ['ක','ග','ච','ජ','ට','ඩ','ණ','ත','ද','න','ප','බ','ම','ය','ර','ල','ව','ස','හ','ළ'],
+            ['්','ා','ැ','ෑ','ි','ී','ු','ූ','ෙ','ේ','ො','ෝ','ං'],
+            ['SPACE', 'BACKSPACE', 'CLOSE']
+        ];
+    }
+
+    let html = `<div class="v-kbd-header"><span>${type === 'en' ? 'English Keyboard' : 'සිංහල යතුරුපුවරුව'}</span><button type="button" onclick="closeVirtualKeyboard()">&times;</button></div><div class="v-kbd-keys">`;
+
+    keysLayout.forEach(row => {
+        html += `<div class="v-kbd-row">`;
+        row.forEach(key => {
+            if (key === 'SPACE') {
+                html += `<button type="button" class="v-key k-space" data-key=" ">SPACE</button>`;
+            } else if (key === 'BACKSPACE') {
+                html += `<button type="button" class="v-key k-back" data-key="BS">⌫</button>`;
+            } else if (key === 'CLOSE') {
+                html += `<button type="button" class="v-key k-close" onclick="closeVirtualKeyboard()">Done</button>`;
+            } else {
+                html += `<button type="button" class="v-key" data-key="${key}">${key}</button>`;
+            }
+        });
+        html += `</div>`;
+    });
+
+    html += `</div>`;
+    kbdBox.innerHTML = html;
+
+    modalBody.appendChild(kbdBox);
+    activeKbdContainer = kbdBox;
+    targetInput.focus();
+
+    kbdBox.querySelectorAll('.v-key[data-key]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const val = btn.dataset.key;
+            if (val === 'BS') {
+                targetInput.value = targetInput.value.slice(0, -1);
+            } else {
+                targetInput.value += val;
+            }
+            targetInput.focus();
+        });
+    });
+}
+
+function closeVirtualKeyboard() {
+    if (activeKbdContainer) {
+        activeKbdContainer.remove();
+        activeKbdContainer = null;
+    }
+}
+window.closeVirtualKeyboard = closeVirtualKeyboard;
 
 // Close Report Modal and restore center card
 function closeNumerologyReportModal() {
@@ -142,7 +251,7 @@ function closeNumerologyReportModal() {
 }
 
 // =============================================================
-// 3. RESULT REPORT RENDERER & WHATSAPP REDIRECT
+// 4. RESULT REPORT RENDERER & WHATSAPP REDIRECT
 // =============================================================
 function renderNumerologyReport(data) {
     const reportModal = document.getElementById('numerology-report-modal');
