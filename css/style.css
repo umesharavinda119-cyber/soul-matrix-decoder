@@ -397,28 +397,35 @@ header {
 }
 
 /* =================================================================
-   3D FLIPBOOK OVERLAY STYLES
+   3D FLIPBOOK OVERLAY STYLES & RESPONSIVE CENTERED FIT
    ================================================================= */
 .flipbook-overlay {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(4, 4, 12, 0.98);
+    background: rgba(2, 2, 8, 0.96);
     z-index: 99999;
     display: flex;
     justify-content: center;
     align-items: center;
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(20px);
 }
 
 .close-flip-btn {
     position: absolute;
-    top: 25px; right: 40px;
-    background: transparent; border: none;
-    color: #9ca3af; font-size: 3.5rem; cursor: pointer;
-    z-index: 100000; transition: color 0.3s ease;
+    top: 20px; right: 35px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff; font-size: 2rem; cursor: pointer;
+    width: 45px; height: 45px; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 100001; transition: all 0.3s ease;
 }
 
-.close-flip-btn:hover { color: #f43f5e; }
+.close-flip-btn:hover {
+    color: #f43f5e; border-color: #f43f5e;
+    background: rgba(244, 63, 94, 0.15);
+    transform: scale(1.1);
+}
 
 .flip-loader {
     text-align: center; color: var(--accent-cyan);
@@ -438,12 +445,50 @@ header {
 .flipbook-container {
     width: 100%; height: 100%;
     display: flex; justify-content: center; align-items: center;
-    padding: 60px 20px;
+    padding: 20px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* NAVIGATION ARROWS */
+.flip-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 55px; height: 55px;
+    border-radius: 50%;
+    background: rgba(6, 182, 212, 0.15);
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 100000;
+    display: flex; justify-content: center; align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+}
+
+.flip-nav-btn:hover {
+    background: rgba(6, 182, 212, 0.35);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
+    transform: translateY(-50%) scale(1.12);
+}
+
+.flip-nav-btn.prev-btn { left: 40px; }
+.flip-nav-btn.next-btn { right: 40px; }
+
+#flipbook {
+    margin: 0 auto;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .flip-page {
     background-color: #fff;
-    box-shadow: inset 0 0 25px rgba(0,0,0,0.15);
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.2);
     overflow: hidden;
     border: 1px solid #ddd;
 }
@@ -453,6 +498,9 @@ header {
 }
 
 @media (max-width: 768px) {
-    .close-flip-btn { top: 10px; right: 20px; font-size: 3rem; }
-    .flipbook-container { padding: 50px 10px 20px 10px; }
+    .close-flip-btn { top: 10px; right: 15px; width: 38px; height: 38px; font-size: 1.5rem; }
+    .flip-nav-btn { width: 42px; height: 42px; font-size: 1.1rem; }
+    .flip-nav-btn.prev-btn { left: 10px; }
+    .flip-nav-btn.next-btn { right: 10px; }
+    .flipbook-container { padding: 10px; }
 }
