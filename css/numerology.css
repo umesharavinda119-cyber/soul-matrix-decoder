@@ -144,3 +144,51 @@
     position: relative;
     box-shadow: 0 0 50px rgba(6, 182, 212, 0.35);
 }
+
+/* =================================================================
+   4. INPUT WITH KEYBOARD ACTION BUTTONS
+   ================================================================= */
+.input-with-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-btn input {
+    padding-right: 45px !important;
+}
+
+.keyboard-toggle-btn {
+    position: absolute;
+    right: 8px;
+    background: rgba(6, 182, 212, 0.2);
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    color: #06b6d4;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.keyboard-toggle-btn:hover {
+    background: #06b6d4;
+    color: #000;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+}
+
+.sinhala-kbd-btn {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.4);
+    color: #f59e0b;
+}
+
+.sinhala-kbd-btn:hover {
+    background: #f59e0b;
+    color: #000;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+}
