@@ -528,7 +528,11 @@
             </button>
             
             <div id="flipbook-zoom-wrapper" class="flipbook-zoom-wrapper">
-                <div id="flipbook" class="real-3d-book"></div>
+                <div class="book-3d-hardcover-wrapper">
+                    <div class="paper-stack-edge left-stack"></div>
+                    <div id="flipbook" class="real-3d-book"></div>
+                    <div class="paper-stack-edge right-stack"></div>
+                </div>
             </div>
 
             <button id="next-page-btn" class="flip-nav-btn next-btn" title="Next Page">
@@ -573,7 +577,7 @@
     <script src="js/numerology-ui.js" defer></script>
     <script src="js/cosmic-enhancements.js" defer></script>
 
-    <!-- FIREBASE, 3D FLIPBOOK, HIGH-QUALITY SOUND, ZOOM & SIDEBAR LOGIC -->
+    <!-- FIREBASE, 3D FLIPBOOK, DYNAMIC HIGH-DPI ZOOM & SYNTHESIZED SOUND LOGIC -->
     <script>
         // 1. Firebase Configuration
         const firebaseConfig = {
@@ -621,35 +625,19 @@
         let wasAudioPlaying = false;
         let currentZoom = 1.0;
 
-        // REALISTIC CRISP PAPER PAGE-FLIP SOUND (AUDIO SAMPLE WITH FALLBACK SYNTH)
-        const flipAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.mp3');
-        flipAudio.volume = 0.6;
-
+        // REALISTIC PAPER SWISH & SNAP SOUND VIA WEB AUDIO API (NO EXTERNAL URL DEPENDENCY)
         function playPageFlipSound() {
-            try {
-                flipAudio.currentTime = 0;
-                const playPromise = flipAudio.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => {
-                        playFallbackSynthSound();
-                    });
-                }
-            } catch (e) {
-                playFallbackSynthSound();
-            }
-        }
-
-        function playFallbackSynthSound() {
             try {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 const ctx = new AudioCtx();
                 if (ctx.state === 'suspended') ctx.resume();
 
-                const swishLength = ctx.sampleRate * 0.15;
+                // Swish sound
+                const swishLength = ctx.sampleRate * 0.16;
                 const buffer = ctx.createBuffer(1, swishLength, ctx.sampleRate);
                 const data = buffer.getChannelData(0);
                 for (let i = 0; i < swishLength; i++) {
-                    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / swishLength, 2);
+                    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / swishLength, 2.5);
                 }
 
                 const noise = ctx.createBufferSource();
@@ -657,21 +645,23 @@
 
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'bandpass';
-                filter.frequency.setValueAtTime(1400, ctx.currentTime);
-                filter.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.15);
-                filter.Q.value = 2;
+                filter.frequency.setValueAtTime(1800, ctx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(320, ctx.currentTime + 0.16);
+                filter.Q.value = 3.0;
 
                 const gain = ctx.createGain();
-                gain.gain.setValueAtTime(0.4, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.45, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
 
                 noise.connect(filter);
                 filter.connect(gain);
                 gain.connect(ctx.destination);
 
                 noise.start();
-                noise.stop(ctx.currentTime + 0.15);
-            } catch(e) {}
+                noise.stop(ctx.currentTime + 0.16);
+            } catch(e) {
+                console.warn("Sound play error:", e);
+            }
         }
 
         // FULL CLEANUP ENGINE TO PREVENT SECOND UNLOCK ERRORS
@@ -702,7 +692,7 @@
 
         // ZOOM CONTROLS LOGIC
         function setZoom(newZoom) {
-            currentZoom = Math.min(Math.max(newZoom, 0.75), 2.2);
+            currentZoom = Math.min(Math.max(newZoom, 0.75), 2.5);
             if (zoomWrapper) {
                 zoomWrapper.style.transform = `scale(${currentZoom})`;
             }
@@ -711,8 +701,8 @@
             }
         }
 
-        if (zoomInBtn) zoomInBtn.addEventListener('click', () => setZoom(currentZoom + 0.15));
-        if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => setZoom(currentZoom - 0.15));
+        if (zoomInBtn) zoomInBtn.addEventListener('click', () => setZoom(currentZoom + 0.2));
+        if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => setZoom(currentZoom - 0.2));
         if (zoomResetBtn) zoomResetBtn.addEventListener('click', () => setZoom(1.0));
 
         // MOUSE WHEEL ZOOM ON CONTAINER
@@ -720,8 +710,8 @@
             flipContainer.addEventListener('wheel', (e) => {
                 if (e.ctrlKey || e.altKey || flipModal.style.display === 'flex') {
                     e.preventDefault();
-                    if (e.deltaY < 0) setZoom(currentZoom + 0.08);
-                    else setZoom(currentZoom - 0.08);
+                    if (e.deltaY < 0) setZoom(currentZoom + 0.1);
+                    else setZoom(currentZoom - 0.1);
                 }
             }, { passive: false });
         }
@@ -811,7 +801,7 @@
             });
         }
 
-        // 6. PDF Rendering Engine with Dynamic Screen Scaling, Real 3D Flip & Thumbnails
+        // 6. HIGH-DPI PDF RENDERING ENGINE (3.0 MULTIPLIER FOR CRISP TEXT ON ZOOM)
         async function loadAndRenderPDF(url) {
             try {
                 activeLoadingTask = pdfjsLib.getDocument(url);
@@ -823,24 +813,39 @@
                 const firstPage = await pdf.getPage(1);
                 const unscaledViewport = firstPage.getViewport({ scale: 1.0 });
                 const targetHeight = Math.min(window.innerHeight * 0.78, 820);
-                const optimalScale = targetHeight / unscaledViewport.height;
+                const baseScale = targetHeight / unscaledViewport.height;
+
+                // MULTIPLY BY 2.5 FOR HIGH-DPI CRISP CANVAS
+                const renderMultiplier = 2.5; 
+                const highDpiScale = baseScale * renderMultiplier;
+
+                const calculatedWidth = Math.round(unscaledViewport.width * baseScale);
+                const calculatedHeight = Math.round(targetHeight);
 
                 // Render all pages & build thumbnail sidebar
                 for(let i = 1; i <= numPages; i++) {
                     const page = await pdf.getPage(i);
-                    const viewport = page.getViewport({ scale: optimalScale });
+                    const viewport = page.getViewport({ scale: highDpiScale });
                     
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
                     
+                    // High internal resolution canvas
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    
+                    // Force CSS layout size to match the flipbook dimensions
+                    canvas.style.width = calculatedWidth + "px";
+                    canvas.style.height = calculatedHeight + "px";
+
                     const renderTask = page.render({ canvasContext: ctx, viewport: viewport });
                     activeRenderTasks.push(renderTask);
                     await renderTask.promise;
                     
                     const pageDiv = document.createElement('div');
                     pageDiv.className = `flip-page ${i % 2 === 0 ? 'flip-page--left' : 'flip-page--right'}`;
+                    pageDiv.style.width = calculatedWidth + "px";
+                    pageDiv.style.height = calculatedHeight + "px";
                     pageDiv.appendChild(canvas);
                     flipbookDiv.appendChild(pageDiv);
 
@@ -851,7 +856,7 @@
                     
                     const thumbCanvas = document.createElement('canvas');
                     const thumbCtx = thumbCanvas.getContext('2d');
-                    const thumbViewport = page.getViewport({ scale: 0.22 });
+                    const thumbViewport = page.getViewport({ scale: 0.25 });
                     thumbCanvas.height = thumbViewport.height;
                     thumbCanvas.width = thumbViewport.width;
                     
@@ -874,9 +879,6 @@
 
                 flipLoader.style.display = 'none';
                 flipContainer.style.display = 'flex';
-
-                const calculatedWidth = Math.round(unscaledViewport.width * optimalScale);
-                const calculatedHeight = Math.round(targetHeight);
 
                 // Initialize 3D PageFlip Engine (Real 1.2s smooth page turn)
                 pageFlipInstance = new St.PageFlip(flipbookDiv, {
