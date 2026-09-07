@@ -14,6 +14,21 @@
     <link rel="stylesheet" href="css/horoscope.css?v=2.1">
     <link rel="stylesheet" href="css/numerology.css">
     
+    <style>
+        /* 3D Canvas Visibility Bug Fix */
+        #numerology-app-wrapper, 
+        #horoscope-app-wrapper {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #numerology-app-wrapper.show-widget, 
+        #horoscope-app-wrapper.show-widget {
+            opacity: 1 !important;
+            pointer-events: all !important;
+        }
+    </style>
+
     <!-- THREE.JS, GLTFLOADER & DRACO DECODER -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -172,8 +187,8 @@
         </div>
     </section>
 
-    <!-- LEFT SIDE WIDGET (NUMEROLOGY 3D & MODALS) - HIDDEN BY DEFAULT -->
-    <div id="numerology-app-wrapper" style="display: none;">
+    <!-- LEFT SIDE WIDGET (NUMEROLOGY 3D & MODALS) -->
+    <div id="numerology-app-wrapper">
         <canvas id="numerology-3d-canvas"></canvas>
         <button id="num-trigger-btn" class="num-glow-btn">අංක විද්‍යාත්මක පරීක්ෂණ</button>
     </div>
@@ -211,8 +226,8 @@
         </div>
     </div>
 
-    <!-- RIGHT SIDE PANEL (HOROSCOPE 3D & INPUT PANEL) - HIDDEN BY DEFAULT -->
-    <div id="horoscope-app-wrapper" style="display: none;">
+    <!-- RIGHT SIDE PANEL (HOROSCOPE 3D & INPUT PANEL) -->
+    <div id="horoscope-app-wrapper">
         <canvas id="zodiac-3d-canvas"></canvas>
         <button id="open-horoscope-btn" class="glow-btn" tabindex="0" data-si='<i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම' data-en='<i class="fa-solid fa-compass"></i> GENERATE HOROSCOPE'>
             <i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම
