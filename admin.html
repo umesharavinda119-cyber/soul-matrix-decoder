@@ -12,6 +12,10 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
+    <!-- PDF Compression Libraries (PDF.js & jsPDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: #04040c; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
@@ -23,6 +27,7 @@
         input[type="text"]:focus { border-color: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
         .upload-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #06b6d4, #0284c7); border: none; border-radius: 8px; color: #000; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer; transition: all 0.2s; margin-top: 10px; }
         .upload-btn:hover { background: linear-gradient(135deg, #38bdf8, #06b6d4); box-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
+        .upload-btn:disabled { background: #475569; cursor: not-allowed; box-shadow: none; }
         .progress-box { display: none; margin-top: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; text-align: center; }
         .progress-bar { width: 0%; height: 8px; background: linear-gradient(90deg, #06b6d4, #f59e0b); border-radius: 4px; transition: width 0.2s; }
         #status-msg { margin-top: 10px; font-size: 0.85rem; font-weight: 600; text-align: center; }
@@ -81,14 +86,61 @@
         const db = firebase.firestore();
         const storage = firebase.storage();
 
+        // PDF.js Worker Configuration
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
         const form = document.getElementById('admin-upload-form');
         const progBox = document.getElementById('prog-box');
         const progBar = document.getElementById('prog-bar');
         const statusMsg = document.getElementById('status-msg');
         const btnSubmit = document.getElementById('btn-submit');
 
-        // ADMIN SECRET PASS (අවශ්‍ය පරිදි වෙනස් කරන්න)
         const SECRET_ADMIN_PASS = "URM2026ADMIN";
+
+        // AUTO-COMPRESSION FUNCTION
+        async function compressPDFFile(file, onProgress) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const numPages = pdf.numPages;
+            
+            const { jsPDF } = window.jspdf;
+            let compressedDoc = null;
+
+            for (let i = 1; i <= numPages; i++) {
+                if (onProgress) onProgress(i, numPages);
+
+                const page = await pdf.getPage(i);
+                const scale = 1.2; // Optimal resolution scaling
+                const viewport = page.getViewport({ scale: scale });
+                
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                
+                // Compress canvas frame to 65% JPEG Quality
+                const imgData = canvas.toDataURL('image/jpeg', 0.65);
+                
+                const widthMm = (viewport.width * 25.4) / 96;
+                const heightMm = (viewport.height * 25.4) / 96;
+
+                if (i === 1) {
+                    compressedDoc = new jsPDF({
+                        orientation: widthMm > heightMm ? 'l' : 'p',
+                        unit: 'mm',
+                        format: [widthMm, heightMm]
+                    });
+                } else {
+                    compressedDoc.addPage([widthMm, heightMm], widthMm > heightMm ? 'l' : 'p');
+                }
+                
+                compressedDoc.addImage(imgData, 'JPEG', 0, 0, widthMm, heightMm);
+            }
+            
+            return compressedDoc.output('blob');
+        }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -97,27 +149,45 @@
             const lifeCode = document.getElementById('life-code-input').value.trim();
             const customerName = document.getElementById('customer-name-input').value.trim();
             const fileInput = document.getElementById('pdf-file-input');
-            const file = fileInput.files[0];
+            const originalFile = fileInput.files[0];
 
             if (pass !== SECRET_ADMIN_PASS) {
                 alert('වැරදි Admin Access Code එකකි!');
                 return;
             }
 
-            if (!file || file.type !== 'application/pdf') {
+            if (!originalFile || originalFile.type !== 'application/pdf') {
                 alert('කරුණාකර වලංගු PDF ගොනුවක් තෝරන්න!');
                 return;
             }
 
             btnSubmit.disabled = true;
             progBox.style.display = 'block';
-            statusMsg.style.color = '#06b6d4';
-            statusMsg.innerText = 'PDF ගොනුව Server එකට Upload වෙමින් පවතී...';
+            progBar.style.width = '0%';
+            statusMsg.style.color = '#f59e0b';
 
             try {
-                // Storage Reference
+                let fileToUpload = originalFile;
+
+                // Auto Compress if PDF is larger than 10MB
+                if (originalFile.size > 10 * 1024 * 1024) {
+                    statusMsg.innerText = 'විශාල PDF ගොනුවක් හඳුනා ගන්නා ලදී. Auto-Compress වෙමින් පවතී...';
+                    
+                    fileToUpload = await compressPDFFile(originalFile, (currentPage, totalPages) => {
+                        const compPercent = Math.round((currentPage / totalPages) * 100);
+                        progBar.style.width = compPercent + '%';
+                        statusMsg.innerText = `PDF Compress වෙමින් පවතී: පිටු ${currentPage} / ${totalPages} (${compPercent}%)`;
+                    });
+
+                    console.log(`Original: ${(originalFile.size / (1024*1024)).toFixed(2)} MB -> Compressed: ${(fileToUpload.size / (1024*1024)).toFixed(2)} MB`);
+                }
+
+                // Storage Uploading Phase
+                statusMsg.style.color = '#06b6d4';
+                statusMsg.innerText = 'Firebase Server එකට Upload වෙමින් පවතී...';
+                
                 const storageRef = storage.ref(`blueprints/${lifeCode}.pdf`);
-                const uploadTask = storageRef.put(file);
+                const uploadTask = storageRef.put(fileToUpload);
 
                 uploadTask.on('state_changed', 
                     (snapshot) => {
@@ -132,10 +202,8 @@
                         btnSubmit.disabled = false;
                     }, 
                     async () => {
-                        // Get Download URL
                         const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
 
-                        // Save Record in Firestore
                         await db.collection('blueprints').doc(lifeCode).set({
                             lifeCode: lifeCode,
                             customerName: customerName || 'Valued Client',
@@ -152,7 +220,7 @@
             } catch (err) {
                 console.error(err);
                 statusMsg.style.color = '#f43f5e';
-                statusMsg.innerText = 'දත්ත සමුදායේ දෝෂයක් පවතී!';
+                statusMsg.innerText = 'දත්ත සැකසීමේදී දෝෂයක් සිදු විය!';
                 btnSubmit.disabled = false;
             }
         });
