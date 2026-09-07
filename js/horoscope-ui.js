@@ -156,6 +156,30 @@ function renderHoroscopeResults(data) {
 
     setTxt('m-lucky-freq', rep.lucky_freq);
     setTxt('m-tara-bala', rep.doshas.tara_bala);
+
+    // Render WhatsApp Lead Banner
+    const ctaContainer = document.getElementById('horoscope-cta-container');
+    if (ctaContainer) {
+        const waPhone = "94757290085";
+        const waText = encodeURIComponent(
+            `මගේ ජන්ම පත්‍රයේ සම්පූර්ණ රහස්‍ය වාර්තාව ලබාගැනීමට අවශ්‍යයි.\n\n` +
+            `• නම: ${data.name || ''}\n` +
+            `• උපන්දිනය: ${data.year}-${data.month}-${data.day}\n` +
+            `• උපන් වෙලාව: ${data.hour}:${data.minute}`
+        );
+        const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
+
+        ctaContainer.innerHTML = `
+            <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(6, 182, 212, 0.1)); border: 1px solid rgba(245, 158, 11, 0.4); padding: 20px; border-radius: 12px; text-align: center; margin-top: 25px;">
+                <p style="color: #f3f4f6; font-size: 0.92rem; line-height: 1.6; margin-bottom: 20px; text-align: justify;">
+                    "ඔබේ උපත හුදු අහඹුවක් නොවේ; එය විශ්වයේ ග්‍රහ තාරකාවන් විසින් ඔබ වෙනුවෙන්ම නිර්මාණය කළ සංකීර්ණ ගණිතමය කේතයකි. ඉහත සටහනින් දිස්වන්නේ ඔබේ ජන්ම පත්‍රයේ මූලික තාක්ෂණික කියවීම් (Technical Metrics) සහ ධන යෝගයන්හි මතුපිට ස්වභාවය පමණි. නමුත් ඔබේ ජීවිතයේ සැබෑම හැරවුම් ලක්ෂ්‍යයන්, ඔබව සාර්ථකත්වයේ ඉහළටම ඔසවා තබන සැඟවුණු ව්‍යාපාරික රහස් සහ ඔබේ වාසනාව අවදි කරන ප්‍රබල මැණික් වර්ග තවමත් ඔබෙන් 🔒 අගුළු දමා (Locked) ඇත. විශ්වය විසින් ඔබට පමණක් වෙන් කර ඇති ඒ සම්පූර්ණ ජීවන සිතියමේ (Blueprint) ගැඹුරු රහස්‍ය විශ්ලේෂණය අගුළු හැර ගැනීමට අපගේ ප්‍රවීණ උපදේශකයන් හා වහාම සම්බන්ධ වන්න."
+                </p>
+                <a href="${waUrl}" target="_blank" style="display: inline-block; width: 100%; box-sizing: border-box; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; text-decoration: none; padding: 15px 20px; border-radius: 30px; font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 0.95rem; box-shadow: 0 0 25px rgba(37, 211, 102, 0.4); transition: transform 0.2s ease;">
+                    🔒 මගේ සම්පූර්ණ රහස්‍ය කේන්ද්‍ර වාර්තාව අගුළු හරින්න (Chat on WhatsApp)
+                </a>
+            </div>
+        `;
+    }
 }
 
 function setTxt(id, val) {
