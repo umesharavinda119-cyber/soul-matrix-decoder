@@ -765,11 +765,11 @@
                     const data = doc.data();
                     const pdfUrl = data.pdfUrl;
 
-                    if (bgAudio && !bgAudio.paused) {
-                        wasAudioPlaying = true;
+                    // Stop & Mute background tone completely
+                    if (bgAudio) {
+                        wasAudioPlaying = !bgAudio.paused;
                         bgAudio.pause();
-                    } else {
-                        wasAudioPlaying = false;
+                        bgAudio.currentTime = 0;
                     }
 
                     cleanupFlipbook();
@@ -817,10 +817,17 @@
             });
         }
 
-        // 6. HIGH-DPI PDF RENDERING ENGINE (2.5 MULTIPLIER FOR CRISP TEXT ON ZOOM)
+        // 6. HIGH-DPI PDF RENDERING ENGINE WITH DIRECT ARRAYBUFFER FETCH (PREVENTS WORKER CORS & RANGE ERRORS)
         async function loadAndRenderPDF(url) {
             try {
-                activeLoadingTask = pdfjsLib.getDocument(url);
+                document.getElementById('flip-status').innerText = 'PDF දත්ත බාගත වෙමින් පවතී...';
+
+                // Fetch PDF via ArrayBuffer to completely bypass PDF.js worker CORS & Range-header issues
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+                const pdfBuffer = await response.arrayBuffer();
+
+                activeLoadingTask = pdfjsLib.getDocument({ data: pdfBuffer });
                 const pdf = await activeLoadingTask.promise;
                 const numPages = pdf.numPages;
                 
