@@ -624,13 +624,26 @@
         let activeRenderTasks = [];
         let wasAudioPlaying = false;
         let currentZoom = 1.0;
+        let globalAudioCtx = null;
 
-        // REALISTIC PAPER SWISH & SNAP SOUND VIA WEB AUDIO API (NO EXTERNAL URL DEPENDENCY)
+        // GLOBAL AUDIO CONTEXT INITIALIZATION & BROWSER UNLOCK
+        function initAudioContext() {
+            if (!globalAudioCtx) {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                globalAudioCtx = new AudioCtx();
+            }
+            if (globalAudioCtx.state === 'suspended') {
+                globalAudioCtx.resume();
+            }
+        }
+
+        // REALISTIC PAPER SWISH & SNAP SOUND VIA WEB AUDIO API
         function playPageFlipSound() {
             try {
-                const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                const ctx = new AudioCtx();
-                if (ctx.state === 'suspended') ctx.resume();
+                initAudioContext();
+                if (!globalAudioCtx) return;
+
+                const ctx = globalAudioCtx;
 
                 // Swish sound
                 const swishLength = ctx.sampleRate * 0.16;
@@ -650,7 +663,7 @@
                 filter.Q.value = 3.0;
 
                 const gain = ctx.createGain();
-                gain.gain.setValueAtTime(0.45, ctx.currentTime);
+                gain.gain.setValueAtTime(0.5, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
 
                 noise.connect(filter);
@@ -726,6 +739,9 @@
         // 4. Unlock Button Event
         if(unlockBtn) {
             unlockBtn.addEventListener('click', async () => {
+                // Unlock browser audio context on explicit user gesture
+                initAudioContext();
+
                 const code = securityInput.value.trim();
                 if(!code) {
                     alert("කරුණාකර ඔබගේ Security Code එක ඇතුළත් කරන්න.");
@@ -801,7 +817,7 @@
             });
         }
 
-        // 6. HIGH-DPI PDF RENDERING ENGINE (3.0 MULTIPLIER FOR CRISP TEXT ON ZOOM)
+        // 6. HIGH-DPI PDF RENDERING ENGINE (2.5 MULTIPLIER FOR CRISP TEXT ON ZOOM)
         async function loadAndRenderPDF(url) {
             try {
                 activeLoadingTask = pdfjsLib.getDocument(url);
