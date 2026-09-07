@@ -661,7 +661,7 @@ header {
     color: #fff;
     font-size: 1.5rem;
     cursor: pointer;
-    z-index: 100000;
+    z-index: 999999;
     display: flex; justify-content: center; align-items: center;
     transition: all 0.3s ease;
     box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
