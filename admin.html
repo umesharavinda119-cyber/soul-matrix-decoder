@@ -97,7 +97,7 @@
 
         const SECRET_ADMIN_PASS = "URM2026ADMIN";
 
-        // AUTO-COMPRESSION FUNCTION
+        // AUTO-COMPRESSION FUNCTION (HIGH-RESOLUTION HD COMPRESSION)
         async function compressPDFFile(file, onProgress) {
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -110,7 +110,9 @@
                 if (onProgress) onProgress(i, numPages);
 
                 const page = await pdf.getPage(i);
-                const scale = 1.2; // Optimal resolution scaling
+                
+                // High Resolution Scaling (2.2 Scale for Crisp Text on Zoom)
+                const scale = 2.2; 
                 const viewport = page.getViewport({ scale: scale });
                 
                 const canvas = document.createElement('canvas');
@@ -120,11 +122,11 @@
                 
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
                 
-                // Compress canvas frame to 65% JPEG Quality
-                const imgData = canvas.toDataURL('image/jpeg', 0.65);
+                // Increased JPEG Quality to 85% (0.85) to eliminate blurriness
+                const imgData = canvas.toDataURL('image/jpeg', 0.85);
                 
-                const widthMm = (viewport.width * 25.4) / 96;
-                const heightMm = (viewport.height * 25.4) / 96;
+                const widthMm = (viewport.width * 25.4) / (96 * scale);
+                const heightMm = (viewport.height * 25.4) / (96 * scale);
 
                 if (i === 1) {
                     compressedDoc = new jsPDF({
@@ -171,7 +173,7 @@
 
                 // Auto Compress if PDF is larger than 10MB
                 if (originalFile.size > 10 * 1024 * 1024) {
-                    statusMsg.innerText = 'විශාල PDF ගොනුවක් හඳුනා ගන්නා ලදී. Auto-Compress වෙමින් පවතී...';
+                    statusMsg.innerText = 'විශාල PDF ගොනුවක් හඳුනා ගන්නා ලදී. HD Auto-Compress වෙමින් පවතී...';
                     
                     fileToUpload = await compressPDFFile(originalFile, (currentPage, totalPages) => {
                         const compPercent = Math.round((currentPage / totalPages) * 100);
