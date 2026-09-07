@@ -193,7 +193,7 @@
         <button id="num-trigger-btn" class="num-glow-btn">අංක විද්‍යාත්මක පරීක්ෂණ</button>
     </div>
 
-    <!-- NUMEROLOGY INPUT MODAL (CENTER POPUP) -->
+    <!-- NUMEROLOGY INPUT MODAL (CENTER POPUP WITH KEYBOARD BUTTONS) -->
     <div id="numerology-input-modal" class="num-glass-panel">
         <div class="num-panel-header">
             <h3>අංක විද්‍යාත්මක පරීක්ෂාව</h3>
@@ -203,11 +203,17 @@
             <form id="numerology-form">
                 <div class="input-grp">
                     <label>සම්පූර්ණ නම (English)</label>
-                    <input type="text" id="num-name-en" placeholder="E.g. K. A. CHATHURA UMAGILIYA" required>
+                    <div class="input-with-btn">
+                        <input type="text" id="num-name-en" placeholder="E.g. MIHELI SAHASNA MANCHANAYAKA" required>
+                        <button type="button" class="keyboard-toggle-btn" title="English Keyboard"><i class="fa-solid fa-keyboard"></i></button>
+                    </div>
                 </div>
                 <div class="input-grp">
                     <label>සම්පූර්ණ නම (සිංහල)</label>
-                    <input type="text" id="num-name-si" placeholder="උදා: කේ. ඒ. චතුර උමගිලිය">
+                    <div class="input-with-btn">
+                        <input type="text" id="num-name-si" placeholder="උදා: මිහෙලි සහස්නා මංචනායක">
+                        <button type="button" class="keyboard-toggle-btn sinhala-kbd-btn" title="Google Sinhala Keyboard"><i class="fa-solid fa-language"></i></button>
+                    </div>
                 </div>
                 <div class="input-grp">
                     <label>උපන් දිනය (DOB)</label>
