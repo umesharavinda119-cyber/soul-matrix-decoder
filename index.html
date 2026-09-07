@@ -107,7 +107,6 @@
         <p data-si="ආත්මයේ සංඛ්‍යා න්‍යාසය සහ ජ්‍යොතිෂමය කර්මජ දත්ත එකම තාක්ෂණික පද්ධතියකින් නිවැරදිවම විශ්ලේෂණය කරගන්න." data-en="Precisely analyze your soul's numerical matrix and karmic data through a unified cosmic engine.">ආත්මයේ සංඛ්‍යා න්‍යාසය සහ ජ්‍යොතිෂමය කර්මජ දත්ත එකම තාක්ෂණික පද්ධතියකින් නිවැරදිවම විශ්ලේෂණය කරගන්න.</p>
 
         <div class="wheel-wrapper" id="wheel-card">
-            
             <div class="calc-card-border-wrapper">
                 <div class="calc-card">
                     <div class="hud-corner hud-tl"></div>
@@ -494,15 +493,21 @@
         </div>
     </div>
 
-    <!-- 3D FLIPBOOK MODAL OVERLAY -->
+    <!-- 3D FLIPBOOK MODAL OVERLAY WITH ARROWS & CONTROLS -->
     <div id="flipbook-modal" class="flipbook-overlay" style="display: none;">
-        <button id="close-flipbook-btn" class="close-flip-btn">&times;</button>
+        <button id="close-flipbook-btn" class="close-flip-btn" title="Close Reader">&times;</button>
         <div id="flipbook-loader" class="flip-loader">
             <div class="spinner"></div>
             <p id="flip-status">ඩිජිටල් ග්‍රන්ථය සූදානම් වෙමින් පවතී...</p>
         </div>
         <div class="flipbook-container" style="display: none;">
+            <button id="prev-page-btn" class="flip-nav-btn prev-btn" title="Previous Page">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
             <div id="flipbook"></div>
+            <button id="next-page-btn" class="flip-nav-btn next-btn" title="Next Page">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
         </div>
     </div>
 
@@ -542,9 +547,9 @@
     <script src="js/numerology-ui.js" defer></script>
     <script src="js/cosmic-enhancements.js" defer></script>
 
-    <!-- FIREBASE & FLIPBOOK LOGIC -->
+    <!-- FIREBASE & FLIPBOOK LOGIC WITH SOUND, AUTO-SCALE & AUDIO MUTE -->
     <script>
-        // 1. Firebase Configuration (ඔබගේ යාවත්කාලීන කළ දත්ත)
+        // 1. Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAS1LHsxDHPFwxe7w8ByzbIdFbJogwnYq8",
             authDomain: "soul-matrix-b0fdf.firebaseapp.com",
@@ -570,8 +575,50 @@
         const flipLoader = document.getElementById('flipbook-loader');
         const flipContainer = document.querySelector('.flipbook-container');
         const flipbookDiv = document.getElementById('flipbook');
+        const prevBtn = document.getElementById('prev-page-btn');
+        const nextBtn = document.getElementById('next-page-btn');
+        const bgAudio = document.getElementById('bg-audio');
         
         let pageFlipInstance = null;
+        let wasAudioPlaying = false;
+
+        // WEB AUDIO API - REALISTIC PAPER FLIP SOUND SYNTHESIZER
+        function playPageFlipSound() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+
+                const bufferSize = ctx.sampleRate * 0.12;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(1200, ctx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.12);
+                filter.Q.value = 3;
+
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(0.18, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+
+                noise.start();
+                noise.stop(ctx.currentTime + 0.12);
+            } catch (e) {
+                console.warn("Paper sound error:", e);
+            }
+        }
 
         // 4. Unlock Button Event
         if(unlockBtn) {
@@ -599,6 +646,14 @@
                     const data = doc.data();
                     const pdfUrl = data.pdfUrl;
 
+                    // Mute/Pause Background Cosmic Tone when Flipbook Opens
+                    if (bgAudio && !bgAudio.paused) {
+                        wasAudioPlaying = true;
+                        bgAudio.pause();
+                    } else {
+                        wasAudioPlaying = false;
+                    }
+
                     flipModal.style.display = 'flex';
                     flipLoader.style.display = 'block';
                     flipContainer.style.display = 'none';
@@ -616,7 +671,7 @@
             });
         }
 
-        // 5. Close Modal Event
+        // 5. Close Modal Event & Resume Audio
         if(closeFlipBtn) {
             closeFlipBtn.addEventListener('click', () => {
                 flipModal.style.display = 'none';
@@ -625,23 +680,46 @@
                     pageFlipInstance = null;
                 }
                 flipbookDiv.innerHTML = ''; 
+
+                // Resume Background Tone if it was playing before
+                if (bgAudio && wasAudioPlaying) {
+                    bgAudio.play().catch(e => console.warn(e));
+                }
             });
         }
 
-        // 6. PDF Rendering Engine
+        // Arrow Control Listeners
+        if(prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if(pageFlipInstance) pageFlipInstance.flipPrev();
+            });
+        }
+        if(nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if(pageFlipInstance) pageFlipInstance.flipNext();
+            });
+        }
+
+        // 6. PDF Rendering Engine with Dynamic Screen Scaling
         async function loadAndRenderPDF(url) {
             try {
                 const loadingTask = pdfjsLib.getDocument(url);
                 const pdf = await loadingTask.promise;
                 const numPages = pdf.numPages;
                 
-                document.getElementById('flip-status').innerText = `පිටු ${numPages} ක් සැකසෙමින් පවතී...`;
+                document.getElementById('flip-status').innerText = `පිටු ${numPages} ක් සූදානම් වෙමින් පවතී...`;
                 flipbookDiv.innerHTML = ''; 
                 
-                // Extract pages into canvases
+                // Calculate Dynamic Scale based on viewport height (82vh target to prevent clipping)
+                const firstPage = await pdf.getPage(1);
+                const unscaledViewport = firstPage.getViewport({ scale: 1.0 });
+                const targetHeight = Math.min(window.innerHeight * 0.82, 850);
+                const optimalScale = targetHeight / unscaledViewport.height;
+
+                // Render all pages to canvases
                 for(let i = 1; i <= numPages; i++) {
                     const page = await pdf.getPage(i);
-                    const viewport = page.getViewport({ scale: 1.5 }); // High Quality Scale
+                    const viewport = page.getViewport({ scale: optimalScale });
                     
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
@@ -656,29 +734,39 @@
                     flipbookDiv.appendChild(pageDiv);
                 }
 
-                // Initialize 3D Flipbook
                 flipLoader.style.display = 'none';
                 flipContainer.style.display = 'flex';
 
+                const calculatedWidth = Math.round(unscaledViewport.width * optimalScale);
+                const calculatedHeight = Math.round(targetHeight);
+
+                // Initialize 3D Flipbook Instance
                 pageFlipInstance = new St.PageFlip(flipbookDiv, {
-                    width: 450, 
-                    height: 636, 
-                    size: "stretch",
-                    minWidth: 315,
-                    maxWidth: 1000,
-                    minHeight: 445,
-                    maxHeight: 1414,
-                    maxShadowOpacity: 0.5,
+                    width: calculatedWidth, 
+                    height: calculatedHeight, 
+                    size: "fixed",
+                    minWidth: 260,
+                    maxWidth: 750,
+                    minHeight: 380,
+                    maxHeight: 1000,
+                    maxShadowOpacity: 0.55,
                     showCover: true,
-                    mobileScrollSupport: false
+                    mobileScrollSupport: true,
+                    usePortrait: window.innerWidth < 768
                 });
 
                 pageFlipInstance.loadFromHTML(document.querySelectorAll('.flip-page'));
+
+                // Play Page Flip Sound on Every Flip
+                pageFlipInstance.on('flip', (e) => {
+                    playPageFlipSound();
+                });
 
             } catch(err) {
                 console.error("PDF Load Error:", err);
                 alert("PDF වාර්තාව කියවීමේදී දෝෂයක් මතු විය.");
                 flipModal.style.display = 'none';
+                if (bgAudio && wasAudioPlaying) bgAudio.play().catch(e => console.warn(e));
             }
         }
     </script>
