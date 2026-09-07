@@ -441,12 +441,13 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     box-sizing: border-box !important;
 }
 
+/* MODIFIED THIS SECTION TO CENTER PLANET TEXT */
 #horoscope-modal .h-box {
     border: none !important;
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: wrap !important;
-    align-items: flex-end !important;
+    align-items: center !important; /* Changed from flex-end to center */
     justify-content: center !important;
     font-size: 0.82rem !important;
     line-height: 1.1 !important;
@@ -456,8 +457,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     word-break: normal !important;
     white-space: nowrap !important;
     text-align: center !important;
-    padding-bottom: 6px !important;
-    padding-top: 14px !important;
+    padding: 0 !important; /* Removed top/bottom padding to keep it true center */
     box-sizing: border-box !important;
     overflow: hidden !important;
 }
