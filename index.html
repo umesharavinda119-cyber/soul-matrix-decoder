@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/horoscope.css?v=2.1">
     <link rel="stylesheet" href="css/numerology.css">
+    <!-- NEW: Chatbot WIDGET CSS -->
+    <link rel="stylesheet" href="css/chatbot.css">
     
     <style>
         /* Restored Original Widget Visibility Logic */
@@ -60,6 +62,7 @@
             RADIANCE OF NUMBERS
         </div>
         <div class="header-controls">
+            <!-- Normal Main Header Language Button restored -->
             <button id="lang-toggle-btn" class="lang-btn">සි | EN</button>
 
             <div class="celestial-badge">
@@ -504,6 +507,45 @@
         </div>
     </div>
 
+    <!-- ==========================================
+         AI CHATBOT WIDGET
+         ========================================== -->
+    <div class="chatbot-widget-container">
+        <!-- Chat Window -->
+        <div class="chat-window" id="chat-window" style="display: none;">
+            
+            <div class="chat-header">
+                <div class="chat-title"><i class="fa-solid fa-robot"></i> SOUL AI</div>
+                
+                <!-- Chat Language & Voice Controls -->
+                <div class="chat-header-controls">
+                    <button id="chat-lang-btn" class="chat-lang-btn">සි | EN</button>
+                    <div class="chat-divider"></div>
+                    <button id="chat-voice-toggle" class="chat-voice-btn" title="Voice Mode">
+                        <i class="fa-solid fa-microphone-lines"></i>
+                    </button>
+                    <button id="close-chat-btn" class="chat-close-btn">&times;</button>
+                </div>
+            </div>
+            
+            <div class="chat-body" id="chat-body">
+                <div class="chat-message bot-msg">
+                    ආයුබෝවන්! මම Soul Matrix AI. අංක විද්‍යාව හෝ ජ්‍යොතිෂය පිළිබඳ ඔබේ ගැටලුව මෙතනින් යොමු කරන්න.
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off">
+                <button id="send-chat-btn" class="chat-action-btn send" title="Send"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <!-- Floating Trigger Button -->
+        <button class="chat-trigger-btn" id="chat-trigger-btn">
+            <i class="fa-solid fa-comment-dots"></i>
+        </button>
+    </div>
+
     <!-- GOOGLE MAPS API & AUTOCOMPLETE LOGIC -->
     <script>
         window.selectedLat = 6.9271;
@@ -539,6 +581,9 @@
     <script src="js/horoscope-ui.js" defer></script>
     <script src="js/numerology-ui.js" defer></script>
     <script src="js/cosmic-enhancements.js" defer></script>
+    
+    <!-- Chatbot Scripts -->
+    <script src="js/chatbot.js" defer></script>
 
     <!-- FIREBASE, 3D FLIPBOOK, DYNAMIC HIGH-DPI ZOOM & REAL MP3 SOUND LOGIC -->
     <script>
