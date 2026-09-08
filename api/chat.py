@@ -16,20 +16,33 @@ class handler(BaseHTTPRequestHandler):
             user_message = req_body.get('message', '')
             use_voice = req_body.get('voice', False)
             lang = req_body.get('lang', 'si')
+            
+            # (NEW) Frontend එකෙන් එවන Astrology සහ Numerology දත්ත ලබාගැනීම
+            user_data = req_body.get('userData', None)
+            astro_data = req_body.get('astroData', None)
 
             # 2. Check API Key
             api_key = os.environ.get("GEMINI_API_KEY")
             if not api_key:
                 raise Exception("GEMINI_API_KEY is not set in Vercel Environment Variables.")
 
-            # 3. Gemini AI Setup (Updated Model Name)
+            # 3. Gemini AI Setup 
             genai.configure(api_key=api_key)
             model = genai.GenerativeModel('gemini-3.6-flash')
             
-            # AI කොටස ඉවත් කර සම්පූර්ණයෙන්ම මනුෂ්‍යයෙක් ලෙස වෙනස් කළ System Prompt එක
+            # (NEW) දත්ත තිබේ නම් ඒවා Prompt එකට එකතු කිරීම සඳහා සකස් කිරීම
+            context_str = ""
+            if user_data:
+                context_str += f"\nClient Numerology Data: {json.dumps(user_data, ensure_ascii=False)}"
+            if astro_data:
+                context_str += f"\nClient Astrology Data: {json.dumps(astro_data, ensure_ascii=False)}"
+
+            # අරවින්දගේ සම්පූර්ණ System Prompt එක (දත්ත ද සහිතව)
             system_prompt = (
                 "You are Aravinda, a human expert at 'Radiance of Numbers'. "
                 "CRITICAL RULE: You MUST NEVER state or imply that you are an AI, a bot, or a language model. Always act entirely as a human. "
+                "IMPORTANT: You have voice capabilities. If a user asks if you can speak, talk, or answer through voice, confidently reply that YES, you can speak and answer using your voice. "
+                f"Use the following client data to answer their personal questions accurately. If there is no data, just answer normally: {context_str} "
                 "Respond in the language requested by user (Sinhala, Singlish, or English). Keep responses short and helpful."
             )
             
