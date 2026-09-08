@@ -19,7 +19,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: #04040c; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .admin-card { background: linear-gradient(135deg, rgba(12, 12, 28, 0.98), rgba(4, 4, 12, 0.99)); border: 1.5px solid #06b6d4; border-radius: 16px; padding: 2rem; width: 100%; max-width: 500px; box-shadow: 0 0 40px rgba(6, 182, 212, 0.25); }
+        .admin-card { background: linear-gradient(135deg, rgba(12, 12, 28, 0.98), rgba(4, 4, 12, 0.99)); border: 1.5px solid #06b6d4; border-radius: 16px; padding: 2rem; width: 100%; max-width: 550px; box-shadow: 0 0 40px rgba(6, 182, 212, 0.25); }
         h2 { font-family: 'Orbitron', sans-serif; color: #06b6d4; text-align: center; margin-bottom: 20px; font-size: 1.4rem; letter-spacing: 1px; }
         
         /* Tabs */
@@ -40,6 +40,19 @@
         .progress-box { display: none; margin-top: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; text-align: center; }
         .progress-bar { width: 0%; height: 8px; background: linear-gradient(90deg, #06b6d4, #f59e0b); border-radius: 4px; transition: width 0.2s; }
         .status-msg { margin-top: 10px; font-size: 0.85rem; font-weight: 600; text-align: center; }
+
+        /* MANAGE ARTICLES CSS */
+        .manage-art-list { margin-top: 30px; border-top: 1px solid rgba(6, 182, 212, 0.3); padding-top: 20px; }
+        .manage-art-list h3 { font-size: 1rem; color: #fff; margin-bottom: 15px; text-align: left; font-family: 'Orbitron', sans-serif; }
+        .manage-art-item { display: flex; justify-content: space-between; align-items: center; background: rgba(2, 2, 10, 0.8); padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .art-info strong { color: #f59e0b; font-size: 0.9rem; display: block; margin-bottom: 4px; }
+        .art-info span { color: #9ca3af; font-size: 0.75rem; }
+        .art-actions { display: flex; gap: 8px; }
+        .art-actions button { border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; color: #fff; transition: all 0.2s; font-size: 0.85rem; font-family: 'Inter', sans-serif; font-weight: bold; }
+        .btn-edit { background: #0ea5e9; }
+        .btn-edit:hover { background: #0284c7; }
+        .btn-del { background: #f43f5e; }
+        .btn-del:hover { background: #e11d48; }
     </style>
 </head>
 <body>
@@ -82,7 +95,7 @@
             </div>
         </form>
 
-        <!-- ARTICLE UPLOAD FORM (Hidden by default) -->
+        <!-- ARTICLE UPLOAD / EDIT FORM -->
         <form id="article-upload-form" style="display: none;">
             <div class="form-group">
                 <label>ARTICLE TITLE</label>
@@ -97,17 +110,27 @@
                 <input type="text" id="art-link" placeholder="https://www.facebook.com/..." required>
             </div>
             <div class="form-group">
-                <label>COVER IMAGE (JPG/PNG)</label>
+                <label>COVER IMAGE (JPG/PNG) <span id="img-optional-txt" style="display:none; color:#9ca3af; font-size:0.75rem;">- Optional when editing</span></label>
                 <input type="file" id="art-image-input" accept="image/*" required>
             </div>
+            
             <button type="submit" class="upload-btn" id="btn-art-submit" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
                 <i class="fa-solid fa-newspaper"></i> PUBLISH ARTICLE
             </button>
+            
             <div class="progress-box" id="prog-box-art">
                 <div class="progress-bar" id="prog-bar-art" style="background: #f59e0b;"></div>
                 <p class="status-msg" id="status-msg-art">Preparing article...</p>
             </div>
         </form>
+
+        <!-- MANAGE ARTICLES LIST -->
+        <div id="manage-art-list-container" class="manage-art-list" style="display: none;">
+            <h3><i class="fa-solid fa-list-check"></i> MANAGE POSTED ARTICLES</h3>
+            <div id="manage-articles-list">
+                <p style="font-size: 0.85rem; color: #9ca3af;">Loading articles...</p>
+            </div>
+        </div>
 
     </div>
 
@@ -134,12 +157,14 @@
         const tabArtBtn = document.getElementById('tab-art-btn');
         const formBp = document.getElementById('admin-upload-form');
         const formArt = document.getElementById('article-upload-form');
+        const manageArtContainer = document.getElementById('manage-art-list-container');
 
         tabBpBtn.addEventListener('click', () => {
             tabBpBtn.classList.add('active');
             tabArtBtn.classList.remove('active');
             formBp.style.display = 'block';
             formArt.style.display = 'none';
+            manageArtContainer.style.display = 'none';
         });
 
         tabArtBtn.addEventListener('click', () => {
@@ -147,6 +172,8 @@
             tabBpBtn.classList.remove('active');
             formArt.style.display = 'block';
             formBp.style.display = 'none';
+            manageArtContainer.style.display = 'block';
+            loadArticlesForManagement(); // Load list when tab opens
         });
 
         function checkAuth() {
@@ -159,7 +186,7 @@
         }
 
         // ==========================================
-        // 1. BLUEPRINT UPLOAD LOGIC (Original)
+        // 1. BLUEPRINT UPLOAD LOGIC 
         // ==========================================
         async function compressPDFFile(file, onProgress) {
             const arrayBuffer = await file.arrayBuffer();
@@ -247,8 +274,108 @@
         });
 
         // ==========================================
-        // 2. ARTICLE PUBLISHING LOGIC
+        // 2. ARTICLE PUBLISHING & MANAGEMENT LOGIC
         // ==========================================
+        let editingArticleId = null;
+        let articlesDataMap = {}; // Temporarily stores fetched article data
+
+        async function loadArticlesForManagement() {
+            const listDiv = document.getElementById('manage-articles-list');
+            listDiv.innerHTML = '<p style="font-size: 0.85rem; color: #06b6d4;">ලිපි සොයමින් පවතී...</p>';
+            
+            try {
+                const snapshot = await db.collection('articles').orderBy('timestamp', 'desc').get();
+                listDiv.innerHTML = '';
+                articlesDataMap = {};
+
+                if(snapshot.empty) {
+                    listDiv.innerHTML = '<p style="color:#9ca3af; font-size:0.85rem;">තවමත් ලිපි කිසිවක් පළ කර නොමැත.</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    articlesDataMap[doc.id] = data; // Save to map to prevent quote escaping issues
+
+                    const item = document.createElement('div');
+                    item.className = 'manage-art-item';
+                    item.innerHTML = `
+                        <div class="art-info">
+                            <strong>${data.title}</strong>
+                        </div>
+                        <div class="art-actions">
+                            <button type="button" class="btn-edit" onclick="startEditArticle('${doc.id}')"><i class="fa-solid fa-pen"></i> EDIT</button>
+                            <button type="button" class="btn-del" onclick="deleteArticle('${doc.id}')"><i class="fa-solid fa-trash"></i> DELETE</button>
+                        </div>
+                    `;
+                    listDiv.appendChild(item);
+                });
+            } catch (err) {
+                listDiv.innerHTML = '<p style="color:#f43f5e; font-size:0.85rem;">ලිපි ලබාගැනීමේදී දෝෂයක් මතු විය.</p>';
+            }
+        }
+
+        window.startEditArticle = function(id) {
+            const data = articlesDataMap[id];
+            if(!data) return;
+
+            editingArticleId = id;
+            document.getElementById('art-title').value = data.title;
+            document.getElementById('art-excerpt').value = data.excerpt;
+            document.getElementById('art-link').value = data.link;
+
+            // Image is not required when editing
+            document.getElementById('art-image-input').required = false;
+            document.getElementById('img-optional-txt').style.display = 'inline';
+
+            // Change Submit Button UI
+            const btnSubmit = document.getElementById('btn-art-submit');
+            btnSubmit.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> UPDATE ARTICLE';
+            btnSubmit.style.background = 'linear-gradient(135deg, #06b6d4, #0284c7)';
+
+            // Add Cancel Edit Button
+            if(!document.getElementById('cancel-edit-btn')) {
+                const cancelBtn = document.createElement('button');
+                cancelBtn.id = 'cancel-edit-btn';
+                cancelBtn.type = 'button';
+                cancelBtn.className = 'upload-btn';
+                cancelBtn.style.background = '#475569';
+                cancelBtn.style.marginTop = '10px';
+                cancelBtn.innerHTML = '<i class="fa-solid fa-xmark"></i> CANCEL EDITING';
+                cancelBtn.onclick = cancelEditMode;
+                document.getElementById('article-upload-form').appendChild(cancelBtn);
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.cancelEditMode = function() {
+            editingArticleId = null;
+            formArt.reset();
+            document.getElementById('art-image-input').required = true;
+            document.getElementById('img-optional-txt').style.display = 'none';
+
+            const btnSubmit = document.getElementById('btn-art-submit');
+            btnSubmit.innerHTML = '<i class="fa-solid fa-newspaper"></i> PUBLISH ARTICLE';
+            btnSubmit.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+
+            const cancelBtn = document.getElementById('cancel-edit-btn');
+            if(cancelBtn) cancelBtn.remove();
+        }
+
+        window.deleteArticle = async function(id) {
+            if (!checkAuth()) return;
+            if (confirm('මෙම ලිපිය සම්පූර්ණයෙන්ම මකා දැමීමට අවශ්‍ය බව විශ්වාසද?')) {
+                try {
+                    await db.collection('articles').doc(id).delete();
+                    alert('ලිපිය සාර්ථකව මකා දමන ලදී!');
+                    loadArticlesForManagement(); // Refresh the list
+                } catch(err) {
+                    alert('මකා දැමීමේදී දෝෂයක් මතු විය!');
+                }
+            }
+        }
+
         formArt.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!checkAuth()) return;
@@ -258,7 +385,10 @@
             const link = document.getElementById('art-link').value.trim();
             const imgFile = document.getElementById('art-image-input').files[0];
 
-            if (!imgFile || !imgFile.type.startsWith('image/')) return alert('කරුණාකර පින්තූරයක් තෝරන්න (JPG/PNG)!');
+            // If it's a new article, Image is strictly required
+            if (!editingArticleId && (!imgFile || !imgFile.type.startsWith('image/'))) {
+                return alert('කරුණාකර පින්තූරයක් තෝරන්න (JPG/PNG)!');
+            }
 
             const btnSubmit = document.getElementById('btn-art-submit');
             const progBox = document.getElementById('prog-box-art');
@@ -267,36 +397,59 @@
 
             btnSubmit.disabled = true;
             progBox.style.display = 'block';
-            progBar.style.width = '0%';
+            progBar.style.width = '30%';
             statusMsg.style.color = '#f59e0b';
-            statusMsg.innerText = 'Image Uploading...';
+            statusMsg.innerText = 'Processing...';
 
             try {
-                const imgRefName = `articles/${Date.now()}_${imgFile.name}`;
-                const uploadTask = storage.ref(imgRefName).put(imgFile);
+                let imgUrl = null;
 
-                uploadTask.on('state_changed', 
-                    (snapshot) => { progBar.style.width = ((snapshot.bytesTransferred / snapshot.totalBytes) * 100) + '%'; }, 
-                    (error) => { statusMsg.style.color = '#f43f5e'; statusMsg.innerText = 'Image Upload Error!'; btnSubmit.disabled = false; }, 
-                    async () => {
-                        statusMsg.innerText = 'Database Update වෙමින් පවතී...';
-                        const imgUrl = await uploadTask.snapshot.ref.getDownloadURL();
-                        
-                        await db.collection('articles').add({
-                            title: title,
-                            excerpt: excerpt,
-                            link: link,
-                            imageUrl: imgUrl,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
+                // Only upload image if user selected a new one
+                if (imgFile) {
+                    statusMsg.innerText = 'Uploading new image...';
+                    const imgRefName = `articles/${Date.now()}_${imgFile.name}`;
+                    const uploadTask = await storage.ref(imgRefName).put(imgFile);
+                    imgUrl = await uploadTask.ref.getDownloadURL();
+                    progBar.style.width = '70%';
+                }
 
-                        statusMsg.style.color = '#4ade80';
-                        statusMsg.innerText = `ලිපිය සාර්ථකව පබ්ලිෂ් කරන ලදී!`;
-                        formArt.reset();
-                        btnSubmit.disabled = false;
-                    }
-                );
-            } catch (err) { statusMsg.style.color = '#f43f5e'; statusMsg.innerText = 'දෝෂයක් සිදු විය!'; btnSubmit.disabled = false; }
+                statusMsg.innerText = 'Database Update වෙමින් පවතී...';
+
+                if (editingArticleId) {
+                    // Update Mode
+                    let updatePayload = { title, excerpt, link };
+                    if (imgUrl) updatePayload.imageUrl = imgUrl; // Update image only if a new one was uploaded
+                    
+                    await db.collection('articles').doc(editingArticleId).update(updatePayload);
+                    
+                    statusMsg.style.color = '#4ade80';
+                    statusMsg.innerText = `ලිපිය සාර්ථකව යාවත්කාලීන (Update) කරන ලදී!`;
+                    cancelEditMode(); // Resets form and UI automatically
+                } else {
+                    // New Publish Mode
+                    await db.collection('articles').add({
+                        title: title,
+                        excerpt: excerpt,
+                        link: link,
+                        imageUrl: imgUrl,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    statusMsg.style.color = '#4ade80';
+                    statusMsg.innerText = `ලිපිය සාර්ථකව පබ්ලිෂ් කරන ලදී!`;
+                    formArt.reset();
+                }
+
+                progBar.style.width = '100%';
+                btnSubmit.disabled = false;
+                loadArticlesForManagement(); // Refresh the visual list
+
+            } catch (err) { 
+                console.error(err);
+                statusMsg.style.color = '#f43f5e'; 
+                statusMsg.innerText = 'දෝෂයක් සිදු විය!'; 
+                btnSubmit.disabled = false; 
+            }
         });
     </script>
 </body>
