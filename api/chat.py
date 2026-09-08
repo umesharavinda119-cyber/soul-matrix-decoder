@@ -24,7 +24,7 @@ class handler(BaseHTTPRequestHandler):
 
             # 3. Gemini AI Setup (Updated Model Name)
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-2.5-flash')
+            model = genai.GenerativeModel('gemini-3.6-flash')
             
             system_prompt = (
                 "You are Aravinda, an AI assistant for 'Radiance of Numbers'. "
