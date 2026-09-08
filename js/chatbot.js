@@ -1,5 +1,5 @@
 // =================================================================
-// FULL CHATBOT LOGIC WITH GEMINI & ELEVENLABS AUDIO
+// FULL CHATBOT LOGIC WITH GEMINI, ELEVENLABS AUDIO & WHATSAPP LIMIT
 // =================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const chatTriggerBtn = document.getElementById('chat-trigger-btn');
@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let chatLang = 'si';
     let voiceActive = false;
-    let currentAudio = null; // Currently playing voice
+    let currentAudio = null; 
+    let messageCount = 0; // (NEW) මැසේජ් ගණන ගණනය කිරීම සඳහා
 
     // 1. Toggle Chat Window
     if (chatTriggerBtn && chatWindow && closeChatBtn) {
@@ -57,10 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 4. UI: Append Message Function
-    function appendMessage(sender, text) {
+    function appendMessage(sender, text, isHTML = false) {
         const msgDiv = document.createElement('div');
         msgDiv.className = `chat-message ${sender === 'user' ? 'user-msg' : 'bot-msg'}`;
-        msgDiv.innerText = text;
+        
+        if (isHTML) {
+            msgDiv.innerHTML = text;
+        } else {
+            msgDiv.innerText = text;
+        }
+        
         chatBody.appendChild(msgDiv);
         chatBody.scrollTop = chatBody.scrollHeight; // Scroll to bottom
     }
@@ -73,6 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show user message
         appendMessage('user', text);
         chatInput.value = '';
+        messageCount++; // මැසේජ් ගණන වැඩිකිරීම
+
+        // (NEW) පණිවිඩ 2ක සීමාව පරීක්ෂා කිරීම
+        if (messageCount > 2) {
+            const waMsg = `ඔබගේ ගැටළු පිළිබඳ වැඩිදුර විස්තර සහ සම්පූර්ණ රහස්‍ය වාර්තාව ලබාගැනීම සඳහා කරුණාකර අපගේ WhatsApp අංකයට සම්බන්ධ වන්න.<br><br><a href="https://wa.me/94757290085" target="_blank" style="display:inline-block; background:#25D366; color:#fff; padding:8px 15px; border-radius:15px; text-decoration:none; font-weight:bold;">WhatsApp වෙත පිවිසෙන්න</a>`;
+            
+            appendMessage('bot', waMsg, true);
+            return; // මෙතැනින් එහාට Backend API එකට Request එක යන්නේ නැත
+        }
         
         // Show loading typing indicator
         const loadingDiv = document.createElement('div');
@@ -88,7 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     message: text,
                     lang: chatLang,
-                    voice: voiceActive
+                    voice: voiceActive,
+                    // (NEW) අල්ලාගත් Numerology සහ Horoscope දත්ත යැවීම
+                    userData: window.userNumerologyData || null,
+                    astroData: window.userHoroscopeData || null
                 })
             });
             
@@ -97,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Remove loading indicator
             chatBody.removeChild(loadingDiv);
 
-            // API Error එක අල්ලා ගැනීම සඳහා යාවත්කාලීන කරන ලද කොටස
             if (data.reply) {
                 appendMessage('bot', data.reply);
             } else if (data.error) {
