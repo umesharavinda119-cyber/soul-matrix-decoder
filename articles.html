@@ -36,12 +36,18 @@
             box-shadow: 0 15px 30px rgba(6, 182, 212, 0.2);
             border-color: #06b6d4;
         }
+        
+        /* UPDATED IMAGE STYLES: Height increased and object-fit changed to stop text cropping */
         .article-img {
             width: 100%;
-            height: 200px;
-            object-fit: cover;
+            height: auto;
+            min-height: 250px;
+            max-height: 400px;
+            object-fit: contain;
+            background: rgba(0, 0, 0, 0.6); /* Fills empty space nicely */
             border-bottom: 2px solid #f59e0b;
         }
+        
         .article-content {
             padding: 20px;
             flex: 1;
