@@ -104,6 +104,9 @@ class handler(BaseHTTPRequestHandler):
             }).encode('utf-8'))
 
         except Exception as e:
+            # සැබෑ දෝෂය Vercel Logs වල සටහන් කිරීම
+            print(f"!!! REAL ERROR: {str(e)}")
+            
             # 7. Friendly Error Response (Prevents Frontend crashes on API limits)
             error_str = str(e)
             if "429" in error_str or "quota" in error_str.lower():
