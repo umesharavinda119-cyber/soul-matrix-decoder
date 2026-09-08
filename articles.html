@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTICLES | Radiance of Numbers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;800&family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;600;700&family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        .articles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        .article-card {
+            background: linear-gradient(135deg, rgba(12, 12, 25, 0.9), rgba(4, 4, 12, 0.95));
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(6, 182, 212, 0.2);
+            border-color: #06b6d4;
+        }
+        .article-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #f59e0b;
+        }
+        .article-content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .article-title {
+            color: #f59e0b;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            font-weight: 700;
+        }
+        .article-excerpt {
+            color: #d1d5db;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+        .read-btn {
+            background: linear-gradient(135deg, #1877f2, #0b50a8);
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+        .read-btn:hover { background: #1877f2; box-shadow: 0 0 15px rgba(24, 119, 242, 0.5); }
+        .loader { text-align: center; color: #06b6d4; font-family: 'Orbitron', sans-serif; font-size: 1.2rem; margin-top: 50px; z-index: 10; position: relative; }
+    </style>
+</head>
+<body>
+
+    <div class="real-bg"></div>
+    <div class="ambient-overlay"></div>
+
+    <header>
+        <div class="logo">
+            <div style="width:10px; height:10px; background:var(--accent-gold); border-radius:50%; box-shadow:0 0 15px var(--accent-gold);"></div>
+            RADIANCE OF NUMBERS
+        </div>
+        <div class="header-controls">
+            <!-- Back to Home Button -->
+            <a href="index.html" class="lang-btn" style="text-decoration: none;"><i class="fa-solid fa-house"></i> HOME PAGE</a>
+        </div>
+    </header>
+
+    <section class="hero" style="padding-top: 150px; padding-bottom: 40px;">
+        <div class="badge">COSMIC KNOWLEDGE BASE</div>
+        <h1 style="font-size: 3rem; margin-bottom: 15px;">LATEST ARTICLES</h1>
+        <p style="font-size: 1rem; margin-bottom: 0;">විශ්වයේ ගැඹුරු රහස්, කර්මජ දත්ත සහ ජ්‍යොතිෂමය ලිපි එකතුව</p>
+    </section>
+
+    <div id="loading-txt" class="loader">Loading Articles...</div>
+    <div id="articles-wrapper" class="articles-container"></div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAS1LHsxDHPFwxe7w8ByzbIdFbJogwnYq8",
+            authDomain: "soul-matrix-b0fdf.firebaseapp.com",
+            projectId: "soul-matrix-b0fdf"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const wrapper = document.getElementById('articles-wrapper');
+        const loader = document.getElementById('loading-txt');
+
+        async function fetchArticles() {
+            try {
+                const snapshot = await db.collection('articles').orderBy('timestamp', 'desc').get();
+                loader.style.display = 'none';
+
+                if (snapshot.empty) {
+                    wrapper.innerHTML = '<p style="color:#9ca3af; text-align:center; width:100%;">තවමත් ලිපි කිසිවක් පළ කර නොමැත.</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'article-card';
+                    card.innerHTML = `
+                        <img src="${data.imageUrl}" class="article-img" alt="Article Image">
+                        <div class="article-content">
+                            <h3 class="article-title">${data.title}</h3>
+                            <p class="article-excerpt">${data.excerpt}</p>
+                            <a href="${data.link}" target="_blank" class="read-btn"><i class="fa-brands fa-facebook"></i> READ ON FACEBOOK</a>
+                        </div>
+                    `;
+                    wrapper.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Error fetching articles: ", error);
+                loader.innerText = 'ලිපි ලබාගැනීමේදී දෝෂයක් මතු විය.';
+            }
+        }
+
+        fetchArticles();
+    </script>
+</body>
+</html>
