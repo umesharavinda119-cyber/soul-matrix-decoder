@@ -1,9 +1,9 @@
 /* =================================================================
-   1. NUMEROLOGY LEFT SIDE WIDGET
+   1. NUMEROLOGY LEFT SIDE WIDGET (PC VIEW)
    ================================================================= */
 #numerology-app-wrapper {
     position: fixed;
-    left: 6%;
+    left: 4%;
     top: 52%;
     transform: translateY(-50%);
     width: 380px;
@@ -13,6 +13,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    opacity: 1 !important;
+    pointer-events: all !important;
     transition: opacity 0.5s ease;
 }
 
@@ -194,7 +196,7 @@
 }
 
 /* =================================================================
-   5. MOBILE RESPONSIVE FIX (PREVENTS OVERLAPPING ON PHONES)
+   5. MOBILE RESPONSIVE FIX
    ================================================================= */
 @media (max-width: 768px) {
     #numerology-app-wrapper {
@@ -223,8 +225,5 @@
         top: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-    }
-    .num-glow-btn:hover {
-        transform: translateX(-50%) scale(1.05) !important;
     }
 }
