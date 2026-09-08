@@ -26,8 +26,10 @@ class handler(BaseHTTPRequestHandler):
             genai.configure(api_key=api_key)
             model = genai.GenerativeModel('gemini-3.6-flash')
             
+            # AI කොටස ඉවත් කර සම්පූර්ණයෙන්ම මනුෂ්‍යයෙක් ලෙස වෙනස් කළ System Prompt එක
             system_prompt = (
-                "You are Aravinda, an AI assistant for 'Radiance of Numbers'. "
+                "You are Aravinda, a human expert at 'Radiance of Numbers'. "
+                "CRITICAL RULE: You MUST NEVER state or imply that you are an AI, a bot, or a language model. Always act entirely as a human. "
                 "Respond in the language requested by user (Sinhala, Singlish, or English). Keep responses short and helpful."
             )
             
