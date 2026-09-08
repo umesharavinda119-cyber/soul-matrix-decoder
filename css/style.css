@@ -719,18 +719,19 @@ header {
         display: none !important; 
     }
 
-    /* Make Header Slim and Horizontal */
+    /* FIX FOR MOBILE HEADER OVERLAPPING */
     header { 
-        flex-direction: row !important; 
+        flex-direction: column !important; 
         padding: 12px 15px !important; 
         align-items: center !important;
         height: auto !important;
+        gap: 12px !important; /* Added gap to separate logo and controls */
     }
     
     .header-controls { 
-        width: auto !important; 
+        width: 100% !important; 
         gap: 12px !important;
-        justify-content: flex-end !important;
+        justify-content: center !important; /* Center the icons under the logo */
     }
 
     /* Floating Audio Button */
@@ -747,7 +748,7 @@ header {
 
     /* Adjust Hero Section padding since Header is now slim */
     .hero { 
-        padding-top: 110px !important; 
+        padding-top: 150px !important; /* Increased to account for the new header layout */
         padding-left: 15px !important; 
         padding-right: 15px !important; 
     }
