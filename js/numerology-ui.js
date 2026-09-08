@@ -122,6 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.status === 'success') {
                     inputModal.classList.remove('active');
                     closeVirtualKeyboard();
+                    
+                    // (NEW) චැට්බොට් එකට දත්ත ලබා දීම සඳහා Global Variable එකකට සේව් කිරීම
+                    window.userNumerologyData = result.data; 
+
                     renderNumerologyReport(result.data);
                 } else {
                     window.restoreCenterAndSideWidgets();
