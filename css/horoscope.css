@@ -1,5 +1,5 @@
 /* =================================================================
-   1. HOROSCOPE APP WRAPPER & MAIN TRIGGER
+   1. HOROSCOPE APP WRAPPER & MAIN TRIGGER (PC VIEW)
    ================================================================= */
 #horoscope-app-wrapper {
     position: fixed;
@@ -13,6 +13,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    opacity: 1 !important;
+    pointer-events: all !important;
     transition: opacity 0.5s ease;
 }
 
@@ -526,10 +528,18 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
 
     /* FIX FOR HOROSCOPE RESULT MODAL & CHARTS ON MOBILE */
     #horoscope-modal .horoscope-modal-card {
-        padding: 1.2rem 0.8rem !important;
+        padding: 1.5rem 1rem !important;
         width: 95% !important;
+        max-width: 100% !important;
         height: 92vh !important;
         overflow-x: hidden !important;
+        overflow-y: auto !important;
+        /* Force exact center */
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        margin: 0 !important;
     }
     #horoscope-modal .close-modal-btn {
         top: 10px !important;
@@ -543,19 +553,43 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]:
     #horoscope-modal .dual-wheels-wrapper {
         flex-direction: column !important;
         align-items: center !important;
-        gap: 0 !important;
+        gap: 20px !important;
         margin-bottom: 10px !important;
     }
+    
+    /* Reduce actual physical dimensions instead of just scaling */
     #horoscope-modal .wheel-box {
-        width: 100% !important;
-        transform: scale(0.8) !important; /* Scale down the 380px charts to fit mobile */
-        transform-origin: top center !important;
-        margin-bottom: -60px !important; /* Adjust empty space left by scaling */
+        width: 320px !important; 
+        margin: 0 auto !important;
+        transform: none !important;
     }
+    #horoscope-modal .ring-container {
+        width: 320px !important;
+        height: 320px !important;
+    }
+    #horoscope-modal .ring-container canvas {
+        width: 320px !important;
+        height: 320px !important;
+    }
+    #horoscope-modal .zodiac-center-grid {
+        width: 290px !important;
+        height: 290px !important;
+    }
+    #horoscope-modal .chart-center-title {
+        font-size: 0.8rem !important;
+    }
+    #horoscope-modal .h-box {
+        font-size: 0.75rem !important;
+    }
+    #horoscope-modal .h-box span,
+    #horoscope-modal .h-box .p-symbol {
+        font-size: 0.75rem !important;
+    }
+
     #horoscope-modal .v12-report-grid {
-        grid-template-columns: 1fr !important; /* Display report cards in one column */
+        grid-template-columns: 1fr !important; 
         gap: 15px !important;
-        padding: 0 10px !important;
+        padding: 0 !important;
         margin-top: 15px !important;
     }
 }
