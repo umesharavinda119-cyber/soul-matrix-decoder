@@ -60,7 +60,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 4. LASER SCAN & DECODER LOGIC ---
+    // --- 4. NEW: LANGUAGE TOGGLE LOGIC ---
+    const langToggleBtn = document.getElementById('lang-toggle-btn');
+    let currentLang = 'si'; // Default language
+
+    if (langToggleBtn) {
+        // අකුරු වල මුල් සැකසුම (Initial Setup)
+        langToggleBtn.innerText = 'සි | EN'; 
+
+        langToggleBtn.addEventListener('click', () => {
+            currentLang = currentLang === 'si' ? 'en' : 'si';
+            
+            // බොත්තමේ අකුරු මාරු කිරීම
+            langToggleBtn.innerText = currentLang === 'si' ? 'සි | EN' : 'EN | සි';
+
+            // data-si සහ data-en ඇති සියලුම tags වල අකුරු මාරු කිරීම
+            document.querySelectorAll('[data-si][data-en]').forEach(el => {
+                el.innerHTML = el.getAttribute(`data-${currentLang}`);
+            });
+        });
+    }
+
+    // --- 5. LASER SCAN & DECODER LOGIC ---
     if (decodeBtn) {
         decodeBtn.addEventListener('click', () => {
             const dateVal = birthdateInput ? birthdateInput.value : null;
@@ -131,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(resBox) resBox.style.display = 'block';
     }
 
-    // --- 5. TAB SWITCHING LOGIC ---
+    // --- 6. TAB SWITCHING LOGIC ---
     const viewPkgsBtn = document.getElementById('view-packages-btn');
     if (viewPkgsBtn) {
         viewPkgsBtn.addEventListener('click', () => {
@@ -186,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(initDecoder) initDecoder.style.display = 'block';
     };
 
-    // --- 6. 3D HOVER EFFECT ---
+    // --- 7. 3D HOVER EFFECT ---
     let mouseX = 0, mouseY = 0;
     const uniBg = document.getElementById('universe-bg');
     const calcCard = document.querySelector('.calc-card');
@@ -209,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 }); // End DOMContentLoaded
 
-// --- 7. 3D HOROSCOPE RINGS ENGINE ---
+// --- 8. 3D HOROSCOPE RINGS ENGINE ---
 function open3DHoroscopeRings() {
     const modal = document.getElementById('horoscope-modal');
     if (modal) {
