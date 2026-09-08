@@ -210,7 +210,7 @@ header {
 
 .hero p { color: var(--text-main); font-size: 1.15rem; max-width: 700px; line-height: 1.6; margin-bottom: 3rem; text-shadow: 0 2px 5px #000; }
 
-.wheel-wrapper { position: relative; width: 100%; max-width: 680px; display: flex; justify-content: center; align-items: center; }
+.wheel-wrapper { position: relative; width: 100%; max-width: 680px; display: flex; justify-content: center; align-items: center; flex-direction: column; }
 
 /* ANIMATED GLOWING BORDER WRAPPER */
 .calc-card-border-wrapper {
@@ -384,6 +384,43 @@ header {
 
 .pkg-delivery strong {
     color: var(--accent-cyan);
+}
+
+/* =================================================================
+   NEW 3D KNOWLEDGE BASE / ARTICLES BUTTON 
+   ================================================================= */
+.articles-3d-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 35px;
+    padding: 1.2rem 2.5rem;
+    background: linear-gradient(135deg, rgba(12, 12, 25, 0.9), rgba(4, 4, 12, 0.95));
+    border: 2px solid var(--accent-cyan);
+    border-radius: 12px;
+    color: var(--accent-cyan);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    text-decoration: none;
+    letter-spacing: 2px;
+    box-shadow: 0 8px 0 #083344, 0 15px 25px rgba(0,0,0,0.7), inset 0 0 15px rgba(6, 182, 212, 0.2);
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 20;
+}
+
+.articles-3d-cta:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, #06b6d4, #0284c7);
+    color: #000;
+    box-shadow: 0 10px 0 #083344, 0 20px 30px rgba(6, 182, 212, 0.4);
+}
+
+.articles-3d-cta:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 #083344, 0 5px 10px rgba(0,0,0,0.5);
 }
 
 /* =================================================================
@@ -667,11 +704,12 @@ header {
 .flip-nav-btn.prev-btn { left: calc(50% - 65px); }
 .flip-nav-btn.next-btn { right: calc(50% - 65px); }
 
+
 /* =================================================================
    MOBILE RESPONSIVE FIXES (Clean Header & Floating Audio)
    ================================================================= */
 @media (max-width: 768px) {
-    /* Hide unnecessary header clutter on mobile */
+    /* FORCE HIDE unnecessary header clutter on mobile */
     .celestial-badge, 
     .daily-badge, 
     .theme-picker, 
@@ -686,6 +724,7 @@ header {
         flex-direction: row !important; 
         padding: 12px 15px !important; 
         align-items: center !important;
+        height: auto !important;
     }
     
     .header-controls { 
@@ -718,6 +757,14 @@ header {
     .calc-card { padding: 1.5rem 1rem !important; transform: none !important; }
     .calc-card h3, .calc-card p, .input-group, .result-box, .tab-menu, .tab-content { transform: none !important; }
     
+    /* 3D Article Button Mobile Scale */
+    .articles-3d-cta {
+        width: 90% !important;
+        font-size: 0.85rem !important;
+        padding: 1rem !important;
+        margin-top: 20px !important;
+    }
+
     /* Date Input Font Size */
     .date-input { 
         width: 100% !important; 
@@ -731,10 +778,7 @@ header {
 
     /* Flipbook Toolbar Fixes */
     .flipbook-toolbar { width: 92%; justify-content: space-between; padding: 6px 12px; }
-    
-    /* Pushed the flipbook container down to create space for arrows */
     .flipbook-container { padding-top: 120px !important; }
-    
     .flip-nav-btn { width: 42px; height: 42px; font-size: 1.1rem; top: -55px; }
     .flip-nav-btn.prev-btn { left: calc(50% - 50px); }
     .flip-nav-btn.next-btn { right: calc(50% - 50px); }
