@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let chatLang = 'si';
     let voiceActive = false;
     let currentAudio = null; 
-    let messageCount = 0; // (NEW) මැසේජ් ගණන ගණනය කිරීම සඳහා
+    let messageCount = 0; 
 
     // 1. Toggle Chat Window
     if (chatTriggerBtn && chatWindow && closeChatBtn) {
@@ -77,17 +77,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = chatInput.value.trim();
         if (!text) return;
 
+        // දත්ත ඇතුළත් කර නොමැති නම් චැට් කිරීම නැවැත්වීම
+        if (!window.userNumerologyData && !window.userHoroscopeData) {
+            appendMessage('bot', 'කරුණාකර මා සමඟ කතා කිරීමට පෙර, අංක විද්‍යාත්මක හෝ ජ්‍යොතිෂ පරීක්ෂාව සම්පූර්ණ කර (Submit කර) ඉන්න. ඉන්පසු ඔබට අදාළ නිවැරදිම තොරතුරු ලබා දීමට මට හැක.');
+            chatInput.value = '';
+            return; 
+        }
+
         // Show user message
         appendMessage('user', text);
         chatInput.value = '';
-        messageCount++; // මැසේජ් ගණන වැඩිකිරීම
+        messageCount++; 
 
-        // (NEW) පණිවිඩ 2ක සීමාව පරීක්ෂා කිරීම
+        // පණිවිඩ 2ක සීමාව පරීක්ෂා කිරීම
         if (messageCount > 2) {
             const waMsg = `ඔබගේ ගැටළු පිළිබඳ වැඩිදුර විස්තර සහ සම්පූර්ණ රහස්‍ය වාර්තාව ලබාගැනීම සඳහා කරුණාකර අපගේ WhatsApp අංකයට සම්බන්ධ වන්න.<br><br><a href="https://wa.me/94757290085" target="_blank" style="display:inline-block; background:#25D366; color:#fff; padding:8px 15px; border-radius:15px; text-decoration:none; font-weight:bold;">WhatsApp වෙත පිවිසෙන්න</a>`;
             
             appendMessage('bot', waMsg, true);
-            return; // මෙතැනින් එහාට Backend API එකට Request එක යන්නේ නැත
+            return; 
         }
         
         // Show loading typing indicator
@@ -105,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     message: text,
                     lang: chatLang,
                     voice: voiceActive,
-                    // (NEW) අල්ලාගත් Numerology සහ Horoscope දත්ත යැවීම
                     userData: window.userNumerologyData || null,
                     astroData: window.userHoroscopeData || null
                 })
