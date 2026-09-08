@@ -97,8 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Remove loading indicator
             chatBody.removeChild(loadingDiv);
 
+            // API Error එක අල්ලා ගැනීම සඳහා යාවත්කාලීන කරන ලද කොටස
             if (data.reply) {
                 appendMessage('bot', data.reply);
+            } else if (data.error) {
+                appendMessage('bot', 'API Error: ' + data.error);
             } else {
                 appendMessage('bot', 'System Error: No response received.');
             }
@@ -113,7 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } catch (error) {
-            chatBody.removeChild(loadingDiv);
+            if (chatBody.contains(loadingDiv)) {
+                chatBody.removeChild(loadingDiv);
+            }
             appendMessage('bot', 'Connection Error. Please try again.');
             console.error('Chat Error:', error);
         }
