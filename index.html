@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="css/numerology.css">
     
     <style>
+        /* Restored Original Widget Visibility Logic */
         #numerology-app-wrapper, 
         #horoscope-app-wrapper {
             opacity: 0;
@@ -295,6 +296,153 @@
         <div class="num-report-card">
             <button class="num-close-btn" onclick="closeNumerologyReportModal()" style="position: absolute; top: 15px; right: 20px;">&times;</button>
             <div id="num-report-content"></div>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE PANEL (HOROSCOPE 3D WIDGET) -->
+    <div id="horoscope-app-wrapper">
+        <canvas id="zodiac-3d-canvas"></canvas>
+        <button id="open-horoscope-btn" class="glow-btn" tabindex="0" data-si='<i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම' data-en='<i class="fa-solid fa-compass"></i> GENERATE HOROSCOPE'>
+            <i class="fa-solid fa-compass"></i> ජන්ම පත්‍ර සැකසීම
+        </button>
+    </div>
+
+    <!-- HOROSCOPE INPUT MODAL -->
+    <div id="horoscope-panel" class="glass-panel">
+        <div class="panel-header">
+            <h3>SOUL MATRIX DECODER</h3>
+            <button id="close-panel-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="panel-body">
+            <p class="panel-desc">නිවැරදි ජ්‍යොතිෂමය දත්ත සඳහා ඔබගේ උපන් තොරතුරු ලබා දෙන්න.</p>
+            <form id="horoscope-form">
+                <div class="input-grp">
+                    <label><i class="fa-solid fa-user"></i> සම්පූර්ණ නම</label>
+                    <input type="text" id="h-name" placeholder="Ex: Umesh (Mars/No.9)" required>
+                </div>
+                <div class="input-grp">
+                    <label><i class="fa-solid fa-heart"></i> විවාහක / අවිවාහක බව</label>
+                    <select id="h-status" required style="width: 100%; padding: 0.8rem 1rem; background: rgba(2, 2, 10, 0.85); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.9rem;">
+                        <option value="single">අවිවාහක (Single)</option>
+                        <option value="married">විවාහක (Married)</option>
+                    </select>
+                </div>
+                <div class="input-grp">
+                    <label><i class="fa-solid fa-calendar-days"></i> උපන් දිනය</label>
+                    <input type="date" id="h-date" required>
+                </div>
+                <div class="input-grp">
+                    <label><i class="fa-solid fa-clock"></i> උපන් වෙලාව (පැය 24)</label>
+                    <input type="time" id="h-time" step="60" required>
+                </div>
+                <div class="input-grp">
+                    <label><i class="fa-solid fa-hospital"></i> උපන් ස්ථානය / නගරය</label>
+                    <input type="text" id="h-place" placeholder="Ex: Castle Hospital, Colombo" required>
+                </div>
+                <button type="submit" class="submit-btn-3d" id="generate-matrix-btn">
+                    <i class="fa-solid fa-atom"></i> GENERATE MATRIX
+                </button>
+            </form>
+            <div id="loading-matrix" style="display: none;">
+                <div class="spinner"></div>
+                <p>කේන්දර සටහන ගණනය කරමින් පවතී...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DUAL 3D HOROSCOPE MODAL WITH TECHNICAL METRICS DASHBOARD -->
+    <div id="horoscope-modal" class="horoscope-modal-overlay" style="display: none;">
+        <canvas id="modal-bg-canvas"></canvas>
+        <div class="horoscope-modal-card" id="horoscope-3d-card">
+            <button class="close-modal-btn" id="close-modal-btn">&times;</button>
+            <h2 class="modal-title">ජන්ම පත්‍ර ගණිතමය විශ්ලේෂණය (TECHNICAL METRICS)</h2>
+            
+            <div class="dual-wheels-wrapper">
+                <div class="wheel-box">
+                    <h3>ලග්න චක්‍රය (D1)</h3>
+                    <div class="ring-container">
+                        <canvas id="lagna-3d-canvas"></canvas>
+                        <div class="zodiac-center-grid lagna-bg">
+                            <div class="chart-center-title" id="lagna-name-display">මේෂ<br>ලග්නය</div>
+                            <div class="house-grid" id="lagna-houses">
+                                <div class="h-box h1"></div><div class="h-box h2"></div><div class="h-box h3"></div>
+                                <div class="h-box h4"></div><div class="h-box h5"></div><div class="h-box h6"></div>
+                                <div class="h-box h7"></div><div class="h-box h8"></div><div class="h-box h9"></div>
+                                <div class="h-box h10"></div><div class="h-box h11"></div><div class="h-box h12"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wheel-box">
+                    <h3>නවාංශක චක්‍රය (D9)</h3>
+                    <div class="ring-container">
+                        <canvas id="navamsha-3d-canvas"></canvas>
+                        <div class="zodiac-center-grid navamsha-bg">
+                            <div class="chart-center-title" id="navamsha-name-display">කන්‍යා<br>නවාංශකය</div>
+                            <div class="house-grid" id="navamsha-houses">
+                                <div class="h-box h1"></div><div class="h-box h2"></div><div class="h-box h3"></div>
+                                <div class="h-box h4"></div><div class="h-box h5"></div><div class="h-box h6"></div>
+                                <div class="h-box h7"></div><div class="h-box h8"></div><div class="h-box h9"></div>
+                                <div class="h-box h10"></div><div class="h-box h11"></div><div class="h-box h12"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="v12-report-container" class="v12-report-grid">
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-calculator"></i> පංචාංග අගයන්</h4>
+                    <div class="metric-row"><span>ලහිරි අයනාංශය:</span> <strong id="m-ayanamsha">0.00°</strong></div>
+                    <div class="metric-row"><span>නැකත & පදය:</span> <strong id="m-nakshatra">-</strong></div>
+                    <div class="metric-row"><span>නැකත් අධිපති:</span> <strong id="m-nak-lord">-</strong></div>
+                    <div class="metric-row"><span>තිථිය & පක්ෂය:</span> <strong id="m-tithi">-</strong></div>
+                    <div class="metric-row"><span>යෝනි / ගණ / නාඩි:</span> <strong id="m-yoni-gana-nadi">-</strong></div>
+                </div>
+
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-clock"></i> දශා කාල & Golden Window</h4>
+                    <div class="metric-row"><span>මහ දශාව:</span> <strong id="m-maha-dasha" class="val-gold">-</strong></div>
+                    <div class="metric-row"><span>අන්තර දශාව:</span> <strong id="m-antar-dasha" class="val-cyan">-</strong></div>
+                    <div class="metric-row"><span>ප්‍රත්‍යන්තර දශාව:</span> <strong id="m-pratyantar-dasha">-</strong></div>
+                    <div class="metric-row"><span>ජීවන රන්මය කාලය:</span> <strong id="m-golden-window" class="val-green">-</strong></div>
+                </div>
+
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-sack-dollar"></i> ධන සම්පත් & Indu Matrix</h4>
+                    <div class="metric-row"><span>ධන & බල Potential:</span> <strong id="m-wealth-score" class="val-gold">0%</strong></div>
+                    <div class="metric-row"><span>ඉන්දු ලග්නය (Wealth):</span> <strong id="m-indu-lagna">-</strong></div>
+                    <div class="metric-row"><span>අරුඪ ලග්නය (AL):</span> <strong id="m-arudha-lagna">-</strong></div>
+                    <div class="metric-row"><span>ප්‍රධාන යෝග:</span> <strong id="m-yogas" class="val-green">-</strong></div>
+                </div>
+
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-ring"></i> විවාහ & Soulmate Vector</h4>
+                    <div class="metric-row"><span id="lbl-marriage-window">විවාහ වීමේ කාලසීමාව:</span> <strong id="m-marriage-window" class="val-cyan">-</strong></div>
+                    <div class="metric-row"><span>Soulmate Match %:</span> <strong id="m-soulmate-match" class="val-gold">-</strong></div>
+                    <div class="metric-row"><span>7 අධිපති / දිශාව:</span> <strong id="m-spouse-dir">-</strong></div>
+                    <div class="metric-row"><span>නමේ මූලික ශබ්දය:</span> <strong id="m-spouse-letter" class="val-gold">-</strong></div>
+                </div>
+
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-shield-halved"></i> කර්මජ බාධක & Doshas</h4>
+                    <div class="metric-row"><span>කර්මජ බාධක මට්ටම:</span> <strong id="m-karmic-level" class="val-red">-</strong></div>
+                    <div class="metric-row"><span>කුජ දෝෂය:</span> <strong id="m-kuja-dosha">-</strong></div>
+                    <div class="metric-row"><span>ඒරාෂ්ටක / ඡායා:</span> <strong id="m-sade-sati">-</strong></div>
+                    <div class="metric-row"><span>SAV මුළු බිංදු:</span> <strong id="m-sav-total" class="val-cyan">0 / 337</strong></div>
+                </div>
+
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-gem"></i> ශක්ති නාලිකා & Pratikarma</h4>
+                    <div class="metric-row"><span>ලග්න ශක්ති කම්පනය:</span> <strong id="m-lucky-freq" class="val-cyan">-</strong></div>
+                    <div class="metric-row"><span>අද දින තාරා බලය:</span> <strong id="m-tara-bala">-</strong></div>
+                    <div class="metric-row"><span>වාසනාවන්ත මැණික:</span> <strong id="m-power-gem" class="val-locked">🔒 LOCKED</strong></div>
+                    <div class="metric-row"><span>අනුරූපී ව්‍යාපාර:</span> <strong class="val-locked">🔒 LOCKED (In Blueprint)</strong></div>
+                </div>
+            </div>
+
+            <div id="horoscope-cta-container"></div>
         </div>
     </div>
 
