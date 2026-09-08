@@ -1,9 +1,9 @@
 /* =================================================================
-   1. NUMEROLOGY LEFT SIDE WIDGET (Restored 100% Original PC layout)
+   1. NUMEROLOGY LEFT SIDE WIDGET
    ================================================================= */
 #numerology-app-wrapper {
     position: fixed;
-    left: 6%;
+    left: 4%;
     top: 52%;
     transform: translateY(-50%);
     width: 380px;
@@ -203,7 +203,7 @@
         top: auto !important;
         transform: none !important;
         width: 100% !important;
-        height: 500px !important; /* Forces it to have proper space */
+        height: 500px !important; 
         margin: 40px auto !important;
         z-index: 20 !important;
     }
