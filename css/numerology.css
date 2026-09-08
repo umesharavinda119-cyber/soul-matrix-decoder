@@ -1,9 +1,9 @@
 /* =================================================================
-   1. NUMEROLOGY LEFT SIDE WIDGET
+   1. NUMEROLOGY LEFT SIDE WIDGET (Restored 100% Original PC layout)
    ================================================================= */
 #numerology-app-wrapper {
     position: fixed;
-    left: 4%;
+    left: 6%;
     top: 52%;
     transform: translateY(-50%);
     width: 380px;
@@ -194,7 +194,7 @@
 }
 
 /* =================================================================
-   5. MOBILE RESPONSIVE FIX
+   5. MOBILE RESPONSIVE FIX (Does NOT affect PC)
    ================================================================= */
 @media (max-width: 768px) {
     #numerology-app-wrapper {
@@ -202,26 +202,26 @@
         left: auto !important;
         top: auto !important;
         transform: none !important;
-        width: 90vw !important;
-        height: auto !important;
-        margin: 30px auto 10px auto !important;
+        width: 100% !important;
+        height: 500px !important; /* Forces it to have proper space */
+        margin: 40px auto !important;
         z-index: 20 !important;
     }
     #numerology-3d-canvas {
-        position: relative !important;
-        top: 0 !important;
+        position: absolute !important;
+        top: 20px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        width: 100% !important;
-        height: auto !important;
-        max-width: 330px !important;
-        aspect-ratio: 1/1;
-        margin-bottom: 15px;
+        width: 320px !important;
+        height: 320px !important;
     }
     .num-glow-btn {
-        position: relative !important;
-        top: 0 !important;
+        position: absolute !important;
+        top: 380px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
+    }
+    .num-glow-btn:hover {
+        transform: translateX(-50%) scale(1.05) !important;
     }
 }
