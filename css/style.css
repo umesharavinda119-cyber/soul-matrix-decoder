@@ -390,9 +390,11 @@ header {
 @media (max-width: 768px) {
     header { flex-direction: column; padding: 10px 12px !important; gap: 8px; }
     .header-controls { justify-content: center; gap: 6px !important; width: 100%; }
-    .hero { padding-top: 190px !important; }
+    .hero { padding-top: 190px !important; padding-left: 15px !important; padding-right: 15px !important; }
     .hero h1 { font-size: 2.2rem !important; line-height: 1.25 !important; }
-    .calc-card { padding: 1.5rem 1rem !important; }
+    .hero p { font-size: 0.95rem !important; margin-bottom: 1.5rem !important; }
+    .calc-card { padding: 1.5rem 1rem !important; transform: none !important; }
+    .calc-card h3, .calc-card p, .input-group, .result-box, .tab-menu, .tab-content { transform: none !important; }
     .date-input, .decode-btn { width: 100% !important; min-width: 100% !important; }
 }
 
