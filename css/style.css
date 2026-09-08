@@ -682,8 +682,13 @@ header {
 .flip-nav-btn.prev-btn { left: calc(50% - 65px); }
 .flip-nav-btn.next-btn { right: calc(50% - 65px); }
 
+/* MOBILE FIX FOR ARROWS OVERLAPPING TOOLBAR */
 @media (max-width: 768px) {
     .flipbook-toolbar { width: 92%; justify-content: space-between; padding: 6px 12px; }
+    
+    /* Pushed the flipbook container down to create space for arrows */
+    .flipbook-container { padding-top: 120px !important; }
+    
     .flip-nav-btn { width: 42px; height: 42px; font-size: 1.1rem; top: -55px; }
     .flip-nav-btn.prev-btn { left: calc(50% - 50px); }
     .flip-nav-btn.next-btn { right: calc(50% - 50px); }
