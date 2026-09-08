@@ -21,57 +21,98 @@
         body { background: #04040c; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .admin-card { background: linear-gradient(135deg, rgba(12, 12, 28, 0.98), rgba(4, 4, 12, 0.99)); border: 1.5px solid #06b6d4; border-radius: 16px; padding: 2rem; width: 100%; max-width: 500px; box-shadow: 0 0 40px rgba(6, 182, 212, 0.25); }
         h2 { font-family: 'Orbitron', sans-serif; color: #06b6d4; text-align: center; margin-bottom: 20px; font-size: 1.4rem; letter-spacing: 1px; }
+        
+        /* Tabs */
+        .tab-controls { display: flex; gap: 10px; margin-bottom: 25px; }
+        .admin-tab-btn { flex: 1; padding: 10px; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.1); color: #9ca3af; }
+        .admin-tab-btn.active { background: #06b6d4; color: #000; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
+
         .form-group { margin-bottom: 18px; }
         label { display: block; font-size: 0.85rem; color: #f59e0b; margin-bottom: 8px; font-family: 'Orbitron', sans-serif; }
-        input[type="text"], input[type="password"], input[type="file"] { width: 100%; padding: 12px; background: rgba(2, 2, 10, 0.9); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none; }
-        input[type="text"]:focus { border-color: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+        input[type="text"], input[type="password"], input[type="file"], textarea { width: 100%; padding: 12px; background: rgba(2, 2, 10, 0.9); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none; }
+        input[type="text"]:focus, textarea:focus { border-color: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+        textarea { resize: vertical; min-height: 80px; }
+        
         .upload-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #06b6d4, #0284c7); border: none; border-radius: 8px; color: #000; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer; transition: all 0.2s; margin-top: 10px; }
         .upload-btn:hover { background: linear-gradient(135deg, #38bdf8, #06b6d4); box-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
         .upload-btn:disabled { background: #475569; cursor: not-allowed; box-shadow: none; }
+        
         .progress-box { display: none; margin-top: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; text-align: center; }
         .progress-bar { width: 0%; height: 8px; background: linear-gradient(90deg, #06b6d4, #f59e0b); border-radius: 4px; transition: width 0.2s; }
-        #status-msg { margin-top: 10px; font-size: 0.85rem; font-weight: 600; text-align: center; }
+        .status-msg { margin-top: 10px; font-size: 0.85rem; font-weight: 600; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="admin-card">
-        <h2><i class="fa-solid fa-user-shield"></i> BLUEPRINT ADMIN PANEL</h2>
-        
-        <form id="admin-upload-form">
-            <div class="form-group">
-                <label>ADMIN ACCESS CODE</label>
-                <input type="password" id="admin-pass" placeholder="Enter Secret Key" required>
-            </div>
+        <h2><i class="fa-solid fa-user-shield"></i> MASTER CONTROL PANEL</h2>
 
+        <!-- Password Field (Global for both forms) -->
+        <div class="form-group" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
+            <label>ADMIN ACCESS CODE</label>
+            <input type="password" id="global-admin-pass" placeholder="Enter Secret Key" required>
+        </div>
+        
+        <!-- Tab Controls -->
+        <div class="tab-controls">
+            <button class="admin-tab-btn active" id="tab-bp-btn">BLUEPRINTS</button>
+            <button class="admin-tab-btn" id="tab-art-btn">ARTICLES</button>
+        </div>
+
+        <!-- BLUEPRINT UPLOAD FORM -->
+        <form id="admin-upload-form">
             <div class="form-group">
                 <label>CUSTOMER DIGIT LIFE CODE (8-DIGITS)</label>
                 <input type="text" id="life-code-input" placeholder="E.g. 29637242" maxlength="8" pattern="\d{8}" required>
             </div>
-
             <div class="form-group">
                 <label>CUSTOMER NAME (OPTIONAL)</label>
                 <input type="text" id="customer-name-input" placeholder="E.g. Miheli Sahasna">
             </div>
-
             <div class="form-group">
                 <label>SELECT BLUEPRINT PDF REPORT</label>
                 <input type="file" id="pdf-file-input" accept="application/pdf" required>
             </div>
-
             <button type="submit" class="upload-btn" id="btn-submit">
                 <i class="fa-solid fa-cloud-arrow-up"></i> UPLOAD & LINK REPORT
             </button>
+            <div class="progress-box" id="prog-box-bp">
+                <div class="progress-bar" id="prog-bar-bp"></div>
+                <p class="status-msg" id="status-msg-bp">Preparing file...</p>
+            </div>
         </form>
 
-        <div class="progress-box" id="prog-box">
-            <div class="progress-bar" id="prog-bar"></div>
-            <p id="status-msg">Preparing file...</p>
-        </div>
+        <!-- ARTICLE UPLOAD FORM (Hidden by default) -->
+        <form id="article-upload-form" style="display: none;">
+            <div class="form-group">
+                <label>ARTICLE TITLE</label>
+                <input type="text" id="art-title" placeholder="E.g. කර්මයේ බලපෑම..." required>
+            </div>
+            <div class="form-group">
+                <label>EXCERPT (කෙටි හැඳින්වීම)</label>
+                <textarea id="art-excerpt" placeholder="ලිපියේ අන්තර්ගතය ගැන කෙටි සටහනක්..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label>FACEBOOK POST LINK</label>
+                <input type="text" id="art-link" placeholder="https://www.facebook.com/..." required>
+            </div>
+            <div class="form-group">
+                <label>COVER IMAGE (JPG/PNG)</label>
+                <input type="file" id="art-image-input" accept="image/*" required>
+            </div>
+            <button type="submit" class="upload-btn" id="btn-art-submit" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <i class="fa-solid fa-newspaper"></i> PUBLISH ARTICLE
+            </button>
+            <div class="progress-box" id="prog-box-art">
+                <div class="progress-bar" id="prog-bar-art" style="background: #f59e0b;"></div>
+                <p class="status-msg" id="status-msg-art">Preparing article...</p>
+            </div>
+        </form>
+
     </div>
 
     <script>
-        // 1. YOUR FIREBASE CONFIGURATION
+        // FIREBASE CONFIGURATION
         const firebaseConfig = {
             apiKey: "AIzaSyAS1LHsxDHPFwxe7w8ByzbIdFbJogwnYq8",
             authDomain: "soul-matrix-b0fdf.firebaseapp.com",
@@ -81,87 +122,92 @@
             appId: "1:68411238048:web:8ea31ad61d8c985d474bc5"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const storage = firebase.storage();
 
-        // PDF.js Worker Configuration
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
-        const form = document.getElementById('admin-upload-form');
-        const progBox = document.getElementById('prog-box');
-        const progBar = document.getElementById('prog-bar');
-        const statusMsg = document.getElementById('status-msg');
-        const btnSubmit = document.getElementById('btn-submit');
-
         const SECRET_ADMIN_PASS = "URM2026ADMIN";
 
-        // AUTO-COMPRESSION FUNCTION (HIGH-RESOLUTION HD COMPRESSION)
+        // Tab Switching Logic
+        const tabBpBtn = document.getElementById('tab-bp-btn');
+        const tabArtBtn = document.getElementById('tab-art-btn');
+        const formBp = document.getElementById('admin-upload-form');
+        const formArt = document.getElementById('article-upload-form');
+
+        tabBpBtn.addEventListener('click', () => {
+            tabBpBtn.classList.add('active');
+            tabArtBtn.classList.remove('active');
+            formBp.style.display = 'block';
+            formArt.style.display = 'none';
+        });
+
+        tabArtBtn.addEventListener('click', () => {
+            tabArtBtn.classList.add('active');
+            tabBpBtn.classList.remove('active');
+            formArt.style.display = 'block';
+            formBp.style.display = 'none';
+        });
+
+        function checkAuth() {
+            const pass = document.getElementById('global-admin-pass').value;
+            if (pass !== SECRET_ADMIN_PASS) {
+                alert('වැරදි Admin Access Code එකකි!');
+                return false;
+            }
+            return true;
+        }
+
+        // ==========================================
+        // 1. BLUEPRINT UPLOAD LOGIC (Original)
+        // ==========================================
         async function compressPDFFile(file, onProgress) {
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             const numPages = pdf.numPages;
-            
             const { jsPDF } = window.jspdf;
             let compressedDoc = null;
 
             for (let i = 1; i <= numPages; i++) {
                 if (onProgress) onProgress(i, numPages);
-
                 const page = await pdf.getPage(i);
-                
-                // High Resolution Scaling (2.2 Scale for Crisp Text on Zoom)
                 const scale = 2.2; 
                 const viewport = page.getViewport({ scale: scale });
-                
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
                 
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-                
-                // Increased JPEG Quality to 85% (0.85) to eliminate blurriness
                 const imgData = canvas.toDataURL('image/jpeg', 0.85);
-                
                 const widthMm = (viewport.width * 25.4) / (96 * scale);
                 const heightMm = (viewport.height * 25.4) / (96 * scale);
 
                 if (i === 1) {
-                    compressedDoc = new jsPDF({
-                        orientation: widthMm > heightMm ? 'l' : 'p',
-                        unit: 'mm',
-                        format: [widthMm, heightMm]
-                    });
+                    compressedDoc = new jsPDF({ orientation: widthMm > heightMm ? 'l' : 'p', unit: 'mm', format: [widthMm, heightMm] });
                 } else {
                     compressedDoc.addPage([widthMm, heightMm], widthMm > heightMm ? 'l' : 'p');
                 }
-                
                 compressedDoc.addImage(imgData, 'JPEG', 0, 0, widthMm, heightMm);
             }
-            
             return compressedDoc.output('blob');
         }
 
-        form.addEventListener('submit', async (e) => {
+        formBp.addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (!checkAuth()) return;
 
-            const pass = document.getElementById('admin-pass').value;
             const lifeCode = document.getElementById('life-code-input').value.trim();
             const customerName = document.getElementById('customer-name-input').value.trim();
             const fileInput = document.getElementById('pdf-file-input');
             const originalFile = fileInput.files[0];
 
-            if (pass !== SECRET_ADMIN_PASS) {
-                alert('වැරදි Admin Access Code එකකි!');
-                return;
-            }
+            if (!originalFile || originalFile.type !== 'application/pdf') return alert('කරුණාකර වලංගු PDF ගොනුවක් තෝරන්න!');
 
-            if (!originalFile || originalFile.type !== 'application/pdf') {
-                alert('කරුණාකර වලංගු PDF ගොනුවක් තෝරන්න!');
-                return;
-            }
+            const btnSubmit = document.getElementById('btn-submit');
+            const progBox = document.getElementById('prog-box-bp');
+            const progBar = document.getElementById('prog-bar-bp');
+            const statusMsg = document.getElementById('status-msg-bp');
 
             btnSubmit.disabled = true;
             progBox.style.display = 'block';
@@ -170,61 +216,87 @@
 
             try {
                 let fileToUpload = originalFile;
-
-                // Auto Compress if PDF is larger than 10MB
                 if (originalFile.size > 10 * 1024 * 1024) {
-                    statusMsg.innerText = 'විශාල PDF ගොනුවක් හඳුනා ගන්නා ලදී. HD Auto-Compress වෙමින් පවතී...';
-                    
+                    statusMsg.innerText = 'HD Auto-Compress වෙමින් පවතී...';
                     fileToUpload = await compressPDFFile(originalFile, (currentPage, totalPages) => {
-                        const compPercent = Math.round((currentPage / totalPages) * 100);
-                        progBar.style.width = compPercent + '%';
-                        statusMsg.innerText = `PDF Compress වෙමින් පවතී: පිටු ${currentPage} / ${totalPages} (${compPercent}%)`;
+                        progBar.style.width = Math.round((currentPage / totalPages) * 100) + '%';
+                        statusMsg.innerText = `PDF Compress වෙමින් පවතී: පිටු ${currentPage} / ${totalPages}`;
                     });
-
-                    console.log(`Original: ${(originalFile.size / (1024*1024)).toFixed(2)} MB -> Compressed: ${(fileToUpload.size / (1024*1024)).toFixed(2)} MB`);
                 }
 
-                // Storage Uploading Phase
                 statusMsg.style.color = '#06b6d4';
                 statusMsg.innerText = 'Firebase Server එකට Upload වෙමින් පවතී...';
                 
-                const storageRef = storage.ref(`blueprints/${lifeCode}.pdf`);
-                const uploadTask = storageRef.put(fileToUpload);
+                const uploadTask = storage.ref(`blueprints/${lifeCode}.pdf`).put(fileToUpload);
 
                 uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        progBar.style.width = progress + '%';
-                        statusMsg.innerText = `Upload වෙමින් පවතී: ${Math.round(progress)}%`;
-                    }, 
-                    (error) => {
-                        console.error('Upload Error:', error);
-                        statusMsg.style.color = '#f43f5e';
-                        statusMsg.innerText = 'Upload කිරීමේදී දෝෂයක් සිදු විය!';
-                        btnSubmit.disabled = false;
-                    }, 
+                    (snapshot) => { progBar.style.width = ((snapshot.bytesTransferred / snapshot.totalBytes) * 100) + '%'; }, 
+                    (error) => { statusMsg.style.color = '#f43f5e'; statusMsg.innerText = 'Upload Error!'; btnSubmit.disabled = false; }, 
                     async () => {
                         const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-
                         await db.collection('blueprints').doc(lifeCode).set({
-                            lifeCode: lifeCode,
-                            customerName: customerName || 'Valued Client',
-                            pdfUrl: downloadURL,
-                            uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            lifeCode: lifeCode, customerName: customerName || 'Valued Client', pdfUrl: downloadURL, uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
-
                         statusMsg.style.color = '#4ade80';
-                        statusMsg.innerText = `සාර්ථකයි! Life Code (${lifeCode}) සඳහා Report එක සක්‍රීය කරන ලදී.`;
-                        form.reset();
+                        statusMsg.innerText = `සාර්ථකයි! Life Code (${lifeCode}) සක්‍රීය කරන ලදී.`;
+                        formBp.reset();
                         btnSubmit.disabled = false;
                     }
                 );
-            } catch (err) {
-                console.error(err);
-                statusMsg.style.color = '#f43f5e';
-                statusMsg.innerText = 'දත්ත සැකසීමේදී දෝෂයක් සිදු විය!';
-                btnSubmit.disabled = false;
-            }
+            } catch (err) { statusMsg.innerText = 'දෝෂයක් සිදු විය!'; btnSubmit.disabled = false; }
+        });
+
+        // ==========================================
+        // 2. ARTICLE PUBLISHING LOGIC
+        // ==========================================
+        formArt.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!checkAuth()) return;
+
+            const title = document.getElementById('art-title').value.trim();
+            const excerpt = document.getElementById('art-excerpt').value.trim();
+            const link = document.getElementById('art-link').value.trim();
+            const imgFile = document.getElementById('art-image-input').files[0];
+
+            if (!imgFile || !imgFile.type.startsWith('image/')) return alert('කරුණාකර පින්තූරයක් තෝරන්න (JPG/PNG)!');
+
+            const btnSubmit = document.getElementById('btn-art-submit');
+            const progBox = document.getElementById('prog-box-art');
+            const progBar = document.getElementById('prog-bar-art');
+            const statusMsg = document.getElementById('status-msg-art');
+
+            btnSubmit.disabled = true;
+            progBox.style.display = 'block';
+            progBar.style.width = '0%';
+            statusMsg.style.color = '#f59e0b';
+            statusMsg.innerText = 'Image Uploading...';
+
+            try {
+                const imgRefName = `articles/${Date.now()}_${imgFile.name}`;
+                const uploadTask = storage.ref(imgRefName).put(imgFile);
+
+                uploadTask.on('state_changed', 
+                    (snapshot) => { progBar.style.width = ((snapshot.bytesTransferred / snapshot.totalBytes) * 100) + '%'; }, 
+                    (error) => { statusMsg.style.color = '#f43f5e'; statusMsg.innerText = 'Image Upload Error!'; btnSubmit.disabled = false; }, 
+                    async () => {
+                        statusMsg.innerText = 'Database Update වෙමින් පවතී...';
+                        const imgUrl = await uploadTask.snapshot.ref.getDownloadURL();
+                        
+                        await db.collection('articles').add({
+                            title: title,
+                            excerpt: excerpt,
+                            link: link,
+                            imageUrl: imgUrl,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+
+                        statusMsg.style.color = '#4ade80';
+                        statusMsg.innerText = `ලිපිය සාර්ථකව පබ්ලිෂ් කරන ලදී!`;
+                        formArt.reset();
+                        btnSubmit.disabled = false;
+                    }
+                );
+            } catch (err) { statusMsg.style.color = '#f43f5e'; statusMsg.innerText = 'දෝෂයක් සිදු විය!'; btnSubmit.disabled = false; }
         });
     </script>
 </body>
