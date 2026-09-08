@@ -76,6 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (data.status === 'success') {
+                    
+                    // (NEW) චැට්බොට් එකට දත්ත ලබා දීම සඳහා Global Variable එකකට සේව් කිරීම
+                    window.userHoroscopeData = data;
+
                     renderHoroscopeResults(data);
                     if (glassPanel) glassPanel.classList.remove('active');
                     if (modalOverlay) modalOverlay.style.display = 'flex';
