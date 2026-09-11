@@ -472,6 +472,9 @@
         <div class="flipbook-toolbar">
             <button id="toggle-sidebar-btn" class="tb-btn" title="Toggle Page Previews"><i class="fa-solid fa-border-all"></i> Pages</button>
             
+            <!-- NEW HD DOWNLOAD BUTTON -->
+            <button id="download-pdf-btn" class="tb-btn" title="Download Original HD Report" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 700; padding: 0 15px; border: none;"><i class="fa-solid fa-download"></i> HD DOWNLOAD</button>
+
             <div class="zoom-controls-grp">
                 <button id="zoom-out-btn" class="tb-btn" title="Zoom Out (-)"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
                 <span id="zoom-level-text">100%</span>
@@ -595,7 +598,7 @@
     <!-- Chatbot Scripts -->
     <script src="js/chatbot.js" defer></script>
 
-    <!-- FIREBASE, 3D FLIPBOOK, DYNAMIC HIGH-DPI ZOOM & REAL MP3 SOUND LOGIC -->
+    <!-- FIREBASE, 3D FLIPBOOK, DYNAMIC HIGH-DPI ZOOM, DOWNLOAD & REAL MP3 SOUND LOGIC -->
     <script>
         // 1. Firebase Configuration
         const firebaseConfig = {
@@ -641,12 +644,18 @@
         const sidebar = document.getElementById('thumbnail-sidebar');
         const toggleSidebarBtn = document.getElementById('toggle-sidebar-btn');
         const thumbnailList = document.getElementById('thumbnail-list');
+        
+        // NEW DOWNLOAD BUTTON ELEMENT
+        const downloadPdfBtn = document.getElementById('download-pdf-btn');
 
         let pageFlipInstance = null;
         let activeLoadingTask = null;
         let activeRenderTasks = [];
         let wasAudioPlaying = false;
         let currentZoom = 1.0;
+        
+        // VARIABLE TO STORE URL FOR DOWNLOADING
+        let currentLoadedPdfUrl = null;
 
         // LOAD REAL CUSTOM MP3 FILE FOR PAGE TURN
         const customFlipSound = new Audio('assets/page turn.mp3');
@@ -681,6 +690,7 @@
             if (flipbookDiv) flipbookDiv.innerHTML = '';
             if (thumbnailList) thumbnailList.innerHTML = '';
             currentZoom = 1.0;
+            currentLoadedPdfUrl = null;
             if (zoomWrapper) zoomWrapper.style.transform = `scale(1.0)`;
             if (zoomText) zoomText.innerText = `100%`;
         }
@@ -759,6 +769,9 @@
 
                     const data = doc.data();
                     const pdfUrl = data.pdfUrl;
+                    
+                    // SAVE URL FOR DOWNLOAD BUTTON
+                    currentLoadedPdfUrl = pdfUrl;
 
                     // Stop & Mute background tone completely
                     if (bgAudio) {
@@ -768,6 +781,8 @@
                     }
 
                     cleanupFlipbook();
+                    // Restore URL after cleanup
+                    currentLoadedPdfUrl = pdfUrl;
 
                     flipModal.style.display = 'flex';
                     flipLoader.style.display = 'block';
@@ -784,6 +799,16 @@
                 } finally {
                     unlockBtn.disabled = false;
                     unlockBtn.innerText = "UNLOCK BLUEPRINT";
+                }
+            });
+        }
+
+        // HD DOWNLOAD BUTTON EVENT
+        if (downloadPdfBtn) {
+            downloadPdfBtn.addEventListener('click', () => {
+                if (currentLoadedPdfUrl) {
+                    // Opens the original Firebase PDF file directly in a new tab/window for 100% HD download
+                    window.open(currentLoadedPdfUrl, '_blank');
                 }
             });
         }
